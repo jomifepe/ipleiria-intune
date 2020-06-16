@@ -4,6 +4,7 @@ public class ButtonStart : MonoBehaviour
 {
     public void LoadLevel()
     {
-        GameManager.Instance.LoadNextLevel();
+        GameManager.Instance.LoadMenuLevels();
+        Debug.Log("Press");
     }
 }
