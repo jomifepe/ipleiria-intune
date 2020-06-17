@@ -208,7 +208,7 @@ MonoBehaviour:
     m_Bits: 512
   enemyLayerMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1024
   speed: 4
   jumpForce: 8
   jumpAudioClip: {fileID: 8300000, guid: e2b041cbc0ad2e849b585bf3f679b5e6, type: 3}
