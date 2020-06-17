@@ -17,7 +17,18 @@ public class ParallaxEffect : MonoBehaviour
     
     void FixedUpdate()
     {
-        float distance = (camera.transform.position.x * effectAmount);
+        var position = camera.transform.position;
+        float temp = (position.x * (1 - effectAmount));
+        float distance = (position.x * effectAmount);
         transform.position = new Vector3(startPos + distance, transform.position.y, transform.position.z);
+
+        if (temp > startPos + length)
+        {
+            startPos += temp;
+        }
+        else if (temp < startPos - length)
+        {
+            startPos -= length;
+        }
     }
 }
