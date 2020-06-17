@@ -1,41 +1,36 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-public class Enemy : MonoBehaviour
+public abstract class Enemy : MonoBehaviour
 {
-    private Rigidbody2D myRigidbody;
+    private Rigidbody2D rigidBody;
+    private Animator animator;
 
-    private Animator myAnimator;
-
-    [SerializeField]
-    private Transform groundCheck;
-
-    [SerializeField]
-    private LayerMask groundLayerMask;
+    [SerializeField] private Transform groundCheck;
+    [SerializeField] private LayerMask groundLayerMask;
 
     private Collider2D[] results = new Collider2D[1];
 
-    [SerializeField]
-    private float speed = 1f;
+    [SerializeField] private float speed = 1f;
 
-    private float life = 100f;
-
-    private bool isAlive = true;
-
-    [SerializeField]
-    private Image lifebarImage;
-
-    [SerializeField]
-    private Canvas myCanvas;
+    protected float Life;
+    protected bool IsAlive = true;
+    [SerializeField] private Image lifebarImage;
+    [SerializeField] private Canvas lifebarCanvas;
 
     private Camera mainCamera;
 
+    protected abstract float getMaxHealth();
+    
     private void Awake()
     {
-        myRigidbody = GetComponent<Rigidbody2D>();
-        myAnimator = GetComponent<Animator>();
+        Life = getMaxHealth();
+        rigidBody = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
         mainCamera = FindObjectOfType<Camera>();
     }
 
@@ -49,13 +44,9 @@ public class Enemy : MonoBehaviour
 
     private void Update()
     {
-        if (isAlive)
+        if (IsAlive)
         {
-            myRigidbody.velocity =
-                new Vector2(speed * transform.right.x,
-                myRigidbody.velocity.y
-                );
-
+            rigidBody.velocity = new Vector2(speed * transform.right.x, rigidBody.velocity.y);
             //myAnimator.SetFloat("HorizontalSpeed", Mathf.Abs(myRigidbody.velocity.x));
         }
     }
@@ -76,23 +67,24 @@ public class Enemy : MonoBehaviour
         Vector3 localRotation = transform.localEulerAngles;
         localRotation.y += 180f;
         transform.localEulerAngles = localRotation;
-        myCanvas.transform.forward = mainCamera.transform.forward; 
+        lifebarCanvas.transform.forward = mainCamera.transform.forward; 
     }
 
     public void TakeDamage(float damage)
     {
-        if (isAlive)
+        if (IsAlive)
         {
-            life -= damage;
+            animator.SetTrigger("Hurt");
+            Life -= damage;
 
-            if (life < 0f)
+            if (Life < 0f)
             {
-                life = 0f;
+                Life = 0f;
             }
 
             UpdateLifebarImage();
 
-            if (life == 0f)
+            if (Life == 0f)
             {
                 Die();
             }
@@ -101,15 +93,16 @@ public class Enemy : MonoBehaviour
 
     private void UpdateLifebarImage()
     {
-        lifebarImage.fillAmount = life / 100f;
+        lifebarImage.fillAmount = Life / getMaxHealth();
     }
 
     private void Die()
     {
-        myRigidbody.velocity = Vector2.zero;
-        isAlive = false;
-        myAnimator.SetTrigger("Die");
+        IsAlive = false;
+        animator.SetBool("IsDead", true);
         EnemyManager.Instance.DecreaseEnemiesCounter();
+        rigidBody.velocity = Vector2.zero;
+        rigidBody.angularVelocity = 0f;
     }
 
     private void DestroyEnemy() //called by animation event

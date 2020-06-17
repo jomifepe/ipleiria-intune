@@ -260,8 +260,8 @@ GameObject:
   - component: {fileID: 8044703417865281759}
   - component: {fileID: 8044703417865281758}
   - component: {fileID: 8044703417865281757}
-  - component: {fileID: 8044703417865281753}
   - component: {fileID: 8044703417865281754}
+  - component: {fileID: 2237965594218538728}
   m_Layer: 10
   m_Name: Skeleton
   m_TagString: Enemy
@@ -322,7 +322,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1203682789
-  m_SortingLayer: 4
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 4723107735738678597, guid: b0b446d69a753674f8647c6c646aba52,
     type: 3}
@@ -373,25 +373,6 @@ CapsuleCollider2D:
   m_Offset: {x: 0.24003726, y: 0.0006364584}
   m_Size: {x: 0.94588846, y: 1.8324087}
   m_Direction: 0
---- !u!114 &8044703417865281753
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8044703417865281756}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 75f8b25e271208742b38896346705af4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  groundCheck: {fileID: 8044703418025823954}
-  groundLayerMask:
-    serializedVersion: 2
-    m_Bits: 512
-  speed: 1
-  lifebarImage: {fileID: 5504275465695881511}
-  myCanvas: {fileID: 7139927683293155757}
 --- !u!95 &8044703417865281754
 Animator:
   serializedVersion: 3
@@ -411,6 +392,25 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &2237965594218538728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8044703417865281756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08215b2a079a4a6f873c50ed531494e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  groundCheck: {fileID: 8044703418025823954}
+  groundLayerMask:
+    serializedVersion: 2
+    m_Bits: 512
+  speed: 1
+  lifebarImage: {fileID: 5504275465695881511}
+  lifebarCanvas: {fileID: 7139927683293155757}
 --- !u!1 &8044703418025823953
 GameObject:
   m_ObjectHideFlags: 0
