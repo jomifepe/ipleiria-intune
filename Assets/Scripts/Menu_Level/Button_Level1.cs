@@ -4,6 +4,6 @@ public class Button_Level1 : MonoBehaviour
 {
     public void LoadLevel()
     {
-        GameManager.Instance.LoadNextLevel();
+        GameManager.Instance.LoadLevel(1);
     }
 }

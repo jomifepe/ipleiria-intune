@@ -55,6 +55,12 @@ public class GameManager : MonoBehaviour
         StartCoroutine(LoadNextLevelAsync(level));
         level++;
     }
+    
+     public void LoadLevel(int level)
+    {
+        StartCoroutine(LoadNextLevelAsync(level));
+        this.level = ++level;
+    }
 
     public void LoadMenuLevels()
     {
