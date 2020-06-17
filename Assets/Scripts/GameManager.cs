@@ -55,6 +55,18 @@ public class GameManager : MonoBehaviour
         StartCoroutine(LoadNextLevelAsync(level));
         level++;
     }
+    
+     public void LoadLevel(int level)
+    {
+        StartCoroutine(LoadNextLevelAsync(level));
+        this.level = ++level;
+    }
+
+    public void LoadMenuLevels()
+    {
+        StartCoroutine(LoadNextLevelAsync(-1));
+        level++;
+    }
 
     public void LoadMainMenu()
     {
@@ -78,6 +90,11 @@ public class GameManager : MonoBehaviour
         {
             ResetScore();
             asyncLoad = SceneManager.LoadSceneAsync("Menu");
+        }
+        else if (levelToLoad == -1)
+        {
+            ResetScore();
+            asyncLoad = SceneManager.LoadSceneAsync("Menu_Levels");
         }
         else
         {
