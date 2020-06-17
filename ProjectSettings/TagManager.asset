@@ -19,8 +19,8 @@ TagManager:
   - Ground
   - Enemy
   - PlayerProjectiles
-  - 
-  - 
+  - BackWall
+  - Background
   - 
   - 
   - 
@@ -43,15 +43,21 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Background
+    uniqueID: 3129080417
+    locked: 0
+  - name: BackWall
+    uniqueID: 2365786081
+    locked: 0
+  - name: Enemy
+    uniqueID: 1203682789
+    locked: 0
+  - name: Player
+    uniqueID: 1595361559
+    locked: 0
   - name: Platforms
     uniqueID: 2280640941
     locked: 0
   - name: Items
     uniqueID: 1530474173
-    locked: 0
-  - name: Player
-    uniqueID: 1595361559
-    locked: 0
-  - name: Enemy
-    uniqueID: 1203682789
     locked: 0

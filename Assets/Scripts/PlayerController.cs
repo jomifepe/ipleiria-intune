@@ -1,53 +1,50 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject starPrefab;
+    [SerializeField] private GameObject starPrefab;
 
-    [SerializeField]
-    private Transform shootPoint;
+    [SerializeField] private Transform throwPoint;
+    [SerializeField] private Transform meleeAttackPoint;
 
-    private Rigidbody2D myRigidbody;
+    private Rigidbody2D playerRigidbody;
+    private Animator animator;
 
-    private Animator myAnimator;
-
-    [SerializeField]
-    private Transform groundCheck;
-
-    [SerializeField]
-    private LayerMask groundLayerMask;
+    [SerializeField] private Transform groundCheck;
+    [SerializeField] private LayerMask groundLayerMask;
+    [SerializeField] private LayerMask enemyLayerMask;
 
     private Collider2D[] results = new Collider2D[1];
 
-    [SerializeField]
-    private float speed = 3.5f;
-
-    [SerializeField]
-    private float jumpForce = 5f;
+    [SerializeField] private float speed = 3.5f;
+    [SerializeField] private float jumpForce = 5f;
 
     private bool jump = false;
-
     private bool isGrounded = false;
-
     private float life = 100f;
-
     private bool isAlive = true;
     private float shootVelocity = 5f;
 
     private AudioSource myAudioSource;
 
     [SerializeField] private AudioClip jumpAudioClip;
-
     [SerializeField] private AudioClip[] shotAudioClips;
+
+    [SerializeField] private float attackRange = 0.5f;
+    [SerializeField] private float meleeDamage = 1f;
+    private float attackRate = 2f;
+    private float nextAttackTime = 0f;
 
     private void Awake()
     {
-        myRigidbody = GetComponent<Rigidbody2D>();
-        myAnimator = GetComponent<Animator>();
+        playerRigidbody = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
         myAudioSource = GetComponent<AudioSource>();
     }
 
@@ -67,9 +64,13 @@ public class PlayerController : MonoBehaviour
         {
             if (isAlive)
             {
-                if (Input.GetButtonDown("Fire1"))
+                if (Time.time >= nextAttackTime)
                 {
-                    Shoot();
+                    if (Input.GetButtonDown("Fire1"))
+                    {
+                        AttackMelee();
+                        nextAttackTime = Time.time + 1f / attackRate;
+                    }
                 }
 
                 float horizontalInput = Input.GetAxisRaw("Horizontal");
@@ -89,26 +90,41 @@ public class PlayerController : MonoBehaviour
                     jump = true;
                 }
 
-                myRigidbody.velocity =
-                new Vector2(horizontalInput * speed,
-                myRigidbody.velocity.y
-                );
+                playerRigidbody.velocity =
+                new Vector2(horizontalInput * speed, playerRigidbody.velocity.y);
 
-                myAnimator.SetFloat("HorizontalSpeed", Mathf.Abs(myRigidbody.velocity.x));
+                animator.SetFloat("HorizontalSpeed", Mathf.Abs(playerRigidbody.velocity.x));
             }
         }
     }
 
     private void Shoot()
     {
-        myAnimator.SetTrigger("Attack");    
+        animator.SetTrigger("Attack");    
+    }
+
+    private void AttackMelee()
+    {
+        animator.SetTrigger("AttackMelee");
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(meleeAttackPoint.position, attackRange, enemyLayerMask);
+        
+        foreach (Collider2D enemy in hitEnemies)
+        {
+            enemy.GetComponent<Enemy>().TakeDamage(meleeDamage);
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (meleeAttackPoint == null) return;
+        Gizmos.DrawWireSphere(meleeAttackPoint.position, attackRange);
     }
 
     private void AnimatorEventShoot()
     {
         GameObject star =
-            Instantiate(starPrefab, shootPoint.position, shootPoint.rotation);
-        star.GetComponent<Rigidbody2D>().velocity = shootPoint.right * shootVelocity;
+            Instantiate(starPrefab, throwPoint.position, throwPoint.rotation);
+        star.GetComponent<Rigidbody2D>().velocity = throwPoint.right * shootVelocity;
         myAudioSource.PlayOneShot(shotAudioClips[Random.Range(0, shotAudioClips.Length)]);
     }
 
@@ -120,10 +136,11 @@ public class PlayerController : MonoBehaviour
 
             if (jump && isGrounded)
             {
-                myRigidbody.velocity = Vector2.zero;
-                myRigidbody.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+                playerRigidbody.velocity = Vector2.zero;
+                playerRigidbody.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
                 myAudioSource.PlayOneShot(jumpAudioClip);
             }
+
             jump = false;
         }
     }
@@ -162,7 +179,7 @@ public class PlayerController : MonoBehaviour
     private void Die()
     {
         isAlive = false;
-        myAnimator.SetTrigger("Die");
+        animator.SetTrigger("Die");
         //Destroy(gameObject);
     }
 }
