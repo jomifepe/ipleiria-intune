@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
+using UnityStandardAssets.CrossPlatformInput;
 using Random = UnityEngine.Random;
 
 public class PlayerController : MonoBehaviour
@@ -27,7 +28,7 @@ public class PlayerController : MonoBehaviour
 
     private bool jump = false;
     private bool isGrounded = false;
-    private float life = 100f;
+    private float life = 3f;
     private bool isAlive = true;
     private float shootVelocity = 5f;
 
@@ -66,14 +67,17 @@ public class PlayerController : MonoBehaviour
             {
                 if (Time.time >= nextAttackTime)
                 {
-                    if (Input.GetButtonDown("Fire1"))
+                    // if (Input.GetButtonDown("Fire1"))
+                    
+                    if (CrossPlatformInputManager.GetButtonDown("Fire1"))
                     {
                         AttackMelee();
                         nextAttackTime = Time.time + 1f / attackRate;
                     }
                 }
 
-                float horizontalInput = Input.GetAxisRaw("Horizontal");
+                // float horizontalInput = Input.GetAxisRaw("Horizontal");
+                float horizontalInput = CrossPlatformInputManager.GetAxisRaw("Horizontal");
 
                 if (transform.right.x > 0 && horizontalInput < 0)
                 {
@@ -85,7 +89,8 @@ public class PlayerController : MonoBehaviour
                     Flip();
                 }
 
-                if (Input.GetButtonDown("Jump"))
+                // if (Input.GetButtonDown("Jump"))
+                if (CrossPlatformInputManager.GetButtonDown("Jump"))
                 {
                     jump = true;
                 }
@@ -161,6 +166,7 @@ public class PlayerController : MonoBehaviour
     {
         if (isAlive)
         {
+            animator.SetTrigger("Hurt");
             life -= damage;
             if (life < 0f)
             {
@@ -179,7 +185,7 @@ public class PlayerController : MonoBehaviour
     private void Die()
     {
         isAlive = false;
-        animator.SetTrigger("Die");
+        animator.SetBool("IsDead", true);
         //Destroy(gameObject);
     }
 }
