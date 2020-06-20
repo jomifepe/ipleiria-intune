@@ -14,8 +14,8 @@ public class GameManager : MonoBehaviour
 
     private float oldTimeScale;
 
-    [SerializeField]
-    private GameObject HUD;
+    [SerializeField] private GameObject HUD;
+    [SerializeField] private GameObject controls;
 
     private void Awake()
     {

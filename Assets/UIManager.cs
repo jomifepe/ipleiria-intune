@@ -37,12 +37,15 @@ public class UIManager : MonoBehaviour
 
     public void UpdatePlayerLife(float life)
     {
-        lifeBar.fillAmount = life / 100f;
+        lifeBar.fillAmount = life / 3f;
     }
 
     public void UpdateEnemyCounter(int enemyCounter)
     {
-        enemyCounterText.text = enemyCounter.ToString();
+        if (enemyCounterText != null)
+        {
+            enemyCounterText.text = enemyCounter.ToString();
+        }
     }
 
     public void ShowPausePanel(bool value)
