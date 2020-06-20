@@ -1,12 +1,26 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
+    private const string StateKeyCoins = "coins";
     public static GameManager Instance { get; private set; } = null;
-    private int score = 0;
+
+    private int coins;
+    private int Coins
+    {
+        get => coins;
+        set
+        {
+            if (value == coins) return;
+            coins = value;
+            PlayerPrefs.SetInt(StateKeyCoins, coins);
+            PlayerPrefs.Save();
+        }
+    }
 
     private int level = 1;
 
@@ -32,21 +46,23 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        if (PlayerPrefs.HasKey(StateKeyCoins))
+        {
+            Coins = PlayerPrefs.GetInt(StateKeyCoins);
+        }
         UpdateGameScoreText();
     }
-
+    
     private void UpdateGameScoreText()
     {
-        UIManager.Instance.UpdateScore(score);
+        UIManager.Instance.UpdateScore(Coins);
     }
 
-    public void AddScore(int scoreToAdd)
+    public void IncrementCoins(int amount)
     {
-        if (scoreToAdd > 0)
-        {
-            score += scoreToAdd;
-            UpdateGameScoreText();
-        }
+        if (amount <= 0) return;
+        Coins += amount;
+        UpdateGameScoreText();
     }
 
     public void LoadNextLevel()
@@ -74,12 +90,6 @@ public class GameManager : MonoBehaviour
         level = 1;
     }
 
-    private void ResetScore()
-    {
-        score = 0;
-        UpdateGameScoreText();
-    }
-
     private IEnumerator LoadNextLevelAsync(int levelToLoad)
     {      
         HUD.SetActive(false);
@@ -88,12 +98,10 @@ public class GameManager : MonoBehaviour
         AsyncOperation asyncLoad;
         if (levelToLoad == 0)
         {
-            ResetScore();
             asyncLoad = SceneManager.LoadSceneAsync("Menu");
         }
         else if (levelToLoad == -1)
         {
-            ResetScore();
             asyncLoad = SceneManager.LoadSceneAsync("Menu_Levels");
         }
         else

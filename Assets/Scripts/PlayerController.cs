@@ -10,37 +10,30 @@ using Random = UnityEngine.Random;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private GameObject starPrefab;
-
     [SerializeField] private Transform throwPoint;
     [SerializeField] private Transform meleeAttackPoint;
-
-    private Rigidbody2D playerRigidbody;
-    private Animator animator;
-
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayerMask;
     [SerializeField] private LayerMask enemyLayerMask;
-
-    private Collider2D[] results = new Collider2D[1];
-
     [SerializeField] private float speed = 3.5f;
-    [SerializeField] private float jumpForce = 5f;
+    [SerializeField] private float jumpForce = 6f;
+    [SerializeField] private AudioClip jumpAudioClip;
+    [SerializeField] private AudioClip[] shotAudioClips;
+    [SerializeField] private float attackRange = 0.5f;
+    [SerializeField] private float meleeDamage = 1f;
+    [Range(0, .3f)] [SerializeField] private float movementSmoothing = .05f;
 
-    private bool jump = false;
-    private bool isGrounded = false;
+    private Rigidbody2D playerRigidbody;
+    private Animator animator;
+    private Collider2D[] results = new Collider2D[1];
+    private bool jump, isGrounded, wasJumping, isAlive = true;
     private float life = 3f;
-    private bool isAlive = true;
     private float shootVelocity = 5f;
 
     private AudioSource myAudioSource;
-
-    [SerializeField] private AudioClip jumpAudioClip;
-    [SerializeField] private AudioClip[] shotAudioClips;
-
-    [SerializeField] private float attackRange = 0.5f;
-    [SerializeField] private float meleeDamage = 1f;
     private float attackRate = 2f;
     private float nextAttackTime = 0f;
+    private float jumpTimer;
 
     private void Awake()
     {
@@ -61,23 +54,24 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        jumpTimer -= Time.deltaTime;
+        
         if (!GameManager.Instance.IsPaused)
         {
             if (isAlive)
             {
                 if (Time.time >= nextAttackTime)
                 {
-                    // if (Input.GetButtonDown("Fire1"))
-                    
-                    if (CrossPlatformInputManager.GetButtonDown("Fire1"))
+                    if (Input.GetButtonDown("Fire1"))
+                    // if (CrossPlatformInputManager.GetButtonDown("Fire1"))
                     {
                         AttackMelee();
                         nextAttackTime = Time.time + 1f / attackRate;
                     }
                 }
 
-                // float horizontalInput = Input.GetAxisRaw("Horizontal");
-                float horizontalInput = CrossPlatformInputManager.GetAxisRaw("Horizontal");
+                float horizontalInput = Input.GetAxisRaw("Horizontal");
+                // float horizontalInput = CrossPlatformInputManager.GetAxisRaw("Horizontal");
 
                 if (transform.right.x > 0 && horizontalInput < 0)
                 {
@@ -89,17 +83,42 @@ public class PlayerController : MonoBehaviour
                     Flip();
                 }
 
-                // if (Input.GetButtonDown("Jump"))
-                if (CrossPlatformInputManager.GetButtonDown("Jump"))
+                if (Input.GetButtonDown("Jump"))
+                // if (CrossPlatformInputManager.GetButtonDown("Jump"))
                 {
                     jump = true;
                 }
 
-                playerRigidbody.velocity =
-                new Vector2(horizontalInput * speed, playerRigidbody.velocity.y);
+                playerRigidbody.velocity = new Vector2(horizontalInput * speed, playerRigidbody.velocity.y);
 
                 animator.SetFloat("HorizontalSpeed", Mathf.Abs(playerRigidbody.velocity.x));
             }
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        if (isAlive)
+        {
+            isGrounded = CheckForGround();
+
+            if (wasJumping && isGrounded && jumpTimer <= 0)
+            {
+                animator.SetBool("IsJumping", false);
+                wasJumping = false;
+            }
+
+            if (jump && isGrounded && jumpTimer <= 0)
+            {
+                wasJumping = true;
+                jumpTimer = 0.1f;
+                animator.SetBool("IsJumping", true);
+                playerRigidbody.velocity = Vector2.up * jumpForce;
+
+                myAudioSource.PlayOneShot(jumpAudioClip);
+            }
+
+            jump = false;
         }
     }
 
@@ -131,23 +150,6 @@ public class PlayerController : MonoBehaviour
             Instantiate(starPrefab, throwPoint.position, throwPoint.rotation);
         star.GetComponent<Rigidbody2D>().velocity = throwPoint.right * shootVelocity;
         myAudioSource.PlayOneShot(shotAudioClips[Random.Range(0, shotAudioClips.Length)]);
-    }
-
-    private void FixedUpdate()
-    {
-        if (isAlive)
-        {
-            isGrounded = CheckForGround();
-
-            if (jump && isGrounded)
-            {
-                playerRigidbody.velocity = Vector2.zero;
-                playerRigidbody.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-                myAudioSource.PlayOneShot(jumpAudioClip);
-            }
-
-            jump = false;
-        }
     }
 
     private bool CheckForGround()

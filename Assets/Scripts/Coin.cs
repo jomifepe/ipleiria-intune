@@ -11,9 +11,14 @@ public class Coin : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            GameManager.Instance.AddScore(coinScore);
+            GameManager.Instance.IncrementCoins(coinScore);
             Dismiss();
         }
+    }
+
+    public void setCoinValue(int value)
+    {
+        coinScore = value;
     }
 
     private void Dismiss()

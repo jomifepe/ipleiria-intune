@@ -440,3 +440,5 @@ MonoBehaviour:
   speed: 1
   lifebarImage: {fileID: 6772507679635615633}
   lifebarCanvas: {fileID: 8253344273807759131}
+  coinPrefab: {fileID: 6173687096675158454, guid: c3701e3175864e440a1049bc6d8f424c,
+    type: 3}
