@@ -74,13 +74,13 @@ public class GameManager : MonoBehaviour
         level = 1;
     }
 
-    private void ResetScore()
+    public void ResetScore()
     {
         score = 0;
         UpdateGameScoreText();
     }
 
-    private IEnumerator LoadNextLevelAsync(int levelToLoad)
+    public IEnumerator LoadNextLevelAsync(int levelToLoad)
     {      
         HUD.SetActive(false);
 
@@ -95,6 +95,11 @@ public class GameManager : MonoBehaviour
         {
             ResetScore();
             asyncLoad = SceneManager.LoadSceneAsync("Menu_Levels");
+        }
+        else if (levelToLoad == -2)
+        {
+            ResetScore();
+            asyncLoad = SceneManager.LoadSceneAsync("Option");
         }
         else
         {
@@ -117,8 +122,14 @@ public class GameManager : MonoBehaviour
         yield return null;
     }
 
+    public int GetLevel()
+    {
+        return level;
+    }
+
     public void PauseGame(bool pause)
     {
+        Debug.Log("Press paused");
         IsPaused = pause;
         if (pause)
         {
