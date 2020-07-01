@@ -7,28 +7,44 @@ using UnityEngine.UI;
 
 public abstract class Enemy : MonoBehaviour
 {
-    private Rigidbody2D rigidBody;
+    protected Rigidbody2D rigidBody;
     private Animator animator;
+    protected Vector2 movement;
 
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayerMask;
 
     private Collider2D[] results = new Collider2D[1];
 
-    [SerializeField] private float speed = 1f;
+    [SerializeField] protected float speed = 1f;
 
     protected float Life;
     protected bool IsAlive = true;
+    protected bool CanFlip = false;
+    protected bool InRange = false;
+    protected bool ReachedBorder = false;
+    protected float SensingRange;
+
+    //atack
+    protected float atackRange;
+    protected float cooldown;
+
     [SerializeField] private Image lifebarImage;
     [SerializeField] private Canvas lifebarCanvas;
 
-    private Camera mainCamera;
+    private Camera mainCamera; 
 
     protected abstract float getMaxHealth();
-    
+    protected abstract float getSensingRange();
+    protected abstract void enemyUpdate();
+    protected abstract void enemyFixedUpdate();
+
+    public Transform player;
+
     private void Awake()
     {
         Life = getMaxHealth();
+        SensingRange = getSensingRange();
         rigidBody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         mainCamera = FindObjectOfType<Camera>();
@@ -42,53 +58,74 @@ public abstract class Enemy : MonoBehaviour
         UpdateLifebarImage();
     }
 
-    private void Update()
+    protected void Update()
     {
-        if (IsAlive)
-        {
-            rigidBody.velocity = new Vector2(speed * transform.right.x, rigidBody.velocity.y);
-            //myAnimator.SetFloat("HorizontalSpeed", Mathf.Abs(myRigidbody.velocity.x));
-        }
+        if (!IsAlive) return;
+        enemyUpdate();
     }
 
     private void FixedUpdate()
     {
-        if (Physics2D.OverlapPointNonAlloc(
-            groundCheck.position,
-            results,
-            groundLayerMask) == 0)
-        {
-            Flip();
-        }
+        if (!IsAlive) return;
+        enemyFixedUpdate();
     }
 
-    private void Flip()
+    protected void moveNormally()
+    {
+        updateReachedBorder();
+        Debug.Log("Movign normaly");
+        if (ReachedBorder) Flip();
+    }
+
+    protected bool isPlayerOnRange(float playerDistanceX)
+    {
+        return Mathf.Abs(playerDistanceX) <= SensingRange;
+    }
+
+    protected void moveCharacter(Vector2 direction)
+    {
+        rigidBody.MovePosition((Vector2)transform.position + (direction * speed * Time.deltaTime));
+    }
+
+    protected void updateReachedBorder()
+	{
+        ReachedBorder = (Physics2D.OverlapPointNonAlloc(
+            groundCheck.position,
+            results,
+            groundLayerMask) == 0);
+
+    }
+
+    protected void updateCanFlip(Vector2 direction)
+	{
+        CanFlip = (direction.x < 0 && transform.localEulerAngles.y < 180f ||
+           direction.x > 0 && transform.localEulerAngles.y >= 180f);
+    }
+    //todo delete this funtion and use this one
+    protected bool sameDirection(Vector2 direction)
+    {
+        return !(direction.x < 0 && transform.localEulerAngles.y < 180f ||
+           direction.x > 0 && transform.localEulerAngles.y >= 180f);
+    }
+
+    protected void Flip()
     {
         Vector3 localRotation = transform.localEulerAngles;
         localRotation.y += 180f;
         transform.localEulerAngles = localRotation;
-        lifebarCanvas.transform.forward = mainCamera.transform.forward; 
+        lifebarCanvas.transform.forward = mainCamera.transform.forward;
     }
 
     public void TakeDamage(float damage)
     {
-        if (IsAlive)
-        {
-            animator.SetTrigger("Hurt");
-            Life -= damage;
+        if (!IsAlive) return;
 
-            if (Life < 0f)
-            {
-                Life = 0f;
-            }
+        animator.SetTrigger("Hurt");
+        Life -= damage;
 
-            UpdateLifebarImage();
-
-            if (Life == 0f)
-            {
-                Die();
-            }
-        }
+        if (Life < 0f) Life = 0f;
+        UpdateLifebarImage();
+        if (Life == 0f)Die();
     }
 
     private void UpdateLifebarImage()
@@ -108,5 +145,13 @@ public abstract class Enemy : MonoBehaviour
     private void DestroyEnemy() //called by animation event
     {
         Destroy(gameObject);
+    }
+
+    protected void updateMovement(Vector2 mov)
+    {
+        mov.Normalize();
+        //so he doesn't jump
+        mov.y = 0f;
+        movement = mov;
     }
 }

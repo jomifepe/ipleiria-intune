@@ -2017,7 +2017,7 @@ SpriteRenderer:
   m_Size: {x: 0.8, y: 0.8}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &209698078
@@ -6734,7 +6734,7 @@ SpriteRenderer:
   m_Size: {x: 0.8, y: 0.8}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &780524576
@@ -9083,7 +9083,7 @@ SpriteRenderer:
   m_Size: {x: 0.32, y: 0.32}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &1003068582
@@ -14064,7 +14064,7 @@ SpriteRenderer:
   m_Size: {x: 0.8, y: 0.8}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &1548519772
@@ -17898,6 +17898,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2237965594218538728, guid: 9a91f00f4bab3b44d87c5f7694852005,
+        type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 585214246}
     - target: {fileID: 8044703417865281752, guid: 9a91f00f4bab3b44d87c5f7694852005,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -18119,7 +18124,7 @@ SpriteRenderer:
   m_Size: {x: 0.8, y: 0.8}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &2024022784
@@ -19267,6 +19272,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 739748169526260456, guid: 5ed380fd29cbf4f478908d43c1c9a803,
+        type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 585214246}
     - target: {fileID: 9095966846338819690, guid: 5ed380fd29cbf4f478908d43c1c9a803,
         type: 3}
       propertyPath: m_Name
