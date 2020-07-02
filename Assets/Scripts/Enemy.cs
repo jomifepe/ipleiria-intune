@@ -3,31 +3,38 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
-using UnityEngine.UI;
+using UnityEngine.UIElements;
+using Image = UnityEngine.UI.Image;
+using Random = System.Random;
 
 public abstract class Enemy : MonoBehaviour
 {
+    [SerializeField] private Transform groundCheck;
+    [SerializeField] private LayerMask groundLayerMask;
+    [SerializeField] private Image lifebarImage;
+    [SerializeField] private Canvas lifebarCanvas;
+    [SerializeField] private float speed = 1f;
+    
     private Rigidbody2D rigidBody;
     private Animator animator;
 
-    [SerializeField] private Transform groundCheck;
-    [SerializeField] private LayerMask groundLayerMask;
-
     private Collider2D[] results = new Collider2D[1];
-
-    [SerializeField] private float speed = 1f;
 
     protected float Life;
     protected bool IsAlive = true;
-    [SerializeField] private Image lifebarImage;
-    [SerializeField] private Canvas lifebarCanvas;
 
     private Camera mainCamera;
+    private CoinDrop coinDropper;
 
     protected abstract float getMaxHealth();
+    protected abstract int getMinCoinDrop();
+    protected abstract int getMaxCoinDrop();
+    protected abstract int getMaxCoinCount();
+    protected abstract int getMinCoinCount();
     
     private void Awake()
     {
+        coinDropper = GetComponent<CoinDrop>();
         Life = getMaxHealth();
         rigidBody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
@@ -77,17 +84,10 @@ public abstract class Enemy : MonoBehaviour
             animator.SetTrigger("Hurt");
             Life -= damage;
 
-            if (Life < 0f)
-            {
-                Life = 0f;
-            }
-
+            if (Life < 0f) Life = 0f;
             UpdateLifebarImage();
 
-            if (Life == 0f)
-            {
-                Die();
-            }
+            if (Life == 0f) Die();
         }
     }
 
@@ -103,9 +103,12 @@ public abstract class Enemy : MonoBehaviour
         EnemyManager.Instance.DecreaseEnemiesCounter();
         rigidBody.velocity = Vector2.zero;
         rigidBody.angularVelocity = 0f;
+        coinDropper.DropCoins(getMinCoinDrop(), getMaxCoinDrop(), 
+            getMinCoinCount(),getMaxCoinCount());
+        Invoke(nameof(DestroyEnemy), 3);
     }
 
-    private void DestroyEnemy() //called by animation event
+    private void DestroyEnemy()
     {
         Destroy(gameObject);
     }
