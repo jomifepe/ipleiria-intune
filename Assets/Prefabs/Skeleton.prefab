@@ -262,6 +262,7 @@ GameObject:
   - component: {fileID: 8044703417865281757}
   - component: {fileID: 8044703417865281754}
   - component: {fileID: 2237965594218538728}
+  - component: {fileID: 1977576664}
   m_Layer: 10
   m_Name: Skeleton
   m_TagString: Enemy
@@ -411,6 +412,18 @@ MonoBehaviour:
   speed: 1
   lifebarImage: {fileID: 5504275465695881511}
   lifebarCanvas: {fileID: 7139927683293155757}
+--- !u!114 &1977576664
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8044703417865281756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2671dc92f7184c93bd0c11051f37d896, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   coinPrefab: {fileID: 6173687096675158454, guid: c3701e3175864e440a1049bc6d8f424c,
     type: 3}
 --- !u!1 &8044703418025823953

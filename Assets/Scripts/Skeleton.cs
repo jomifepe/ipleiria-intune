@@ -3,7 +3,7 @@ public class Skeleton: Enemy
 {
     private float maxHealth = 2f;
     private int minCoinDrop = 5;
-    private int maxCoinDrop = 15;
+    private int maxCoinDrop = 10;
     private int minCoinCount = 1;
     private int maxCoinCount = 2;
     

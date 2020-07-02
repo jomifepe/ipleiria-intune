@@ -3,7 +3,7 @@ public class Witch : Enemy
 {
     private float maxHealth = 3f;
     private int minCoinDrop = 10;
-    private int maxCoinDrop = 20;
+    private int maxCoinDrop = 15;
     private int minCoinCount = 1;
     private int maxCoinCount = 2;
 

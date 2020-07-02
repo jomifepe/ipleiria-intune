@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayerMask;
     [SerializeField] private LayerMask enemyLayerMask;
+    [SerializeField] private LayerMask destructibleLayerMask;
     [SerializeField] private float speed = 3.5f;
     [SerializeField] private float jumpForce = 6f;
     [SerializeField] private AudioClip jumpAudioClip;
@@ -65,7 +66,8 @@ public class PlayerController : MonoBehaviour
                     if (Input.GetButtonDown("Fire1"))
                     // if (CrossPlatformInputManager.GetButtonDown("Fire1"))
                     {
-                        AttackMelee();
+                        // AttackMelee();
+                        animator.SetTrigger("AttackMelee");
                         nextAttackTime = Time.time + 1f / attackRate;
                     }
                 }
@@ -129,12 +131,17 @@ public class PlayerController : MonoBehaviour
 
     private void AttackMelee()
     {
-        animator.SetTrigger("AttackMelee");
+        // animator.SetTrigger("AttackMelee");
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(meleeAttackPoint.position, attackRange, enemyLayerMask);
+        Collider2D[] hitDesctructibles = Physics2D.OverlapCircleAll(meleeAttackPoint.position, attackRange, destructibleLayerMask);
         
         foreach (Collider2D enemy in hitEnemies)
         {
             enemy.GetComponent<Enemy>().TakeDamage(meleeDamage);
+        }
+        foreach (Collider2D desctructible in hitDesctructibles)
+        {
+            desctructible.GetComponent<Destructible>().Destroy();
         }
     }
 

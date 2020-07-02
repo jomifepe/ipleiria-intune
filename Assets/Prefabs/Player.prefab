@@ -137,7 +137,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1595361559
-  m_SortingLayer: 4
+  m_SortingLayer: 6
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 312e71fb39d4d0e4d853188bff6285c3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -326,13 +326,16 @@ MonoBehaviour:
   enemyLayerMask:
     serializedVersion: 2
     m_Bits: 1024
+  destructibleLayerMask:
+    serializedVersion: 2
+    m_Bits: 16384
   speed: 3.5
   jumpForce: 6
   jumpAudioClip: {fileID: 8300000, guid: e2b041cbc0ad2e849b585bf3f679b5e6, type: 3}
   shotAudioClips:
   - {fileID: 8300000, guid: 62bdbec8a6ae0c048a083cd828663dd1, type: 3}
   - {fileID: 8300000, guid: 9733b37c96ed737488a36b57cbe15d58, type: 3}
-  attackRange: 0.72
+  attackRange: 0.74
   meleeDamage: 1
   movementSmoothing: 0.05
 --- !u!114 &8371594012753148061
@@ -371,7 +374,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8438792343703410412}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.007, y: -0.261, z: 0}
+  m_LocalPosition: {x: 0.93, y: -0.261, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5411998984150073576}

@@ -9,24 +9,22 @@ using Random = System.Random;
 
 public abstract class Enemy : MonoBehaviour
 {
+    [SerializeField] private Transform groundCheck;
+    [SerializeField] private LayerMask groundLayerMask;
+    [SerializeField] private Image lifebarImage;
+    [SerializeField] private Canvas lifebarCanvas;
+    [SerializeField] private float speed = 1f;
+    
     private Rigidbody2D rigidBody;
     private Animator animator;
 
-    [SerializeField] private Transform groundCheck;
-    [SerializeField] private LayerMask groundLayerMask;
-
     private Collider2D[] results = new Collider2D[1];
-
-    [SerializeField] private float speed = 1f;
 
     protected float Life;
     protected bool IsAlive = true;
-    [SerializeField] private Image lifebarImage;
-    [SerializeField] private Canvas lifebarCanvas;
-    [SerializeField] private GameObject coinPrefab;
 
     private Camera mainCamera;
-    private Random rng;
+    private CoinDrop coinDropper;
 
     protected abstract float getMaxHealth();
     protected abstract int getMinCoinDrop();
@@ -36,11 +34,11 @@ public abstract class Enemy : MonoBehaviour
     
     private void Awake()
     {
+        coinDropper = GetComponent<CoinDrop>();
         Life = getMaxHealth();
         rigidBody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         mainCamera = FindObjectOfType<Camera>();
-        rng = new Random();
     }
 
     private void Start()
@@ -105,22 +103,9 @@ public abstract class Enemy : MonoBehaviour
         EnemyManager.Instance.DecreaseEnemiesCounter();
         rigidBody.velocity = Vector2.zero;
         rigidBody.angularVelocity = 0f;
-        DropCoins();
+        coinDropper.DropCoins(getMinCoinDrop(), getMaxCoinDrop(), 
+            getMinCoinCount(),getMaxCoinCount());
         Invoke(nameof(DestroyEnemy), 3);
-    }
-
-    private void DropCoins()
-    {
-        var tr = transform;
-        for (int i = 0; i < getMaxCoinCount(); i++)
-        {
-            float posX = (float) (rng.NextDouble() * 1f);
-            if (rng.Next(0, 2) == 1) posX *= -1f;
-            Vector3 position = new Vector3(tr.position.x - posX, tr.position.y);
-            GameObject spawnedObject = Instantiate(coinPrefab, position, tr.rotation);
-            Coin coin = spawnedObject.GetComponent<Coin>();
-            coin.setCoinValue(rng.Next(getMinCoinDrop(), getMaxCoinDrop() + 1));
-        }
     }
 
     private void DestroyEnemy()
