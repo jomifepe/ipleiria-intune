@@ -438,6 +438,11 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   speed: 1
+  raycastMask:
+    serializedVersion: 2
+    m_Bits: 0
+  timer: 0
+  atackRange: 15
   lifebarImage: {fileID: 6772507679635615633}
   lifebarCanvas: {fileID: 8253344273807759131}
   player: {fileID: 5411998984150073576, guid: e233026cf180fc240bcc4f115605ae7e, type: 3}
