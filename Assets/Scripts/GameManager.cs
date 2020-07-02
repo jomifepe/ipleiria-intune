@@ -144,4 +144,10 @@ public class GameManager : MonoBehaviour
             UIManager.Instance.ShowPausePanel(false);
         }
     }
+
+    public void OpenOptionsOnMenu()
+    {
+        Debug.Log("[GAMEMANAGER] Click Open options");
+        UIManager.Instance.OpenOptionMenu();
+    }
 }

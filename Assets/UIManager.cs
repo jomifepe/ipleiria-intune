@@ -1,9 +1,14 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; } = null;
+
+	void Start() {
+		Time.timeScale = 1;
+	}
 
     [SerializeField]
     private Text scoreText;
@@ -52,6 +57,12 @@ public class UIManager : MonoBehaviour
     {
         pausePanel.SetActive(value);
     }
+	
+	public void OpenOptionMenu()
+	{
+		Debug.Log("[UIManager] Click Open options");
+        SceneManager.LoadScene("Option_inMenu");
+	}
 }
 
 

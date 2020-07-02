@@ -21,6 +21,6 @@ EditorBuildSettings:
     path: Assets/Scenes/TheEnd.unity
     guid: 2d3e1a38273b05b4c82d244d4ae3abb6
   - enabled: 1
-    path: Assets/Scenes/Option.unity
+    path: Assets/Scenes/Option_inMenu.unity
     guid: bd85fadd607b0624bb3409dfbf20168e
   m_configObjects: {}

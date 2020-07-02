@@ -29,8 +29,8 @@ public class Paused_Menu : MonoBehaviour
     
     public void Option()
     {
-        StartCoroutine(GameManager.Instance.LoadNextLevelAsync(-2)); // Option
-        Time.timeScale = 1f;
+        Time.timeScale = 0f;
+        Debug.Log("Option");
     }
 
     private IEnumerator Exit()
