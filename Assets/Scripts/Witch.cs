@@ -10,7 +10,7 @@ public class Witch : Enemy
     private float maxHealth = 3f;
     private float sensingRange = 15f;
 
-    protected override float getMaxHealth()
+    protected override float GetMaxHealth()
     {
         return maxHealth;
     }
@@ -68,9 +68,15 @@ public class Witch : Enemy
          //so he doesn't jump
          direction.y = 0f;
          movement = direction;
-     }
+    }
 
     protected override void enemyFixedUpdate()
+	{
+
+
+	}
+
+    protected override void Attack()
     {
 
     }

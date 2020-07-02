@@ -26,28 +26,26 @@ public abstract class Enemy : MonoBehaviour
     protected float SensingRange;
     protected Vector3 direction;
 
-    //atack
-    public float timer; //time for cooldown between attacks
-    public float atackRange;
+    //attack
+    [SerializeField] private float cooldown; //time for cooldown between attacks
+    [SerializeField] protected float attackRange;
+    [SerializeField] protected float attackDamage;
 
-    protected float cooldown;
-    protected bool cooling;
     protected bool attackMode = false;
     protected bool inAttackRange;
-    protected float initialTimer;
 
     private float attackRate = 2f;
     private float nextAttackTime = 0f;
-    //atack
 
     [SerializeField] private Image lifebarImage;
     [SerializeField] private Canvas lifebarCanvas;
 
     private Camera mainCamera; 
 
-    protected abstract float getMaxHealth();
+    protected abstract float GetMaxHealth();
     protected abstract float getSensingRange();
-    //protected abstract void enemyUpdate();
+    protected abstract void Attack();
+
     protected abstract void enemyMove();
     protected abstract void enemyFixedUpdate();
 
@@ -55,12 +53,11 @@ public abstract class Enemy : MonoBehaviour
 
     private void Awake()
     {
-        Life = getMaxHealth();
+        Life = GetMaxHealth();
         SensingRange = getSensingRange();
         rigidBody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         mainCamera = FindObjectOfType<Camera>();
-        initialTimer = timer;
     }
 
     private void Start()
@@ -73,112 +70,36 @@ public abstract class Enemy : MonoBehaviour
 
     protected void Update()
     {
+        //o flip se o uer passar tem de ser feito aqui
+
         if (!IsAlive) return;
         direction = player.position - transform.position;
-        
+
+        //updateCanFlip(direction);
+        //if (CanFlip) Flip();
+
         if (isPlayerOnAttackRange(direction.x))
         {
             if (Time.time >= nextAttackTime && IsAlive)
             {
                 animator.SetTrigger("Attack");
                 animator.SetBool("IsAttacking", true);
-                nextAttackTime = Time.time + 1f / attackRate;   
+                nextAttackTime = Time.time + cooldown / attackRate;
+                //Attack();
             }
+            attackMode = true;
+            return;
         }
-        else
-        {
-            animator.SetBool("IsAttacking", false);
-        }
-        
-        
-  //       if (isPlayerOnAttackRange(direction.x))
-  //       {
-  //           Debug.Log("On attack range");
-  //           inAttackRange = true;
-  //           EnemyLogic();
-		// }else
-		// {
-  //           Debug.Log("Not on attack range");
-  //           inAttackRange = false;
-  //           Move();
-  //
-		// 	if (attackMode)
-		// 	{
-  //               StopAttack();
-		// 	}   
-  //       }
-    }
-
-    private void EnemyLogic()
-	{
-        if(!cooling)
-        {
-            Attack();
-        }else
-		{
-            Cooldown();
-            Debug.Log("CanAttack false");
-            //why it only works at the opossite way?
-            animator.SetBool("CanAttack", false);
-        }
-    }
-
-    private void Move()
-    {
-        Debug.Log("Moving");
-
-        //TODO check if animator.SetBool("CanWalk", true) is used before or after the if
-        //animator.SetBool("CanWalk", true);
-        if (animator.GetCurrentAnimatorStateInfo(0).IsName("SkeletonAttack")) return;
-
-        //animator.SetBool("CanWalk", true);
-        //enemyMove();
-    }
-    //CAN BE OVERRIDEN BY WITCH
-    private void Attack()
-    {
-        Debug.Log("Attacking");
-        timer = initialTimer;
-        
-        attackMode = true;
-        animator.SetBool("CanWalk", false);
-        Debug.Log("CanAttack true");
-        //why it only works at the opossite way?
-        animator.SetBool("CanAttack", true);
-    }
-
-    private void StopAttack()
-    {
-        Debug.Log("Stoped atacking");
-        cooling = false;
+        animator.SetBool("IsAttacking", false);
         attackMode = false;
-
-        Debug.Log("CanAttack false");
-        //why it only works at the opossite way?
-        animator.SetBool("CanAttack", true);
+        enemyMove();  
     }
 
-    public void TriggerCooling()
-	{
-        Debug.Log("trigger cooling");
-        cooling = true;
-	}
-
-    private void Cooldown()
-	{
-        timer -= Time.deltaTime;
-        if(timer <= 0 && cooling && attackMode)
-		{
-            cooling = false;
-            timer = initialTimer;
-		}
-	}
 
     private void FixedUpdate()
     {
         if (!IsAlive) return;
-        if (!attackMode) return;
-        //enemyFixedUpdate();
+        enemyFixedUpdate();
     }
 
     protected void moveNormally()
@@ -191,8 +112,8 @@ public abstract class Enemy : MonoBehaviour
     protected bool isPlayerOnAttackRange(float playerDistanceX)
     {
         //Debug.Log("playerDistanceX: " + Mathf.Abs(playerDistanceX));
-        //Debug.Log("atackRange: " + atackRange);
-        return Mathf.Abs(playerDistanceX) <= atackRange;
+        //Debug.Log("attackRange: " + attackRange);
+        return Mathf.Abs(playerDistanceX) <= attackRange;
     }
 
     protected bool isPlayerOnRange(float playerDistanceX)
@@ -211,7 +132,6 @@ public abstract class Enemy : MonoBehaviour
             groundCheck.position,
             results,
             groundLayerMask) == 0);
-
     }
 
     protected void updateCanFlip(Vector2 direction)
@@ -249,7 +169,7 @@ public abstract class Enemy : MonoBehaviour
 
     private void UpdateLifebarImage()
     {
-        lifebarImage.fillAmount = Life / getMaxHealth();
+        lifebarImage.fillAmount = Life / GetMaxHealth();
     }
 
     private void Die()

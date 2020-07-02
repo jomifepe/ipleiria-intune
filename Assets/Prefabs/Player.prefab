@@ -136,7 +136,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1595361559
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 312e71fb39d4d0e4d853188bff6285c3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -215,7 +215,7 @@ MonoBehaviour:
   shotAudioClips:
   - {fileID: 8300000, guid: 62bdbec8a6ae0c048a083cd828663dd1, type: 3}
   - {fileID: 8300000, guid: 9733b37c96ed737488a36b57cbe15d58, type: 3}
-  attackRange: 0.72
+  attackRange: 0.73
   meleeDamage: 1
 --- !u!95 &5411998984150073572
 Animator:

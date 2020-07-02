@@ -7,6 +7,9 @@ using UnityEngine.UI;
 
 public class Skeleton: Enemy
 {
+    [SerializeField] private Transform meleeAttackPoint;
+    [SerializeField] private LayerMask playerLayerMask;
+
     private float maxHealth = 2f;
     private float sensingRange = 10f;
 
@@ -14,7 +17,7 @@ public class Skeleton: Enemy
     private float triggerPosition = -1f;
     protected bool right = true;
 
-    protected override float getMaxHealth()
+    protected override float GetMaxHealth()
     {
         return maxHealth;
     }
@@ -27,7 +30,6 @@ public class Skeleton: Enemy
     protected override void enemyMove()
     {
         rigidBody.velocity = new Vector2(speed * transform.right.x, rigidBody.velocity.y);
-        direction = player.position - transform.position;
         updateCanFlip(direction);//change method name
         if (!isPlayerOnRange(direction.x))
         {       
@@ -49,32 +51,6 @@ public class Skeleton: Enemy
         updateMovement(direction);
     }
 
-    /*protected override void enemyUpdate()
-	{
-        rigidBody.velocity = new Vector2(speed * transform.right.x, rigidBody.velocity.y);
-        direction = player.position - transform.position;
-        updateCanFlip(direction);//change method name
-
-        if (!isPlayerOnRange(direction.x))
-        {       
-            InRange = false;
-            return;
-        }
-
-        if (diffPlatforms)
-		{
-            if (!isOnAnotherPlatform(player.position.x)) return;	
-            //Debug.Log("Check trigger false");
-            diffPlatforms = false;
-        }
-
-        //Debug.Log(transform.localEulerAngles.y);
-        //Debug.Log(direction.x);
-
-        InRange = true;
-        updateMovement(direction);
-    }*/
-
     private bool isOnAnotherPlatform(float playerPosition)
 	{
         return (player.position.x < triggerPosition && right) ||
@@ -83,6 +59,7 @@ public class Skeleton: Enemy
 
     protected override void enemyFixedUpdate()
 	{
+        if (attackMode) return;
         updateReachedBorder();
         if(!diffPlatforms && ReachedBorder && sameDirection(direction))
         {
@@ -106,9 +83,18 @@ public class Skeleton: Enemy
 
     private void followPlayer()
     {
-        //Debug.Log("Follow player normaly");
         if (CanFlip) Flip();
         moveCharacter(movement);
         return;
+    }
+
+    protected override void Attack()
+	{
+        Collider2D[] hitPlayers = Physics2D.OverlapCircleAll(meleeAttackPoint.position, attackRange, playerLayerMask);
+        
+        foreach (Collider2D player in hitPlayers)
+        {
+            player.GetComponent<PlayerController>().TakeDamage(attackDamage);
+        }
     }
 }
