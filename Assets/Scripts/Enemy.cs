@@ -35,6 +35,9 @@ public abstract class Enemy : MonoBehaviour
     protected bool attackMode = false;
     protected bool inAttackRange;
     protected float initialTimer;
+
+    private float attackRate = 2f;
+    private float nextAttackTime = 0f;
     //atack
 
     [SerializeField] private Image lifebarImage;
@@ -72,23 +75,38 @@ public abstract class Enemy : MonoBehaviour
     {
         if (!IsAlive) return;
         direction = player.position - transform.position;
-
+        
         if (isPlayerOnAttackRange(direction.x))
         {
-            Debug.Log("On attack range");
-            inAttackRange = true;
-            EnemyLogic();
-		}else
-		{
-            Debug.Log("Not on attack range");
-            inAttackRange = false;
-            Move();
-
-			if (attackMode)
-			{
-                StopAttack();
-			}   
+            if (Time.time >= nextAttackTime && IsAlive)
+            {
+                animator.SetTrigger("Attack");
+                animator.SetBool("IsAttacking", true);
+                nextAttackTime = Time.time + 1f / attackRate;   
+            }
         }
+        else
+        {
+            animator.SetBool("IsAttacking", false);
+        }
+        
+        
+  //       if (isPlayerOnAttackRange(direction.x))
+  //       {
+  //           Debug.Log("On attack range");
+  //           inAttackRange = true;
+  //           EnemyLogic();
+		// }else
+		// {
+  //           Debug.Log("Not on attack range");
+  //           inAttackRange = false;
+  //           Move();
+  //
+		// 	if (attackMode)
+		// 	{
+  //               StopAttack();
+		// 	}   
+  //       }
     }
 
     private void EnemyLogic()
@@ -101,7 +119,7 @@ public abstract class Enemy : MonoBehaviour
             Cooldown();
             Debug.Log("CanAttack false");
             //why it only works at the opossite way?
-            animator.SetBool("CanAttack", true);
+            animator.SetBool("CanAttack", false);
         }
     }
 
@@ -126,7 +144,7 @@ public abstract class Enemy : MonoBehaviour
         animator.SetBool("CanWalk", false);
         Debug.Log("CanAttack true");
         //why it only works at the opossite way?
-        animator.SetBool("CanAttack", false);
+        animator.SetBool("CanAttack", true);
     }
 
     private void StopAttack()
@@ -238,7 +256,7 @@ public abstract class Enemy : MonoBehaviour
     {
         IsAlive = false;
         animator.SetBool("IsDead", true);
-        EnemyManager.Instance.DecreaseEnemiesCounter();
+        // EnemyManager.Instance.DecreaseEnemiesCounter();
         rigidBody.velocity = Vector2.zero;
         rigidBody.angularVelocity = 0f;
     }
