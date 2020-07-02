@@ -7,17 +7,11 @@ using UnityEngine.UI;
 
 public class Witch : Enemy
 {
-    private float maxHealth = 3f;
-    private float sensingRange = 15f;
-
-    protected override float GetMaxHealth()
+    protected override void Init()
     {
-        return maxHealth;
-    }
-
-    protected override float getSensingRange()
-    {
-        return sensingRange;
+        Life = 3f;
+        maxLife = Life;
+        sensingRange = 15f;
     }
 
     /* protected override void enemyUpdate()
@@ -45,15 +39,15 @@ public class Witch : Enemy
          movement = direction;
      }*/
 
-     protected override void enemyMove()
+     protected override void EnemyMove()
      {
          rigidBody.velocity = new Vector2(speed * transform.right.x, rigidBody.velocity.y);
 
          Vector3 direction = player.position - transform.position;
          //posso voltar a por como estava maybe
-         updateCanFlip(direction);//change method name
+         UpdateCanFlip(direction);//change method name
          //sensingRange está dentro do sensingRange range, entao paara
-         if (Mathf.Abs(direction.x) > SensingRange)
+         if (Mathf.Abs(direction.x) > sensingRange)
          {
              movement = Vector2.zero;
              InRange = false;
@@ -70,7 +64,7 @@ public class Witch : Enemy
          movement = direction;
     }
 
-    protected override void enemyFixedUpdate()
+    protected override void EnemyFixedUpdate()
 	{
 
 

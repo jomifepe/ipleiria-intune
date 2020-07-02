@@ -8,53 +8,55 @@ using UnityEngine.UI;
 public abstract class Enemy : MonoBehaviour
 {
     protected Rigidbody2D rigidBody;
-    private Animator animator;
     protected Vector2 movement;
+
+    private Collider2D[] results = new Collider2D[1];
+    private Camera mainCamera;
+    private Animator animator;
 
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayerMask;
 
-    private Collider2D[] results = new Collider2D[1];
-
+    [SerializeField] protected bool followPlayer;
     [SerializeField] protected float speed = 1f;
-
-    protected float Life;
-    protected bool IsAlive = true;
-    protected bool CanFlip = false;
-    protected bool InRange = false;
-    protected bool ReachedBorder = false;
-    protected float SensingRange;
-    protected Vector3 direction;
 
     //attack
     [SerializeField] private float cooldown; //time for cooldown between attacks
     [SerializeField] protected float attackRange;
     [SerializeField] protected float attackDamage;
 
-    protected bool attackMode = false;
-    protected bool inAttackRange;
-
-    private float attackRate = 2f;
-    private float nextAttackTime = 0f;
-
     [SerializeField] private Image lifebarImage;
     [SerializeField] private Canvas lifebarCanvas;
 
-    private Camera mainCamera; 
+    protected float Life;
+    protected float maxLife;
+    protected bool IsAlive = true;
+    protected bool CanFlip = false;
+    protected bool InRange = false;
+    protected bool ReachedBorder = false;
+    protected float sensingRange;
+    protected Vector3 direction;
 
-    protected abstract float GetMaxHealth();
-    protected abstract float getSensingRange();
+    protected bool attackMode = false;
+    protected bool inAttackRange;
+    private float attackRate = 2f;
+    private float nextAttackTime = 0f;
+
+    protected bool diffPlatforms = false;
+    protected float triggerPosition = -1f;
+    protected bool right = true;
+
     protected abstract void Attack();
-
-    protected abstract void enemyMove();
-    protected abstract void enemyFixedUpdate();
+    protected abstract void Init();
+    protected abstract void EnemyMove();
+    protected abstract void EnemyFixedUpdate();
 
     public Transform player;
 
     private void Awake()
     {
-        Life = GetMaxHealth();
-        SensingRange = getSensingRange();
+        Init();
+        UpdateDiffPlatforms();
         rigidBody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         mainCamera = FindObjectOfType<Camera>();
@@ -70,63 +72,63 @@ public abstract class Enemy : MonoBehaviour
 
     protected void Update()
     {
-        //o flip se o uer passar tem de ser feito aqui
-
         if (!IsAlive) return;
         direction = player.position - transform.position;
 
-        //updateCanFlip(direction);
-        //if (CanFlip) Flip();
+        UpdateCanFlip(direction);
 
-        if (isPlayerOnAttackRange(direction.x))
+        //so it doesn't attack when on another platform
+        UpdateDiffPlatforms();
+        if (PlayerOnAttackRange(direction.x) && !diffPlatforms)
         {
+            //try to put this flip only on one side
+            if (CanFlip) Flip();
             if (Time.time >= nextAttackTime && IsAlive)
             {
                 animator.SetTrigger("Attack");
                 animator.SetBool("IsAttacking", true);
                 nextAttackTime = Time.time + cooldown / attackRate;
-                //Attack();
             }
             attackMode = true;
             return;
         }
+        //So it doesn't move while still atacking
+        if (Time.time < nextAttackTime) return;	
+
         animator.SetBool("IsAttacking", false);
         attackMode = false;
-        enemyMove();  
+        EnemyMove();  
     }
 
 
     private void FixedUpdate()
     {
         if (!IsAlive) return;
-        enemyFixedUpdate();
+        EnemyFixedUpdate();
     }
 
-    protected void moveNormally()
+    protected void MoveNormally()
     {
-        updateReachedBorder();
-        Debug.Log("Moving normaly");
+        UpdateReachedBorder();
         if (ReachedBorder) Flip();
     }
 
-    protected bool isPlayerOnAttackRange(float playerDistanceX)
+    protected bool PlayerOnAttackRange(float playerDistanceX)
     {
-        //Debug.Log("playerDistanceX: " + Mathf.Abs(playerDistanceX));
-        //Debug.Log("attackRange: " + attackRange);
         return Mathf.Abs(playerDistanceX) <= attackRange;
     }
 
-    protected bool isPlayerOnRange(float playerDistanceX)
+    protected bool PlayerOnSensingRange(float playerDistanceX)
     {
-        return Mathf.Abs(playerDistanceX) <= SensingRange;
+        return Mathf.Abs(playerDistanceX) <= sensingRange;
     }
 
-    protected void moveCharacter(Vector2 direction)
+    protected void MoveCharacter(Vector2 direction)
     {
         rigidBody.MovePosition((Vector2)transform.position + (direction * speed * Time.deltaTime));
     }
 
-    protected void updateReachedBorder()
+    protected void UpdateReachedBorder()
 	{
         ReachedBorder = (Physics2D.OverlapPointNonAlloc(
             groundCheck.position,
@@ -134,14 +136,13 @@ public abstract class Enemy : MonoBehaviour
             groundLayerMask) == 0);
     }
 
-    protected void updateCanFlip(Vector2 direction)
+    protected void UpdateCanFlip(Vector2 direction)
 	{
-        CanFlip = (direction.x < 0 && transform.localEulerAngles.y < 180f ||
-           direction.x > 0 && transform.localEulerAngles.y >= 180f);
+        CanFlip = !SameDirection(direction);
     }
 
     //todo delete this funtion and use this one
-    protected bool sameDirection(Vector2 direction)
+    protected bool SameDirection(Vector2 direction)
     {
         return !(direction.x < 0 && transform.localEulerAngles.y < 180f ||
            direction.x > 0 && transform.localEulerAngles.y >= 180f);
@@ -169,14 +170,13 @@ public abstract class Enemy : MonoBehaviour
 
     private void UpdateLifebarImage()
     {
-        lifebarImage.fillAmount = Life / GetMaxHealth();
+        lifebarImage.fillAmount = Life / maxLife;
     }
 
     private void Die()
     {
         IsAlive = false;
         animator.SetBool("IsDead", true);
-        // EnemyManager.Instance.DecreaseEnemiesCounter();
         rigidBody.velocity = Vector2.zero;
         rigidBody.angularVelocity = 0f;
     }
@@ -186,11 +186,42 @@ public abstract class Enemy : MonoBehaviour
         Destroy(gameObject);
     }
 
-    protected void updateMovement(Vector2 newMov)
+    protected void UpdateMovement(Vector2 newMov)
     {
         newMov.Normalize();
         //so he doesn't jump
         newMov.y = 0f;
         movement = newMov;
+    }
+
+    protected bool IsOnAnotherPlatform(float playerPosition)
+    {
+        return !((player.position.x < triggerPosition && right) ||
+        (player.position.x > triggerPosition && !right));
+    }
+
+    protected void UpdateDiffPlatforms()
+	{
+        if (diffPlatforms)
+        {
+            if (IsOnAnotherPlatform(player.position.x)) return;
+            diffPlatforms = false;
+            return;
+        }
+
+        UpdateReachedBorder();
+        if (ReachedBorder && SameDirection(direction))
+        {
+            triggerPosition = transform.position.x;
+            right = direction.x >= 0;
+            diffPlatforms = true;
+            Flip();
+        }
+    }
+
+    protected void FollowPlayer()
+    {
+        if (CanFlip) Flip();
+        MoveCharacter(movement);
     }
 }

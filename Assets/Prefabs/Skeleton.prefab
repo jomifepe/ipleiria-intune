@@ -420,6 +420,7 @@ MonoBehaviour:
   groundLayerMask:
     serializedVersion: 2
     m_Bits: 512
+  followPlayer: 0
   speed: 1
   cooldown: 1.5
   attackRange: 2

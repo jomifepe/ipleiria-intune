@@ -10,82 +10,44 @@ public class Skeleton: Enemy
     [SerializeField] private Transform meleeAttackPoint;
     [SerializeField] private LayerMask playerLayerMask;
 
-    private float maxHealth = 2f;
-    private float sensingRange = 10f;
-
-    private bool diffPlatforms = false;
-    private float triggerPosition = -1f;
-    protected bool right = true;
-
-    protected override float GetMaxHealth()
+    protected override void Init()
     {
-        return maxHealth;
+        Life = 2f;
+        maxLife = Life;
+        sensingRange = 10f;
     }
 
-    protected override float getSensingRange()
-	{
-        return sensingRange;
-	}
-
-    protected override void enemyMove()
+    protected override void EnemyMove()
     {
         rigidBody.velocity = new Vector2(speed * transform.right.x, rigidBody.velocity.y);
-        updateCanFlip(direction);//change method name
-        if (!isPlayerOnRange(direction.x))
-        {       
+        if (!PlayerOnSensingRange(direction.x))
+        {
+            Debug.Log("Player isnt on sensing range");
             InRange = false;
             return;
         }
 
-        if (diffPlatforms)
-        {
-            if (!isOnAnotherPlatform(player.position.x)) return;	
-            //Debug.Log("Check trigger false");
-            diffPlatforms = false;
-        }
+        if (diffPlatforms) return;
 
         //Debug.Log(transform.localEulerAngles.y);
         //Debug.Log(direction.x);
 
         InRange = true;
-        updateMovement(direction);
+        UpdateMovement(direction);
     }
 
-    private bool isOnAnotherPlatform(float playerPosition)
-	{
-        return (player.position.x < triggerPosition && right) ||
-        (player.position.x > triggerPosition && !right);
-    }
-
-    protected override void enemyFixedUpdate()
+    protected override void EnemyFixedUpdate()
 	{
         if (attackMode) return;
-        updateReachedBorder();
-        if(!diffPlatforms && ReachedBorder && sameDirection(direction))
-        {
-            triggerPosition = transform.position.x;
-            right = direction.x >= 0;
-            diffPlatforms = true;
-
-            Flip();
-            return;
-        }
-
         if (diffPlatforms || !InRange)
         {
-            moveNormally();
+            MoveNormally();
             return;
         }
 
+        UpdateReachedBorder();
         //following the player
-        if (!ReachedBorder) followPlayer();
-    }
-
-    private void followPlayer()
-    {
-        if (CanFlip) Flip();
-        moveCharacter(movement);
-        return;
+        if (!ReachedBorder) FollowPlayer();
     }
 
     protected override void Attack()
