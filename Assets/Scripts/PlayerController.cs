@@ -19,7 +19,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float speed = 3.5f;
     [SerializeField] private float jumpForce = 6f;
     [SerializeField] private AudioClip jumpAudioClip;
-    [SerializeField] private AudioClip[] shotAudioClips;
+    [SerializeField] private AudioClip[] meleeAudioClips;
     [SerializeField] private float attackRange = 0.5f;
     [SerializeField] private float meleeDamage = 1f;
     [Range(0, .3f)] [SerializeField] private float movementSmoothing = .05f;
@@ -69,6 +69,7 @@ public class PlayerController : MonoBehaviour
                         // AttackMelee();
                         animator.SetTrigger("AttackMelee");
                         nextAttackTime = Time.time + 1f / attackRate;
+                        myAudioSource.PlayOneShot(meleeAudioClips[0]);
                     }
                 }
 
@@ -129,6 +130,7 @@ public class PlayerController : MonoBehaviour
         animator.SetTrigger("Attack");    
     }
 
+    /* Called by animation event */
     private void AttackMelee()
     {
         // animator.SetTrigger("AttackMelee");
@@ -156,7 +158,7 @@ public class PlayerController : MonoBehaviour
         GameObject star =
             Instantiate(starPrefab, throwPoint.position, throwPoint.rotation);
         star.GetComponent<Rigidbody2D>().velocity = throwPoint.right * shootVelocity;
-        myAudioSource.PlayOneShot(shotAudioClips[Random.Range(0, shotAudioClips.Length)]);
+        myAudioSource.PlayOneShot(meleeAudioClips[Random.Range(0, meleeAudioClips.Length)]);
     }
 
     private bool CheckForGround()

@@ -331,10 +331,9 @@ MonoBehaviour:
     m_Bits: 16384
   speed: 3.5
   jumpForce: 6
-  jumpAudioClip: {fileID: 8300000, guid: e2b041cbc0ad2e849b585bf3f679b5e6, type: 3}
-  shotAudioClips:
-  - {fileID: 8300000, guid: 62bdbec8a6ae0c048a083cd828663dd1, type: 3}
-  - {fileID: 8300000, guid: 9733b37c96ed737488a36b57cbe15d58, type: 3}
+  jumpAudioClip: {fileID: 8300000, guid: e7115b9a0f1fcf84f81e0c8f142af029, type: 3}
+  meleeAudioClips:
+  - {fileID: 8300000, guid: 3ec7c2e1a5a307649846cb2121408a02, type: 3}
   attackRange: 0.74
   meleeDamage: 1
   movementSmoothing: 0.05
