@@ -7,25 +7,16 @@ using UnityEngine.UI;
 
 public class Skeleton: Enemy
 {
-    private float maxHealth = 2f;
-    private int minCoinDrop = 5;
-    private int maxCoinDrop = 10;
-    private int minCoinCount = 1;
-    private int maxCoinCount = 2;
-
-    protected override float getMaxHealth() => maxHealth;
-    protected override int getMinCoinDrop() => minCoinDrop;
-    protected override int getMaxCoinDrop() => maxCoinDrop;
-    protected override int getMinCoinCount() => minCoinCount;
-    protected override int getMaxCoinCount() => maxCoinCount;
-
     [SerializeField] private Transform meleeAttackPoint;
     [SerializeField] private LayerMask playerLayerMask;
 
     protected override void Init()
     {
-        Life = 2f;
-        maxLife = Life;
+        Life = maxHealth = 2f;
+        minCoinDrop = 5;
+        maxCoinDrop = 10;
+        minCoinCount = 1;
+        maxCoinCount = 2;
         sensingRange = 10f;
     }
 
@@ -34,7 +25,7 @@ public class Skeleton: Enemy
         rigidBody.velocity = new Vector2(speed * transform.right.x, rigidBody.velocity.y);
         if (!PlayerOnSensingRange(direction.x))
         {
-            Debug.Log("Player isnt on sensing range");
+            // Debug.Log("Player isnt on sensing range");
             InRange = false;
             return;
         }

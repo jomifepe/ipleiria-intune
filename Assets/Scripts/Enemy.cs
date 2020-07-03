@@ -31,7 +31,7 @@ public abstract class Enemy : MonoBehaviour
     [SerializeField] private Canvas lifebarCanvas;
 
     protected float Life;
-    protected float maxLife;
+    protected float maxHealth;
     protected bool IsAlive = true;
     protected bool CanFlip = false;
     protected bool InRange = false;
@@ -48,26 +48,29 @@ public abstract class Enemy : MonoBehaviour
     protected bool diffPlatforms = false;
     protected float triggerPosition = -1f;
     protected bool right = true;
+    
+    protected int minCoinDrop;
+    protected int maxCoinDrop;
+    protected int minCoinCount;
+    protected int maxCoinCount;
+
+    public Transform player;
+    
+    private static readonly int AnimAttack = Animator.StringToHash("Attack");
+    private static readonly int AnimIsAttacking = Animator.StringToHash("IsAttacking");
+    private static readonly int AnimHurt = Animator.StringToHash("Hurt");
+    private static readonly int AnimIsDead = Animator.StringToHash("IsDead");
 
     protected abstract void Attack();
     protected abstract void Init();
     protected abstract void EnemyMove();
     protected abstract void EnemyFixedUpdate();
-
-    public Transform player;
-
-    protected abstract float getMaxHealth();
-    protected abstract int getMinCoinDrop();
-    protected abstract int getMaxCoinDrop();
-    protected abstract int getMaxCoinCount();
-    protected abstract int getMinCoinCount();
     
     private void Awake()
     {
         Init();
         UpdateDiffPlatforms();
         coinDropper = GetComponent<CoinDrop>();
-        Life = getMaxHealth();
         rigidBody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         mainCamera = FindObjectOfType<Camera>();
@@ -77,8 +80,7 @@ public abstract class Enemy : MonoBehaviour
     {
         int index = SpriteRenderingOrderManager.Instance.GetEnemyOrderInLayer();
         GetComponent<SpriteRenderer>().sortingOrder = index;
-
-        UpdateLifebarImage();
+        UpdateLifebar();
     }
 
     protected void Update()
@@ -96,8 +98,8 @@ public abstract class Enemy : MonoBehaviour
             if (CanFlip) Flip();
             if (Time.time >= nextAttackTime && IsAlive)
             {
-                animator.SetTrigger("Attack");
-                animator.SetBool("IsAttacking", true);
+                animator.SetTrigger(AnimAttack);
+                animator.SetBool(AnimIsAttacking, true);
                 nextAttackTime = Time.time + cooldown / attackRate;
             }
             attackMode = true;
@@ -106,7 +108,7 @@ public abstract class Enemy : MonoBehaviour
         //So it doesn't move while still atacking
         if (Time.time < nextAttackTime) return;	
 
-        animator.SetBool("IsAttacking", false);
+        animator.SetBool(AnimIsAttacking, false);
         attackMode = false;
         EnemyMove();  
     }
@@ -136,7 +138,7 @@ public abstract class Enemy : MonoBehaviour
 
     protected void MoveCharacter(Vector2 direction)
     {
-        rigidBody.MovePosition((Vector2)transform.position + (direction * speed * Time.deltaTime));
+        rigidBody.MovePosition((Vector2)transform.position + (direction * (speed * Time.deltaTime)));
     }
 
     protected void UpdateReachedBorder()
@@ -171,27 +173,27 @@ public abstract class Enemy : MonoBehaviour
     {
         if (!IsAlive) return;
 
-        animator.SetTrigger("Hurt");
+        animator.SetTrigger(AnimHurt);
         Life -= damage;
 
         if (Life < 0f) Life = 0f;
-        UpdateLifebarImage();
+        UpdateLifebar();
         if (Life == 0f)Die();
     }
 
-    private void UpdateLifebarImage()
+    private void UpdateLifebar()
     {
-        lifebarImage.fillAmount = Life / maxLife;
+        lifebarImage.fillAmount = Life / maxHealth;
     }
 
     private void Die()
     {
         IsAlive = false;
-        animator.SetBool("IsDead", true);
+        animator.SetBool(AnimIsDead, true);
         rigidBody.velocity = Vector2.zero;
         rigidBody.angularVelocity = 0f;
-        coinDropper.DropCoins(getMinCoinDrop(), getMaxCoinDrop(), 
-            getMinCoinCount(),getMaxCoinCount());
+        coinDropper.DropCoins(minCoinDrop, maxCoinDrop, 
+            minCoinCount,maxCoinCount);
         Invoke(nameof(DestroyEnemy), 3);
     }
 

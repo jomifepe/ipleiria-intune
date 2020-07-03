@@ -425,7 +425,7 @@ MonoBehaviour:
   speed: 1
   cooldown: 1.5
   attackRange: 2
-  attackDamage: 2
+  attackDamage: 1
   lifebarImage: {fileID: 5504275465695881511}
   lifebarCanvas: {fileID: 7139927683293155757}
   player: {fileID: 5411998984150073576, guid: e233026cf180fc240bcc4f115605ae7e, type: 3}

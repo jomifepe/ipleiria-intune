@@ -7,23 +7,13 @@ using UnityEngine.UI;
 
 public class Witch : Enemy
 {
-
-    private float maxHealth = 3f;
-    private int minCoinDrop = 10;
-    private int maxCoinDrop = 15;
-    private int minCoinCount = 1;
-    private int maxCoinCount = 2;
-
-    protected override float getMaxHealth() => maxHealth;
-    protected override int getMinCoinDrop() => minCoinDrop;
-    protected override int getMaxCoinDrop() => maxCoinDrop;
-    protected override int getMinCoinCount() => minCoinCount;
-    protected override int getMaxCoinCount() => maxCoinCount;
-
     protected override void Init()
     {
-        Life = 3f;
-        maxLife = Life;
+        Life = maxHealth = 3f;
+        minCoinDrop = 10;
+        maxCoinDrop = 15;
+        minCoinCount = 1;
+        maxCoinCount = 2;
         sensingRange = 15f;
     }
 
@@ -90,7 +80,7 @@ public class Witch : Enemy
 
     protected override void Attack()
     {
-
+        
     }
 }
 

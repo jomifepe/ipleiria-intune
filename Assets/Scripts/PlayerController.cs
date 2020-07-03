@@ -37,6 +37,12 @@ public class PlayerController : MonoBehaviour
     private float nextMeleeAttackTime;
     private float nextRangedAttackTime;
     private float jumpTimer;
+    
+    private static readonly int AnimHurt = Animator.StringToHash("Hurt");
+    private static readonly int AnimIsDead = Animator.StringToHash("IsDead");
+    private static readonly int AnimIsJumping = Animator.StringToHash("IsJumping");
+    private static readonly int AnimHorizontalSpeed = Animator.StringToHash("HorizontalSpeed");
+    private static readonly int AnimAttackMelee = Animator.StringToHash("AttackMelee");
 
     private void Awake()
     {
@@ -63,7 +69,7 @@ public class PlayerController : MonoBehaviour
                     if (Input.GetButtonDown("Fire1"))
                     // if (CrossPlatformInputManager.GetButtonDown("Fire1"))
                     {
-                        animator.SetTrigger("AttackMelee");
+                        animator.SetTrigger(AnimAttackMelee);
                         nextMeleeAttackTime = Time.time + 1f / attackRate;
                         audioSource.PlayOneShot(meleeAudioClips[0]);
                     }
@@ -100,7 +106,7 @@ public class PlayerController : MonoBehaviour
 
                 playerRigidbody.velocity = new Vector2(horizontalInput * speed, playerRigidbody.velocity.y);
 
-                animator.SetFloat("HorizontalSpeed", Mathf.Abs(playerRigidbody.velocity.x));
+                animator.SetFloat(AnimHorizontalSpeed, Mathf.Abs(playerRigidbody.velocity.x));
             }
         }
     }
@@ -113,7 +119,7 @@ public class PlayerController : MonoBehaviour
 
             if (wasJumping && isGrounded && jumpTimer <= 0)
             {
-                animator.SetBool("IsJumping", false);
+                animator.SetBool(AnimIsJumping, false);
                 wasJumping = false;
             }
 
@@ -121,7 +127,7 @@ public class PlayerController : MonoBehaviour
             {
                 wasJumping = true;
                 jumpTimer = 0.1f;
-                animator.SetBool("IsJumping", true);
+                animator.SetBool(AnimIsJumping, true);
                 playerRigidbody.velocity = Vector2.up * jumpForce;
 
                 audioSource.PlayOneShot(jumpAudioClip);
@@ -184,7 +190,7 @@ public class PlayerController : MonoBehaviour
     public void TakeDamage(float damage)
     {
         if (!isAlive) return;
-        animator.SetTrigger("Hurt");
+        animator.SetTrigger(AnimHurt);
         life -= damage;
         if (life < 0f) life = 0f;
         UpdateLifebarImage();
@@ -195,7 +201,7 @@ public class PlayerController : MonoBehaviour
     private void Die()
     {
         isAlive = false;
-        animator.SetBool("IsDead", true);
+        animator.SetBool(AnimIsDead, true);
         //Destroy(gameObject);
     }
     
