@@ -30,10 +30,9 @@ public class PlayerController : MonoBehaviour
     private AudioSource audioSource;
     private Collider2D[] results = new Collider2D[1];
     private bool jump, isGrounded, wasJumping, isAlive = true;
-    private float life = 3f;
-    private float shootVelocity = 5f;
+    private float life = 3f, throws = 3f;
+    private float shootVelocity = 5f, attackRate = 2f;
 
-    private float attackRate = 2f;
     private float nextMeleeAttackTime;
     private float nextRangedAttackTime;
     private float jumpTimer;
@@ -58,25 +57,15 @@ public class PlayerController : MonoBehaviour
         {
             if (isAlive)
             {
-                if (Time.time >= nextMeleeAttackTime)
+                if (Time.time >= nextMeleeAttackTime && Input.GetButtonDown("Fire1"))
+                if (Time.time >= nextMeleeAttackTime && CrossPlatformInputManager.GetButtonDown("Fire1"))
                 {
-                    if (Input.GetButtonDown("Fire1"))
-                    // if (CrossPlatformInputManager.GetButtonDown("Fire1"))
-                    {
-                        animator.SetTrigger("AttackMelee");
-                        nextMeleeAttackTime = Time.time + 1f / attackRate;
-                        audioSource.PlayOneShot(meleeAudioClips[0]);
-                    }
+                    PerformAttackAnimation();
                 }
-                if (Time.time >= nextRangedAttackTime)
+                if (Time.time >= nextRangedAttackTime && Input.GetButtonDown("Fire2"))
+                // if (Time.time >= nextRangedAttackTime && CrossPlatformInputManager.GetButtonDown("Fire2"))
                 {
-                    // if (Input.GetButtonDown("Fire2"))
-                    if (CrossPlatformInputManager.GetButtonDown("Fire2"))
-                    {
-                        // animator.SetTrigger("AttackMelee");
-                        Throw();
-                        nextRangedAttackTime = Time.time + 1f / attackRate;
-                    }
+                    Throw();
                 }
 
                 float horizontalInput = Input.GetAxisRaw("Horizontal");
@@ -131,18 +120,25 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void PerformAttackAnimation()
+    {
+        animator.SetTrigger("AttackMelee");
+        nextMeleeAttackTime = Time.time + 1f / attackRate;
+        audioSource.PlayOneShot(meleeAudioClips[0]);
+    }
+    
     /* Called by animation event */
     private void AttackMelee()
     {
         // animator.SetTrigger("AttackMelee");
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(meleeAttackPoint.position, meleeAttackRange, enemyLayerMask);
-        Collider2D[] hitDesctructibles = Physics2D.OverlapCircleAll(meleeAttackPoint.position, meleeAttackRange, destructibleLayerMask);
+        Collider2D[] hitDestructibles = Physics2D.OverlapCircleAll(meleeAttackPoint.position, meleeAttackRange, destructibleLayerMask);
         
         foreach (Collider2D enemy in hitEnemies)
         {
             enemy.GetComponent<Enemy>().TakeDamage(meleeDamage);
         }
-        foreach (Collider2D desctructible in hitDesctructibles)
+        foreach (Collider2D desctructible in hitDestructibles)
         {
             desctructible.GetComponent<Destructible>().Destroy();
         }
@@ -150,10 +146,18 @@ public class PlayerController : MonoBehaviour
     
     private void Throw()
     {
-        // TODO: Throw animation
-        // animator.SetTrigger("Attack");    
+        if (throws == 0f) return;
+        // animator.SetTrigger("Throw"); // TODO: Throw animation
         AnimatorEventThrow();
-        
+        DecrementThrows();
+        nextRangedAttackTime = Time.time + 1f / attackRate;
+    }
+
+    private void DecrementThrows()
+    {
+        throws -= 1;
+        if (throws < 0) throws = 0;
+        UpdateThrowbar();
     }
     
     private void AnimatorEventThrow()
@@ -187,17 +191,9 @@ public class PlayerController : MonoBehaviour
         {
             animator.SetTrigger("Hurt");
             life -= damage;
-            if (life < 0f)
-            {
-                life = 0f;
-            }
-
+            if (life < 0f) life = 0f;
             UpdateLifebarImage();
-
-            if (life == 0f)
-            {
-                Die();
-            }
+            if (life == 0f) Die();
         }
     }
 
@@ -213,8 +209,8 @@ public class PlayerController : MonoBehaviour
         UIManager.Instance.UpdatePlayerLife(life);
     }
     
-    private void UpdateThrowbarImage()
+    private void UpdateThrowbar()
     {
-        UIManager.Instance.UpdatePlayerLife(life);
+        UIManager.Instance.UpdatePlayerThrows(throws);
     }
 }

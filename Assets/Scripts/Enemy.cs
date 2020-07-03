@@ -25,6 +25,8 @@ public abstract class Enemy : MonoBehaviour
 
     private Camera mainCamera;
     private CoinDrop coinDropper;
+    private static readonly int IsDead = Animator.StringToHash("IsDead");
+    private static readonly int Hurt = Animator.StringToHash("Hurt");
 
     protected abstract float getMaxHealth();
     protected abstract int getMinCoinDrop();
@@ -81,7 +83,7 @@ public abstract class Enemy : MonoBehaviour
     {
         if (IsAlive)
         {
-            animator.SetTrigger("Hurt");
+            animator.SetTrigger(Hurt);
             Life -= damage;
 
             if (Life < 0f) Life = 0f;
@@ -99,7 +101,7 @@ public abstract class Enemy : MonoBehaviour
     private void Die()
     {
         IsAlive = false;
-        animator.SetBool("IsDead", true);
+        animator.SetBool(IsDead, true);
         rigidBody.velocity = Vector2.zero;
         rigidBody.angularVelocity = 0f;
         coinDropper.DropCoins(getMinCoinDrop(), getMaxCoinDrop(), 
