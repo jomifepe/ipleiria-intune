@@ -36,6 +36,12 @@ public class PlayerController : MonoBehaviour
     private float nextMeleeAttackTime;
     private float nextRangedAttackTime;
     private float jumpTimer;
+    
+    private string AnimHurt = "Hurt";
+    private string AnimIsDead = "IsDead";
+    private string AnimIsJumping = "IsJumping";
+    private string AnimHorizontalSpeed = "HorizontalSpeed";
+    private string AnimAttackMelee = "AttackMelee";
 
     private void Awake()
     {
@@ -89,7 +95,7 @@ public class PlayerController : MonoBehaviour
 
                 playerRigidbody.velocity = new Vector2(horizontalInput * speed, playerRigidbody.velocity.y);
 
-                animator.SetFloat("HorizontalSpeed", Mathf.Abs(playerRigidbody.velocity.x));
+                animator.SetFloat(AnimHorizontalSpeed, Mathf.Abs(playerRigidbody.velocity.x));
             }
         }
     }
@@ -102,7 +108,7 @@ public class PlayerController : MonoBehaviour
 
             if (wasJumping && isGrounded && jumpTimer <= 0)
             {
-                animator.SetBool("IsJumping", false);
+                animator.SetBool(AnimIsJumping, false);
                 wasJumping = false;
             }
 
@@ -110,7 +116,7 @@ public class PlayerController : MonoBehaviour
             {
                 wasJumping = true;
                 jumpTimer = 0.1f;
-                animator.SetBool("IsJumping", true);
+                animator.SetBool(AnimIsJumping, true);
                 playerRigidbody.velocity = Vector2.up * jumpForce;
 
                 audioSource.PlayOneShot(jumpAudioClip);
@@ -187,20 +193,19 @@ public class PlayerController : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
-        if (isAlive)
-        {
-            animator.SetTrigger("Hurt");
-            life -= damage;
-            if (life < 0f) life = 0f;
-            UpdateLifebarImage();
-            if (life == 0f) Die();
-        }
+        if (!isAlive) return;
+        animator.SetTrigger(AnimHurt);
+        life -= damage;
+        if (life < 0f) life = 0f;
+        UpdateLifebarImage();
+        if (life == 0f) Die();
+
     }
 
     private void Die()
     {
         isAlive = false;
-        animator.SetBool("IsDead", true);
+        animator.SetBool(AnimIsDead, true);
         //Destroy(gameObject);
     }
     
