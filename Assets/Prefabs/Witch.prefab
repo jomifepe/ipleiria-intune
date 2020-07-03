@@ -353,7 +353,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1203682789
-  m_SortingLayer: 3
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_Sprite: {fileID: 260713850392681633, guid: 83f9cd70f4edb9b4286cbb544343bf6b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -438,14 +438,14 @@ MonoBehaviour:
   groundLayerMask:
     serializedVersion: 2
     m_Bits: 512
+  followPlayer: 0
   speed: 1
-  raycastMask:
-    serializedVersion: 2
-    m_Bits: 0
-  timer: 0
-  atackRange: 15
+  cooldown: 0
+  attackRange: 0
+  attackDamage: 0
   lifebarImage: {fileID: 6772507679635615633}
   lifebarCanvas: {fileID: 8253344273807759131}
+  player: {fileID: 5411998984150073576, guid: e233026cf180fc240bcc4f115605ae7e, type: 3}
 --- !u!114 &4471141532328517465
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -460,3 +460,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   coinPrefab: {fileID: 6173687096675158454, guid: c3701e3175864e440a1049bc6d8f424c,
     type: 3}
+  valueMultiplier: 1

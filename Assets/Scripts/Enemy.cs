@@ -38,14 +38,13 @@ public abstract class Enemy : MonoBehaviour
     protected bool ReachedBorder = false;
     protected float sensingRange;
     protected Vector3 direction;
-    private Camera mainCamera;
     private CoinDrop coinDropper;
 
     protected bool attackMode = false;
     protected bool inAttackRange;
     private float attackRate = 2f;
     private float nextAttackTime = 0f;
-
+    
     protected bool diffPlatforms = false;
     protected float triggerPosition = -1f;
     protected bool right = true;

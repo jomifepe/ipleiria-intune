@@ -184,11 +184,12 @@ public class PlayerController : MonoBehaviour
     public void TakeDamage(float damage)
     {
         if (!isAlive) return;
-        //TODO Trigger hurt animation
+        animator.SetTrigger("Hurt");
         life -= damage;
         if (life < 0f) life = 0f;
         UpdateLifebarImage();
-        if (life == 0f) Die();     
+        if (life == 0f) Die();
+
     }
 
     private void Die()
