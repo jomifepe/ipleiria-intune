@@ -2700,7 +2700,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1376194960
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2814,7 +2814,6 @@ MonoBehaviour:
   scoreText: {fileID: 652272731}
   lifeBar: {fileID: 335307468}
   throwBar: {fileID: 960786207}
-  enemyCounterText: {fileID: 0}
   pausePanel: {fileID: 1265457826}
 --- !u!4 &1626773606
 Transform:
