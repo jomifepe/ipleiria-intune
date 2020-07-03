@@ -12,7 +12,7 @@ public class Skeleton: Enemy
 
     protected override void Init()
     {
-        Life = maxHealth = 2f;
+        life = maxHealth = 2f;
         minCoinDrop = 5;
         maxCoinDrop = 10;
         minCoinCount = 1;
@@ -26,7 +26,7 @@ public class Skeleton: Enemy
         if (!PlayerOnSensingRange(direction.x))
         {
             // Debug.Log("Player isnt on sensing range");
-            InRange = false;
+            inRange = false;
             return;
         }
 
@@ -35,14 +35,14 @@ public class Skeleton: Enemy
         //Debug.Log(transform.localEulerAngles.y);
         //Debug.Log(direction.x);
 
-        InRange = true;
+        inRange = true;
         UpdateMovement(direction);
     }
 
     protected override void EnemyFixedUpdate()
 	{
         if (attackMode) return;
-        if (diffPlatforms || !InRange)
+        if (diffPlatforms || !inRange)
         {
             MoveNormally();
             return;
@@ -50,7 +50,7 @@ public class Skeleton: Enemy
 
         UpdateReachedBorder();
         //following the player
-        if (!ReachedBorder) FollowPlayer();
+        if (!reachedBorder) FollowPlayer();
     }
 
     protected override void Attack()
