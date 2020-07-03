@@ -9,7 +9,7 @@ using Random = UnityEngine.Random;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private GameObject starPrefab;
+    [SerializeField] private GameObject throwablePrefab;
     [SerializeField] private Transform throwPoint;
     [SerializeField] private Transform meleeAttackPoint;
     [SerializeField] private Transform groundCheck;
@@ -20,27 +20,29 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpForce = 6f;
     [SerializeField] private AudioClip jumpAudioClip;
     [SerializeField] private AudioClip[] meleeAudioClips;
-    [SerializeField] private float attackRange = 0.5f;
+    [SerializeField] private AudioClip rangedAudioClip;
+    [SerializeField] private float meleeAttackRange = 0.5f;
     [SerializeField] private float meleeDamage = 1f;
     [Range(0, .3f)] [SerializeField] private float movementSmoothing = .05f;
 
     private Rigidbody2D playerRigidbody;
     private Animator animator;
+    private AudioSource audioSource;
     private Collider2D[] results = new Collider2D[1];
     private bool jump, isGrounded, wasJumping, isAlive = true;
     private float life = 3f;
     private float shootVelocity = 5f;
 
-    private AudioSource myAudioSource;
     private float attackRate = 2f;
-    private float nextAttackTime = 0f;
+    private float nextMeleeAttackTime = 0f;
+    private float nextRangedAttackTime = 0f;
     private float jumpTimer;
 
     private void Awake()
     {
         playerRigidbody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        myAudioSource = GetComponent<AudioSource>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     private void Start()
@@ -61,15 +63,24 @@ public class PlayerController : MonoBehaviour
         {
             if (isAlive)
             {
-                if (Time.time >= nextAttackTime)
+                if (Time.time >= nextMeleeAttackTime)
                 {
                     if (Input.GetButtonDown("Fire1"))
                     // if (CrossPlatformInputManager.GetButtonDown("Fire1"))
                     {
-                        // AttackMelee();
                         animator.SetTrigger("AttackMelee");
-                        nextAttackTime = Time.time + 1f / attackRate;
-                        myAudioSource.PlayOneShot(meleeAudioClips[0]);
+                        nextMeleeAttackTime = Time.time + 1f / attackRate;
+                        audioSource.PlayOneShot(meleeAudioClips[0]);
+                    }
+                }
+                if (Time.time >= nextRangedAttackTime)
+                {
+                    // if (Input.GetButtonDown("Fire2"))
+                    if (CrossPlatformInputManager.GetButtonDown("Fire2"))
+                    {
+                        // animator.SetTrigger("AttackMelee");
+                        Throw();
+                        nextRangedAttackTime = Time.time + 1f / attackRate;
                     }
                 }
 
@@ -118,24 +129,19 @@ public class PlayerController : MonoBehaviour
                 animator.SetBool("IsJumping", true);
                 playerRigidbody.velocity = Vector2.up * jumpForce;
 
-                myAudioSource.PlayOneShot(jumpAudioClip);
+                audioSource.PlayOneShot(jumpAudioClip);
             }
 
             jump = false;
         }
     }
 
-    private void Shoot()
-    {
-        animator.SetTrigger("Attack");    
-    }
-
     /* Called by animation event */
     private void AttackMelee()
     {
         // animator.SetTrigger("AttackMelee");
-        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(meleeAttackPoint.position, attackRange, enemyLayerMask);
-        Collider2D[] hitDesctructibles = Physics2D.OverlapCircleAll(meleeAttackPoint.position, attackRange, destructibleLayerMask);
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(meleeAttackPoint.position, meleeAttackRange, enemyLayerMask);
+        Collider2D[] hitDesctructibles = Physics2D.OverlapCircleAll(meleeAttackPoint.position, meleeAttackRange, destructibleLayerMask);
         
         foreach (Collider2D enemy in hitEnemies)
         {
@@ -146,19 +152,25 @@ public class PlayerController : MonoBehaviour
             desctructible.GetComponent<Destructible>().Destroy();
         }
     }
+    
+    private void Throw()
+    {
+        // TODO: Throw animation
+        // animator.SetTrigger("Attack");    
+        AnimatorEventThrow();
+    }
+    
+    private void AnimatorEventThrow()
+    {
+        GameObject throwable = Instantiate(throwablePrefab, throwPoint.position, throwPoint.rotation);
+        throwable.GetComponent<Rigidbody2D>().velocity = throwPoint.right * shootVelocity;
+        audioSource.PlayOneShot(rangedAudioClip);
+    }
 
     private void OnDrawGizmosSelected()
     {
         if (meleeAttackPoint == null) return;
-        Gizmos.DrawWireSphere(meleeAttackPoint.position, attackRange);
-    }
-
-    private void AnimatorEventShoot()
-    {
-        GameObject star =
-            Instantiate(starPrefab, throwPoint.position, throwPoint.rotation);
-        star.GetComponent<Rigidbody2D>().velocity = throwPoint.right * shootVelocity;
-        myAudioSource.PlayOneShot(meleeAudioClips[Random.Range(0, meleeAudioClips.Length)]);
+        Gizmos.DrawWireSphere(meleeAttackPoint.position, meleeAttackRange);
     }
 
     private bool CheckForGround()

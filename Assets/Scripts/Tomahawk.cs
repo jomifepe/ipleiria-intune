@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Star : MonoBehaviour
+public class Tomahawk : MonoBehaviour
 {
     [SerializeField]
-    private float damage = 50f;
+    private float damage = 1.5f;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
