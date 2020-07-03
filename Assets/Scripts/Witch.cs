@@ -9,7 +9,7 @@ public class Witch : Enemy
 {
     protected override void Init()
     {
-        Life = maxHealth = 3f;
+        life = maxHealth = 3f;
         minCoinDrop = 10;
         maxCoinDrop = 15;
         minCoinCount = 1;
@@ -75,7 +75,7 @@ public class Witch : Enemy
     protected override void EnemyFixedUpdate()
 	{
         UpdateReachedBorder();
-        if (ReachedBorder) Flip();
+        if (reachedBorder) Flip();
     }
 
     protected override void Attack()

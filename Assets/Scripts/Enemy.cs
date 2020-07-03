@@ -30,24 +30,23 @@ public abstract class Enemy : MonoBehaviour
     [SerializeField] private Image lifebarImage;
     [SerializeField] private Canvas lifebarCanvas;
 
-    protected float Life;
+    protected float life;
     protected float maxHealth;
-    protected bool IsAlive = true;
-    protected bool CanFlip = false;
-    protected bool InRange = false;
-    protected bool ReachedBorder = false;
+    private bool isAlive = true;
+    private bool canFlip;
+    protected bool inRange = false;
+    protected bool reachedBorder;
     protected float sensingRange;
     protected Vector3 direction;
     private CoinDrop coinDropper;
 
-    protected bool attackMode = false;
-    protected bool inAttackRange;
+    protected bool attackMode;
     private float attackRate = 2f;
-    private float nextAttackTime = 0f;
+    private float nextAttackTime;
     
-    protected bool diffPlatforms = false;
-    protected float triggerPosition = -1f;
-    protected bool right = true;
+    protected bool diffPlatforms;
+    private float triggerPosition = -1f;
+    private bool right = true;
     
     protected int minCoinDrop;
     protected int maxCoinDrop;
@@ -85,7 +84,7 @@ public abstract class Enemy : MonoBehaviour
 
     protected void Update()
     {
-        if (!IsAlive) return;
+        if (!isAlive) return;
         direction = player.position - transform.position;
 
         UpdateCanFlip(direction);
@@ -95,8 +94,8 @@ public abstract class Enemy : MonoBehaviour
         if (PlayerOnAttackRange(direction.x) && !diffPlatforms)
         {
             //try to put this flip only on one side
-            if (CanFlip) Flip();
-            if (Time.time >= nextAttackTime && IsAlive)
+            if (canFlip) Flip();
+            if (Time.time >= nextAttackTime && isAlive)
             {
                 animator.SetTrigger(AnimAttack);
                 animator.SetBool(AnimIsAttacking, true);
@@ -105,28 +104,32 @@ public abstract class Enemy : MonoBehaviour
             attackMode = true;
             return;
         }
-        //So it doesn't move while still atacking
+        //So it doesn't move while still attacking
         if (Time.time < nextAttackTime) return;	
 
         animator.SetBool(AnimIsAttacking, false);
         attackMode = false;
         EnemyMove();  
     }
-
-
+    
     private void FixedUpdate()
     {
-        if (!IsAlive) return;
+        if (!isAlive) return;
         EnemyFixedUpdate();
     }
 
     protected void MoveNormally()
     {
         UpdateReachedBorder();
-        if (ReachedBorder) Flip();
+        if (reachedBorder) Flip();
+    }
+    protected void FollowPlayer()
+    {
+        if (canFlip) Flip();
+        MoveCharacter(movement);
     }
 
-    protected bool PlayerOnAttackRange(float playerDistanceX)
+    private bool PlayerOnAttackRange(float playerDistanceX)
     {
         return Mathf.Abs(playerDistanceX) <= attackRange;
     }
@@ -136,26 +139,26 @@ public abstract class Enemy : MonoBehaviour
         return Mathf.Abs(playerDistanceX) <= sensingRange;
     }
 
-    protected void MoveCharacter(Vector2 direction)
+    private void MoveCharacter(Vector2 direction)
     {
         rigidBody.MovePosition((Vector2)transform.position + (direction * (speed * Time.deltaTime)));
     }
 
     protected void UpdateReachedBorder()
 	{
-        ReachedBorder = (Physics2D.OverlapPointNonAlloc(
+        reachedBorder = (Physics2D.OverlapPointNonAlloc(
             groundCheck.position,
             results,
             groundLayerMask) == 0);
     }
 
-    protected void UpdateCanFlip(Vector2 direction)
+    private void UpdateCanFlip(Vector2 direction)
 	{
-        CanFlip = !SameDirection(direction);
+        canFlip = !SameDirection(direction);
     }
 
     //todo delete this funtion and use this one
-    protected bool SameDirection(Vector2 direction)
+    private bool SameDirection(Vector2 direction)
     {
         return !(direction.x < 0 && transform.localEulerAngles.y < 180f ||
            direction.x > 0 && transform.localEulerAngles.y >= 180f);
@@ -171,24 +174,24 @@ public abstract class Enemy : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
-        if (!IsAlive) return;
+        if (!isAlive) return;
 
         animator.SetTrigger(AnimHurt);
-        Life -= damage;
+        life -= damage;
 
-        if (Life < 0f) Life = 0f;
+        if (life < 0f) life = 0f;
         UpdateLifebar();
-        if (Life == 0f)Die();
+        if (life == 0f)Die();
     }
 
     private void UpdateLifebar()
     {
-        lifebarImage.fillAmount = Life / maxHealth;
+        lifebarImage.fillAmount = life / maxHealth;
     }
 
     private void Die()
     {
-        IsAlive = false;
+        isAlive = false;
         animator.SetBool(AnimIsDead, true);
         rigidBody.velocity = Vector2.zero;
         rigidBody.angularVelocity = 0f;
@@ -210,13 +213,13 @@ public abstract class Enemy : MonoBehaviour
         movement = newMov;
     }
 
-    protected bool IsOnAnotherPlatform(float playerPosition)
+    private bool IsOnAnotherPlatform(float playerPosition)
     {
         return !((player.position.x < triggerPosition && right) ||
         (player.position.x > triggerPosition && !right));
     }
 
-    protected void UpdateDiffPlatforms()
+    private void UpdateDiffPlatforms()
 	{
         if (diffPlatforms)
         {
@@ -226,18 +229,10 @@ public abstract class Enemy : MonoBehaviour
         }
 
         UpdateReachedBorder();
-        if (ReachedBorder && SameDirection(direction))
-        {
-            triggerPosition = transform.position.x;
-            right = direction.x >= 0;
-            diffPlatforms = true;
-            Flip();
-        }
-    }
-
-    protected void FollowPlayer()
-    {
-        if (CanFlip) Flip();
-        MoveCharacter(movement);
+        if (!reachedBorder || !SameDirection(direction)) return;
+        triggerPosition = transform.position.x;
+        right = direction.x >= 0;
+        diffPlatforms = true;
+        Flip();
     }
 }
