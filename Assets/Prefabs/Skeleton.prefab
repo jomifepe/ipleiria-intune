@@ -74,6 +74,36 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &5391130527748149817
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7065451944867234441}
+  m_Layer: 8
+  m_Name: MeleeAttackPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: -5442936267250999957, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7065451944867234441
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5391130527748149817}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.84, y: -0.48, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8044703417865281752}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5477048251703248061
 GameObject:
   m_ObjectHideFlags: 0
@@ -260,7 +290,6 @@ GameObject:
   - component: {fileID: 8044703417865281759}
   - component: {fileID: 8044703417865281758}
   - component: {fileID: 8044703417865281757}
-  - component: {fileID: 8044703417865281754}
   - component: {fileID: 2237965594218538728}
   - component: {fileID: 1977576664}
   m_Layer: 10
@@ -283,6 +312,7 @@ Transform:
   m_Children:
   - {fileID: 8044703418025823954}
   - {fileID: 2788371335722342438}
+  - {fileID: 7065451944867234441}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -374,7 +404,35 @@ CapsuleCollider2D:
   m_Offset: {x: 0.1589774, y: 0.031307578}
   m_Size: {x: 0.7311916, y: 1.7710664}
   m_Direction: 0
---- !u!95 &8044703417865281754
+--- !u!114 &2237965594218538728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8044703417865281756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08215b2a079a4a6f873c50ed531494e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  groundCheck: {fileID: 8044703418025823954}
+  groundLayerMask:
+    serializedVersion: 2
+    m_Bits: 512
+  followPlayer: 0
+  speed: 1
+  cooldown: 1.5
+  attackRange: 2
+  attackDamage: 2
+  lifebarImage: {fileID: 5504275465695881511}
+  lifebarCanvas: {fileID: 7139927683293155757}
+  player: {fileID: 5411998984150073576, guid: e233026cf180fc240bcc4f115605ae7e, type: 3}
+  meleeAttackPoint: {fileID: 7065451944867234441}
+  playerLayerMask:
+    serializedVersion: 2
+    m_Bits: 256
+--- !u!95 &4979361872093680748
 Animator:
   serializedVersion: 3
   m_ObjectHideFlags: 0
@@ -393,39 +451,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &2237965594218538728
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8044703417865281756}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 08215b2a079a4a6f873c50ed531494e7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  groundCheck: {fileID: 8044703418025823954}
-  groundLayerMask:
-    serializedVersion: 2
-    m_Bits: 512
-  speed: 1
-  lifebarImage: {fileID: 5504275465695881511}
-  lifebarCanvas: {fileID: 7139927683293155757}
---- !u!114 &1977576664
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8044703417865281756}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2671dc92f7184c93bd0c11051f37d896, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  coinPrefab: {fileID: 6173687096675158454, guid: c3701e3175864e440a1049bc6d8f424c,
-    type: 3}
 --- !u!1 &8044703418025823953
 GameObject:
   m_ObjectHideFlags: 0
