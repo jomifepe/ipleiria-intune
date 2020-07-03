@@ -55,10 +55,10 @@ public abstract class Enemy : MonoBehaviour
 
     public Transform player;
     
-    private static readonly int AnimAttack = Animator.StringToHash("Attack");
-    private static readonly int AnimIsAttacking = Animator.StringToHash("IsAttacking");
-    private static readonly int AnimHurt = Animator.StringToHash("Hurt");
-    private static readonly int AnimIsDead = Animator.StringToHash("IsDead");
+    private string AnimAttack = "Attack";
+    private string AnimIsAttacking = "IsAttacking";
+    private string AnimHurt = "Hurt";
+    private string AnimIsDead = "IsDead";
 
     protected abstract void Attack();
     protected abstract void Init();

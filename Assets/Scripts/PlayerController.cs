@@ -38,11 +38,11 @@ public class PlayerController : MonoBehaviour
     private float nextRangedAttackTime;
     private float jumpTimer;
     
-    private static readonly int AnimHurt = Animator.StringToHash("Hurt");
-    private static readonly int AnimIsDead = Animator.StringToHash("IsDead");
-    private static readonly int AnimIsJumping = Animator.StringToHash("IsJumping");
-    private static readonly int AnimHorizontalSpeed = Animator.StringToHash("HorizontalSpeed");
-    private static readonly int AnimAttackMelee = Animator.StringToHash("AttackMelee");
+    private string AnimHurt = "Hurt";
+    private string AnimIsDead = "IsDead";
+    private string AnimIsJumping = "IsJumping";
+    private string AnimHorizontalSpeed = "HorizontalSpeed";
+    private string AnimAttackMelee = "AttackMelee";
 
     private void Awake()
     {
