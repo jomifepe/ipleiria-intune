@@ -34,8 +34,8 @@ public class PlayerController : MonoBehaviour
     private float shootVelocity = 5f;
 
     private float attackRate = 2f;
-    private float nextMeleeAttackTime = 0f;
-    private float nextRangedAttackTime = 0f;
+    private float nextMeleeAttackTime;
+    private float nextRangedAttackTime;
     private float jumpTimer;
 
     private void Awake()
@@ -48,11 +48,6 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         UpdateLifebarImage();
-    }
-
-    private void UpdateLifebarImage()
-    {
-        UIManager.Instance.UpdatePlayerLife(life);
     }
 
     private void Update()
@@ -158,6 +153,7 @@ public class PlayerController : MonoBehaviour
         // TODO: Throw animation
         // animator.SetTrigger("Attack");    
         AnimatorEventThrow();
+        
     }
     
     private void AnimatorEventThrow()
@@ -210,5 +206,15 @@ public class PlayerController : MonoBehaviour
         isAlive = false;
         animator.SetBool("IsDead", true);
         //Destroy(gameObject);
+    }
+    
+    private void UpdateLifebarImage()
+    {
+        UIManager.Instance.UpdatePlayerLife(life);
+    }
+    
+    private void UpdateThrowbarImage()
+    {
+        UIManager.Instance.UpdatePlayerLife(life);
     }
 }

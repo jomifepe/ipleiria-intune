@@ -100,7 +100,6 @@ public abstract class Enemy : MonoBehaviour
     {
         IsAlive = false;
         animator.SetBool("IsDead", true);
-        EnemyManager.Instance.DecreaseEnemiesCounter();
         rigidBody.velocity = Vector2.zero;
         rigidBody.angularVelocity = 0f;
         coinDropper.DropCoins(getMinCoinDrop(), getMaxCoinDrop(), 

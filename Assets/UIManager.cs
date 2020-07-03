@@ -5,18 +5,13 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; } = null;
 
-    [SerializeField]
-    private Text scoreText;
-
-    [SerializeField]
-    private Image lifeBar;
-
-    [SerializeField]
-    private Text enemyCounterText;
-
-    [SerializeField]
-    private GameObject pausePanel;
-
+    [SerializeField] private Text scoreText;
+    [SerializeField] private Image lifeBar;
+    [SerializeField] private Image throwBar;
+    [SerializeField] private GameObject pausePanel;
+    private float playerMaxHealth = 3f;
+    private float playerMaxThrows = 3f;
+    
     private void Awake()
     {
         if (Instance == null)
@@ -37,20 +32,28 @@ public class UIManager : MonoBehaviour
 
     public void UpdatePlayerLife(float life)
     {
-        lifeBar.fillAmount = life / 3f;
+        lifeBar.fillAmount = life / playerMaxHealth;
     }
-
-    public void UpdateEnemyCounter(int enemyCounter)
+    
+    public void UpdatePlayerThrows(float amount)
     {
-        if (enemyCounterText != null)
-        {
-            enemyCounterText.text = enemyCounter.ToString();
-        }
+        throwBar.fillAmount = amount / playerMaxThrows;
     }
 
     public void ShowPausePanel(bool value)
     {
         pausePanel.SetActive(value);
+    }
+
+    public void SetPlayerMaxHealth(float value)
+    {
+        if (value < 0) return;
+        playerMaxHealth = value;
+    }
+    public void SetPlayerMaxThrows(float value)
+    {
+        if (value < 0) return;
+        playerMaxThrows = value;
     }
 }
 

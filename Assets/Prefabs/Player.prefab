@@ -331,7 +331,7 @@ MonoBehaviour:
     m_Bits: 16384
   speed: 3.5
   jumpForce: 6
-  jumpAudioClip: {fileID: 8300000, guid: e7115b9a0f1fcf84f81e0c8f142af029, type: 3}
+  jumpAudioClip: {fileID: 8300000, guid: 1a7589471083fed4d8d7bd0def7d01cf, type: 3}
   meleeAudioClips:
   - {fileID: 8300000, guid: 3ec7c2e1a5a307649846cb2121408a02, type: 3}
   rangedAudioClip: {fileID: 8300000, guid: 3e55987c24725e7468673a3327392110, type: 3}

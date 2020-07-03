@@ -94,7 +94,6 @@ public class GameManager : MonoBehaviour
     {      
         HUD.SetActive(false);
 
-        EnemyManager.Instance.ResetEnemyCounter();
         AsyncOperation asyncLoad;
         if (levelToLoad == 0)
         {

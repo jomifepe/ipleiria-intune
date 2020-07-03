@@ -24,7 +24,6 @@ public class EnemySpawner : MonoBehaviour
         {
             yield return new WaitForSeconds(timeToWaitBeforeSpawn);
             Instantiate(enemyPrefab, transform.position, transform.rotation);
-            EnemyManager.Instance.IncreaseEnemiesCounter();
         }
     }
 }
