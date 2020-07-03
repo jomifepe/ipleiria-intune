@@ -39,36 +39,41 @@ public class Witch : Enemy
          movement = direction;
      }*/
 
-     protected override void EnemyMove()
-     {
-         rigidBody.velocity = new Vector2(speed * transform.right.x, rigidBody.velocity.y);
+    /*protected override void EnemyMove()
+    {
+        rigidBody.velocity = new Vector2(speed * transform.right.x, rigidBody.velocity.y);
 
-         Vector3 direction = player.position - transform.position;
-         //posso voltar a por como estava maybe
-         UpdateCanFlip(direction);//change method name
-         //sensingRange está dentro do sensingRange range, entao paara
-         if (Mathf.Abs(direction.x) > sensingRange)
-         {
-             movement = Vector2.zero;
-             InRange = false;
-             return;
-         }
-         InRange = true;
+        Vector3 direction = player.position - transform.position;
+        //posso voltar a por como estava maybe
+        UpdateCanFlip(direction);//change method name
+        //sensingRange está dentro do sensingRange range, entao paara
+        if (Mathf.Abs(direction.x) > sensingRange)
+        {
+            movement = Vector2.zero;
+            InRange = false;
+            return;
+        }
+        InRange = true;
 
-         //Debug.Log(transform.localEulerAngles.y);
-         //Debug.Log(direction.x);
+        //Debug.Log(transform.localEulerAngles.y);
+        //Debug.Log(direction.x);
 
-         direction.Normalize();
-         //so he doesn't jump
-         direction.y = 0f;
-         movement = direction;
+        direction.Normalize();
+        //so he doesn't jump
+        direction.y = 0f;
+        movement = direction;
+   }*/
+
+    protected override void EnemyMove()
+    {
+        rigidBody.velocity = new Vector2(speed * transform.right.x, rigidBody.velocity.y);
     }
 
     protected override void EnemyFixedUpdate()
 	{
-
-
-	}
+        UpdateReachedBorder();
+        if (ReachedBorder) Flip();
+    }
 
     protected override void Attack()
     {
