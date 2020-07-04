@@ -9,8 +9,12 @@ using Random = System.Random;
 
 public abstract class Enemy : MonoBehaviour
 {
-    protected Rigidbody2D rigidBody;
-    protected Vector2 movement;
+    public enum MovementType{SimpleMove, FollowPlayer, FollowPlayerSmart};
+
+    [SerializeField] private MovementType movementType;
+    
+    private Rigidbody2D rigidBody;
+    private Vector2 movement;
 
     private Collider2D[] results = new Collider2D[1];
     private Camera mainCamera;
@@ -19,7 +23,6 @@ public abstract class Enemy : MonoBehaviour
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayerMask;
 
-    [SerializeField] protected bool followPlayer;
     [SerializeField] protected float speed = 1f;
 
     //attack
@@ -34,17 +37,17 @@ public abstract class Enemy : MonoBehaviour
     protected float maxHealth;
     protected bool IsAlive = true;
     private bool canFlip;
-    protected bool inRange = false;
-    protected bool reachedBorder;
+    private bool inRange = false;
+    private bool reachedBorder;
     protected float sensingRange;
     protected Vector3 direction;
     private LootDropper coinDropper;
 
-    protected bool attackMode;
+    private bool attackMode;
     private float attackRate = 2f;
     private float nextAttackTime;
     
-    protected bool diffPlatforms;
+    private bool diffPlatforms;
     private float triggerPosition = -1f;
     private bool right = true;
 
@@ -57,8 +60,8 @@ public abstract class Enemy : MonoBehaviour
 
     protected abstract void Attack();
     protected abstract void Init();
-    protected abstract void EnemyMove();
-    protected abstract void EnemyFixedUpdate();
+    //protected abstract void EnemyMove();
+    //protected abstract void EnemyFixedUpdate();
     
     private void Awake()
     {
@@ -79,18 +82,17 @@ public abstract class Enemy : MonoBehaviour
 
     protected void Update()
     {
-        Debug.Log("Player position: " + player.position.x);
         if (!IsAlive) return;
-        direction = player.position - transform.position;
 
+        UpdateDirection();
         UpdateCanFlip(direction);
-
-        //so it doesn't attack when on another platform
+        //so it doesn't attack when the player is on other platform
         UpdateDiffPlatforms();
+        //player on attack range ou analiza so a frente ou so atras
         if (PlayerOnAttackRange(direction.x) && !diffPlatforms)
         {
             //try to put this flip only on one side
-            if (canFlip) Flip();
+            if (canFlip && movementType == MovementType.FollowPlayerSmart) Flip();
             if (Time.time >= nextAttackTime && IsAlive)
             {
                 animator.SetTrigger(AnimAttack);
@@ -105,32 +107,86 @@ public abstract class Enemy : MonoBehaviour
 
         animator.SetBool(AnimIsAttacking, false);
         attackMode = false;
-        EnemyMove();  
-    }
-    
-    private void FixedUpdate()
-    {
-        if (!IsAlive) return;
-        EnemyFixedUpdate();
+        Move();
     }
 
-    protected void MoveNormally()
+    private void Move()
+    {
+        rigidBody.velocity = new Vector2(speed * transform.right.x, rigidBody.velocity.y);
+        if (movementType == MovementType.SimpleMove) return;
+        
+        if (!PlayerOnSensingRange(direction.x))
+        {
+            // Debug.Log("Player isn't on sensing range");
+            inRange = false;
+            return;
+        }
+
+        if (diffPlatforms) return;
+
+        //Debug.Log(transform.localEulerAngles.y);
+        //Debug.Log(direction.x);
+
+        inRange = true;
+        UpdateMovement(direction);
+    }
+
+    private void UpdateDirection()
+    {
+        direction = player.position - transform.position;
+    }
+
+    private void FixedUpdate()
+    {
+        //EnemyFixedUpdate();
+        
+        if (!IsAlive) return;
+        if (attackMode) return;
+
+        if (movementType == MovementType.SimpleMove)
+        {
+            MoveNormally();
+            return;
+        }
+        
+        //if following player
+        if (diffPlatforms || !inRange)
+        {
+            MoveNormally();
+            return;
+        }
+
+        UpdateReachedBorder();
+        if (!reachedBorder) FollowPlayer();
+    }
+
+    private void MoveNormally()
     {
         UpdateReachedBorder();
         if (reachedBorder) Flip();
     }
-    protected void FollowPlayer()
+    private void FollowPlayer()
     {
         if (canFlip) Flip();
         MoveCharacter(movement);
     }
 
+    //TODO this and trigger area
     private bool PlayerOnAttackRange(float playerDistanceX)
     {
+        if (movementType != MovementType.FollowPlayerSmart)
+        {
+            //contabiliza apenas a frente dele
+        }
+        else
+        {
+            //dois lados
+        }
+        
         return Mathf.Abs(playerDistanceX) <= attackRange;
     }
 
-    protected bool PlayerOnSensingRange(float playerDistanceX)
+    private bool PlayerOnSensingRange(float playerDistanceX)
     {
         return Mathf.Abs(playerDistanceX) <= sensingRange;
     }
@@ -140,7 +196,7 @@ public abstract class Enemy : MonoBehaviour
         rigidBody.MovePosition((Vector2)transform.position + (direction * (speed * Time.deltaTime)));
     }
 
-    protected void UpdateReachedBorder()
+    private void UpdateReachedBorder()
 	{
         reachedBorder = (Physics2D.OverlapPointNonAlloc(
             groundCheck.position,
@@ -160,7 +216,7 @@ public abstract class Enemy : MonoBehaviour
            direction.x > 0 && transform.localEulerAngles.y >= 180f);
     }
 
-    protected void Flip()
+    private void Flip()
     {
         Vector3 localRotation = transform.localEulerAngles;
         localRotation.y += 180f;
@@ -197,7 +253,7 @@ public abstract class Enemy : MonoBehaviour
         Destroy(gameObject);
     }
 
-    protected void UpdateMovement(Vector2 newMov)
+    private void UpdateMovement(Vector2 newMov)
     {
         newMov.Normalize();
         //so he doesn't jump

@@ -16,12 +16,13 @@ public class Skeleton: Enemy
         sensingRange = 10f;
     }
 
-    protected override void EnemyMove()
+    /*protected override void EnemyMove()
     {
+        Debug.Log("Skeleton enemy move");
         rigidBody.velocity = new Vector2(speed * transform.right.x, rigidBody.velocity.y);
         if (!PlayerOnSensingRange(direction.x))
         {
-            // Debug.Log("Player isnt on sensing range");
+            // Debug.Log("Player isn't on sensing range");
             inRange = false;
             return;
         }
@@ -37,6 +38,7 @@ public class Skeleton: Enemy
 
     protected override void EnemyFixedUpdate()
 	{
+        Debug.Log("Skeleton fixed update");
         if (attackMode) return;
         if (diffPlatforms || !inRange)
         {
@@ -47,7 +49,7 @@ public class Skeleton: Enemy
         UpdateReachedBorder();
         //following the player
         if (!reachedBorder) FollowPlayer();
-    }
+    }*/
 
     protected override void Attack()
 	{
