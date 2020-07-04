@@ -290,8 +290,8 @@ GameObject:
   - component: {fileID: 8044703417865281759}
   - component: {fileID: 8044703417865281758}
   - component: {fileID: 8044703417865281757}
+  - component: {fileID: 5182589643205444302}
   - component: {fileID: 2237965594218538728}
-  - component: {fileID: 4979361872093680748}
   - component: {fileID: 8597579083873739715}
   m_Layer: 10
   m_Name: Skeleton
@@ -405,6 +405,25 @@ CapsuleCollider2D:
   m_Offset: {x: 0.1589774, y: 0.031307578}
   m_Size: {x: 0.7311916, y: 1.7710664}
   m_Direction: 0
+--- !u!95 &5182589643205444302
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8044703417865281756}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: f7f3226aa1eff59438fdfe466913daf7, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!114 &2237965594218538728
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -433,25 +452,6 @@ MonoBehaviour:
   playerLayerMask:
     serializedVersion: 2
     m_Bits: 256
---- !u!95 &4979361872093680748
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8044703417865281756}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: f7f3226aa1eff59438fdfe466913daf7, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!114 &8597579083873739715
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -466,7 +466,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   coinPrefab: {fileID: 6173687096675158454, guid: c3701e3175864e440a1049bc6d8f424c,
     type: 3}
+  lifePrefab: {fileID: 4245808345878450828, guid: 4922788a0a471b7478fb01632add7999,
+    type: 3}
+  throwChargePrefab: {fileID: 8873143802504178685, guid: 7f2a67eb744abbb41a0edc94d500aabb,
+    type: 3}
   valueMultiplier: 1
+  lifeDropChance: 0.2
+  throwChargeDropChance: 0.15
+  minCoinValue: 5
+  maxCoinValue: 10
+  minCoinCount: 1
+  maxCoinCount: 2
 --- !u!1 &8044703418025823953
 GameObject:
   m_ObjectHideFlags: 0

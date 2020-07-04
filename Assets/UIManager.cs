@@ -5,7 +5,7 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; } = null;
 
-    [SerializeField] private Text scoreText;
+    [SerializeField] private Text coinText;
     [SerializeField] private Image lifeBar;
     [SerializeField] private Image throwBar;
     [SerializeField] private GameObject pausePanel;
@@ -25,9 +25,9 @@ public class UIManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public void UpdateScore(int score)
+    public void UpdateCoins(int score)
     {
-        scoreText.text = score.ToString();
+        coinText.text = score.ToString();
     }
 
     public void UpdatePlayerLife(float life)

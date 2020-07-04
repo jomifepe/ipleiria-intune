@@ -9,6 +9,11 @@ public class GameManager : MonoBehaviour
     private const string StateKeyCoins = "coins";
     public static GameManager Instance { get; private set; } = null;
 
+    public float CurrentPlayerHealth { get; private set; }
+    public float CurrentPlayerThrows { get; private set; }
+    public float MaxPlayerHealth { get; private set; }
+    public float MaxPlayerThrows { get; private set; }
+    
     private int coins;
     private int Coins
     {
@@ -50,19 +55,19 @@ public class GameManager : MonoBehaviour
         {
             Coins = PlayerPrefs.GetInt(StateKeyCoins);
         }
-        UpdateGameScoreText();
+        UpdateCoinsText();
     }
     
-    private void UpdateGameScoreText()
+    private void UpdateCoinsText()
     {
-        UIManager.Instance.UpdateScore(Coins);
+        UIManager.Instance.UpdateCoins(Coins);
     }
 
     public void IncrementCoins(int amount)
     {
         if (amount <= 0) return;
         Coins += amount;
-        UpdateGameScoreText();
+        UpdateCoinsText();
     }
 
     public void LoadNextLevel()
@@ -149,5 +154,29 @@ public class GameManager : MonoBehaviour
             Time.timeScale = oldTimeScale;
             UIManager.Instance.ShowPausePanel(false);
         }
+    }
+
+    public void SetPlayerMaxHealth(float value)
+    {
+        MaxPlayerHealth = value;
+        UIManager.Instance.SetPlayerMaxHealth(value);
+    }
+
+    public void SetPlayerMaxThrows(float value)
+    {
+        MaxPlayerThrows = value;
+        UIManager.Instance.SetPlayerMaxThrows(value);
+    }
+
+    public void UpdatePlayerLife(float value)
+    {
+        CurrentPlayerHealth = value;
+        UIManager.Instance.UpdatePlayerLife(value);
+    }
+
+    public void UpdatePlayerThrows(float value)
+    {
+        CurrentPlayerThrows = value;
+        UIManager.Instance.UpdatePlayerThrows(value);
     }
 }
