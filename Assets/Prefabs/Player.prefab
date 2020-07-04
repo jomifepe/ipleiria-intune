@@ -325,7 +325,7 @@ MonoBehaviour:
     m_Bits: 512
   enemyLayerMask:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 0
   destructibleLayerMask:
     serializedVersion: 2
     m_Bits: 16384

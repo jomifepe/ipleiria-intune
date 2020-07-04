@@ -83,8 +83,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7065451944867234441}
-  m_Layer: 8
-  m_Name: MeleeAttackPoint
+  m_Layer: 10
+  m_Name: AttackPoint
   m_TagString: Untagged
   m_Icon: {fileID: -5442936267250999957, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -447,7 +447,8 @@ MonoBehaviour:
   attackDamage: 1
   lifebarImage: {fileID: 5504275465695881511}
   lifebarCanvas: {fileID: 7139927683293155757}
-  meleeAttackPoint: {fileID: 7065451944867234441}
+  attackAudioClip: {fileID: 0}
+  attackPoint: {fileID: 7065451944867234441}
   playerLayerMask:
     serializedVersion: 2
     m_Bits: 256

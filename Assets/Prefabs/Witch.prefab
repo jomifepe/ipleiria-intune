@@ -157,7 +157,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8893610868187306608}
-  m_Layer: 8
+  m_Layer: 10
   m_Name: ThrowPoint
   m_TagString: Untagged
   m_Icon: {fileID: 4422084297763085224, guid: 0000000000000000d000000000000000, type: 0}
@@ -471,15 +471,16 @@ MonoBehaviour:
     m_Bits: 512
   movementType: 0
   speed: 1
-  cooldown: 3
+  attackCooldown: 3
   attackRange: 6
   attackDamage: 2
+  attackPoint: {fileID: 8893610868187306608}
   lifebarImage: {fileID: 6772507679635615633}
   lifebarCanvas: {fileID: 8253344273807759131}
+  attackAudioClip: {fileID: 0}
   throwablePrefab: {fileID: 164641265797304320, guid: 5a93d814c7a6eb04abf0996dcd28ac12,
     type: 3}
-  throwPoint: {fileID: 8893610868187306608}
-  attackAudioClip: {fileID: 0}
+  shootVelocity: 3
 --- !u!114 &4471141532328517465
 MonoBehaviour:
   m_ObjectHideFlags: 0
