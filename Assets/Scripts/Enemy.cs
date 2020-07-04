@@ -14,7 +14,7 @@ public abstract class Enemy : MonoBehaviour
     private Rigidbody2D rigidBody;
     private Vector2 movement;
 
-    private Collider2D[] results = new Collider2D[1];
+    protected readonly Collider2D[] results = new Collider2D[1];
     private Camera mainCamera;
     private Animator animator;
 
@@ -23,52 +23,53 @@ public abstract class Enemy : MonoBehaviour
     
     [SerializeField] private MovementType movementType;
     [SerializeField] protected float speed = 1f;
-
-    //attack
-    [SerializeField] private float cooldown; //time for cooldown between attacks
-    [SerializeField] protected float attackRange;
-    [SerializeField] protected float attackDamage;
-
+    
     [SerializeField] private Image lifebarImage;
     [SerializeField] private Canvas lifebarCanvas;
 
+    #region Attack
+    [SerializeField] private float attackCooldown; //time for cooldown between attacks
+    [SerializeField] protected float attackRange;
+    [SerializeField] protected float attackDamage;
+    [SerializeField] protected Transform attackPoint;
+    
+    private bool attackMode;
+    private float attackRate = 2f;
+    private float nextAttackTime;
+    #endregion
+    
     protected float life;
     protected float maxHealth;
     private bool isAlive = true;
     private bool canFlip;
-    private bool inSensingRange = false;
     private bool reachedBorder;
     protected float sensingRange;
+    private bool inSensingRange;
     private Vector3 direction;
-    private LootDropper coinDropper;
-
-    private bool attackMode;
-    protected float attackRate = 2f;
-    protected float nextAttackTime;
     
     private bool diffPlatforms;
     private float triggerPosition = -1f;
     private bool right = true;
 
     private Transform player;
+    
     protected AudioSource audioSource;
+    [SerializeField] protected AudioClip attackAudioClip;
 
-    private string AnimAttack = "Attack";
-    private string AnimIsAttacking = "IsAttacking";
-    private string AnimHurt = "Hurt";
-    private string AnimIsDead = "IsDead";
+    private const string AnimAttack = "Attack";
+    private const string AnimIsAttacking = "IsAttacking";
+    private const string AnimHurt = "Hurt";
+    private const string AnimIsDead = "IsDead";
 
     protected abstract void Attack();
     protected abstract void Init();
 
-    //TODO Improve samePlatform and witch attack
-    //Ranged have the sensing and attack range the same
+    //TODO Improve samePlatform check
     private void Awake()
     {
         Init();
         UpdateDiffPlatforms();
         player = GameObject.Find("Player").transform;
-        coinDropper = GetComponent<LootDropper>();
         rigidBody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         mainCamera = FindObjectOfType<Camera>();
@@ -108,7 +109,7 @@ public abstract class Enemy : MonoBehaviour
     {
         animator.SetTrigger(AnimAttack);
         animator.SetBool(AnimIsAttacking, true);
-        nextAttackTime = Time.time + cooldown / attackRate;
+        nextAttackTime = Time.time + attackCooldown / attackRate;
     }
 
     private void Move()
@@ -192,10 +193,10 @@ public abstract class Enemy : MonoBehaviour
 
     private void UpdateReachedBorder()
 	{
-        reachedBorder = (Physics2D.OverlapPointNonAlloc(
+        reachedBorder = Physics2D.OverlapPointNonAlloc(
             groundCheck.position,
             results,
-            groundLayerMask) == 0);
+            groundLayerMask) == 0;
     }
 
     private void UpdateCanFlip(Vector2 direction)
