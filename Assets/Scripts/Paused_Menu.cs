@@ -5,11 +5,15 @@ using UnityEngine.SceneManagement;
 
 public class Paused_Menu : MonoBehaviour
 {
+	[SerializeField] private GameObject HUD;
+
     public void Resume()
     {
-        UIManager.Instance.ShowPausePanel(false);
-        Time.timeScale = 1f;
+        //UIManager.Instance.ShowPausePanel(false);
+		//HUD.SetActive(true);
+        //Time.timeScale = 1f;
         Debug.Log("Reseumed");
+		GameManager.Instance.PauseGame(false);
     }
 
     public void Restart()
@@ -17,14 +21,16 @@ public class Paused_Menu : MonoBehaviour
         Debug.Log("Restart..");
         int level = GameManager.Instance.GetLevel();
         StartCoroutine(GameManager.Instance.LoadNextLevelAsync(--level));
-        Time.timeScale = 1f;
+		GameManager.Instance.PauseGame(false);
+        //Time.timeScale = 1f;
     }
 
     public void QuitLevel()
     {
         GameManager.Instance.ResetScore();
         StartCoroutine(GameManager.Instance.LoadNextLevelAsync(0));
-        Time.timeScale = 1f;
+        //Time.timeScale = 1f;
+		GameManager.Instance.PauseGame(false);
     }
     
     public void Option()
