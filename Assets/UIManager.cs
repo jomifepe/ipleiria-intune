@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
@@ -55,6 +56,12 @@ public class UIManager : MonoBehaviour
         if (value < 0) return;
         playerMaxThrows = value;
     }
+	
+	public void OpenOptionMenu()
+	{
+		Debug.Log("[UIManager] Click Open options");
+        SceneManager.LoadScene("Option_inMenu");
+	}
 }
 
 

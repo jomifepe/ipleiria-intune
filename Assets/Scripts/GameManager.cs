@@ -112,6 +112,11 @@ public class GameManager : MonoBehaviour
         {
             asyncLoad = SceneManager.LoadSceneAsync("Option");
         }
+        else if (levelToLoad == -3)
+        {
+            //ResetScore();
+            asyncLoad = SceneManager.LoadSceneAsync("Credits");
+        }
         else
         {
             if (Application.CanStreamedLevelBeLoaded("Level" + levelToLoad))
@@ -178,5 +183,11 @@ public class GameManager : MonoBehaviour
     {
         CurrentPlayerThrows = value;
         UIManager.Instance.UpdatePlayerThrows(value);
+    }
+
+    public void OpenOptionsOnMenu()
+    {
+        Debug.Log("[GAMEMANAGER] Click Open options");
+        UIManager.Instance.OpenOptionMenu();
     }
 }
