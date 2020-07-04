@@ -1118,7 +1118,7 @@ GameObject:
   - component: {fileID: 652272733}
   - component: {fileID: 652272734}
   m_Layer: 5
-  m_Name: ScoreText
+  m_Name: CoinsText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2075,7 +2075,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 124.9, y: -141.4}
+  m_AnchoredPosition: {x: 124.8999, y: -141.40002}
   m_SizeDelta: {x: 192, y: 64}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &960786207
@@ -2811,7 +2811,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c9c30d8a3ce5774391c5d71f042e1db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scoreText: {fileID: 652272731}
+  coinText: {fileID: 652272731}
   lifeBar: {fileID: 335307468}
   throwBar: {fileID: 960786207}
   pausePanel: {fileID: 1265457826}
@@ -3242,7 +3242,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 124.9, y: -141.4}
+  m_AnchoredPosition: {x: 124.8999, y: -141.40002}
   m_SizeDelta: {x: 192, y: 64}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1872304085

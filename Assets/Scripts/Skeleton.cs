@@ -12,11 +12,7 @@ public class Skeleton: Enemy
 
     protected override void Init()
     {
-        life = maxHealth = 2f;
-        minCoinDrop = 5;
-        maxCoinDrop = 10;
-        minCoinCount = 1;
-        maxCoinCount = 2;
+        Life = maxHealth = 2f;
         sensingRange = 10f;
     }
 

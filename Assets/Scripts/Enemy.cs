@@ -33,15 +33,15 @@ public abstract class Enemy : MonoBehaviour
     [SerializeField] private Image lifebarImage;
     [SerializeField] private Canvas lifebarCanvas;
 
-    protected float life;
+    protected float Life;
     protected float maxHealth;
-    private bool isAlive = true;
+    protected bool IsAlive = true;
     private bool canFlip;
     private bool inRange = false;
     private bool reachedBorder;
     protected float sensingRange;
-    private Vector3 direction;
-    private CoinDrop coinDropper;
+    protected Vector3 direction;
+    private LootDropper coinDropper;
 
     private bool attackMode;
     private float attackRate = 2f;
@@ -50,11 +50,6 @@ public abstract class Enemy : MonoBehaviour
     private bool diffPlatforms;
     private float triggerPosition = -1f;
     private bool right = true;
-    
-    protected int minCoinDrop;
-    protected int maxCoinDrop;
-    protected int minCoinCount;
-    protected int maxCoinCount;
 
     public Transform player;
     
@@ -72,7 +67,7 @@ public abstract class Enemy : MonoBehaviour
     {
         Init();
         UpdateDiffPlatforms();
-        coinDropper = GetComponent<CoinDrop>();
+        coinDropper = GetComponent<LootDropper>();
         rigidBody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         mainCamera = FindObjectOfType<Camera>();
@@ -87,7 +82,7 @@ public abstract class Enemy : MonoBehaviour
 
     protected void Update()
     {
-        if (!isAlive) return;
+        if (!IsAlive) return;
 
         UpdateDirection();
         UpdateCanFlip(direction);
@@ -231,29 +226,25 @@ public abstract class Enemy : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
-        if (!isAlive) return;
-
+        if (!IsAlive) return;
         animator.SetTrigger(AnimHurt);
-        life -= damage;
-
-        if (life < 0f) life = 0f;
+        Life -= damage;
+        if (Life < 0f) Life = 0f;
         UpdateLifebar();
-        if (life == 0f)Die();
+        if (Life == 0f) Die();
     }
 
     private void UpdateLifebar()
     {
-        lifebarImage.fillAmount = life / maxHealth;
+        lifebarImage.fillAmount = Life / maxHealth;
     }
 
     private void Die()
     {
-        isAlive = false;
+        IsAlive = false;
         animator.SetBool(AnimIsDead, true);
         rigidBody.velocity = Vector2.zero;
         rigidBody.angularVelocity = 0f;
-        coinDropper.DropCoins(minCoinDrop, maxCoinDrop, 
-            minCoinCount,maxCoinCount);
         Invoke(nameof(DestroyEnemy), 3);
     }
 

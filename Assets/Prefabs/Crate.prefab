@@ -118,7 +118,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.038706303, y: -0.11006677}
+  m_Offset: {x: 0.059390306, y: -0.11194712}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -129,7 +129,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.46319866, y: 0.52411914}
+  m_Size: {x: 0.498657, y: 0.49671894}
   m_EdgeRadius: 0
 --- !u!114 &7818268163303545607
 MonoBehaviour:
@@ -145,7 +145,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   coinPrefab: {fileID: 6173687096675158454, guid: c3701e3175864e440a1049bc6d8f424c,
     type: 3}
+  lifePrefab: {fileID: 4245808345878450828, guid: 4922788a0a471b7478fb01632add7999,
+    type: 3}
+  throwChargePrefab: {fileID: 8873143802504178685, guid: 7f2a67eb744abbb41a0edc94d500aabb,
+    type: 3}
   valueMultiplier: 1
+  lifeDropChance: 0.2
+  throwChargeDropChance: 0.15
+  minCoinValue: 3
+  maxCoinValue: 5
+  minCoinCount: 1
+  maxCoinCount: 1
 --- !u!114 &3743170184041292114
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -158,4 +168,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8aa606ea87d3792468263fd88e817047, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 0
