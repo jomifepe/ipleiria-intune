@@ -3341,6 +3341,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HUD: {fileID: 1376194959}
   controls: {fileID: 0}
+  songList: []
 --- !u!4 &1928077186
 Transform:
   m_ObjectHideFlags: 0
@@ -3584,6 +3585,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioMixer: {fileID: 24100000, guid: fc9f5770e8ee9bf42b09b2e2a0092b09, type: 2}
+  audioSource: {fileID: 1995597950}
 --- !u!1 &2053028343
 GameObject:
   m_ObjectHideFlags: 0

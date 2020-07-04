@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
@@ -35,6 +36,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private GameObject HUD;
     [SerializeField] private GameObject controls;
+    [SerializeField] private List<AudioClip> songList;
 
     private void Awake()
     {
@@ -178,4 +180,9 @@ public class GameManager : MonoBehaviour
         CurrentPlayerThrows = value;
         UIManager.Instance.UpdatePlayerThrows(value);
     }
+
+    public void AddSong(AudioClip song)
+    {
+        songList.Add(song);
+    } 
 }
