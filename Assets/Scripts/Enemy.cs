@@ -43,15 +43,16 @@ public abstract class Enemy : MonoBehaviour
     private LootDropper coinDropper;
 
     private bool attackMode;
-    private float attackRate = 2f;
-    private float nextAttackTime;
+    protected float attackRate = 2f;
+    protected float nextAttackTime;
     
     private bool diffPlatforms;
     private float triggerPosition = -1f;
     private bool right = true;
 
     private Transform player;
-    
+    protected AudioSource audioSource;
+
     private string AnimAttack = "Attack";
     private string AnimIsAttacking = "IsAttacking";
     private string AnimHurt = "Hurt";
@@ -59,9 +60,7 @@ public abstract class Enemy : MonoBehaviour
 
     protected abstract void Attack();
     protected abstract void Init();
-    //protected abstract void EnemyMove();
-    //protected abstract void EnemyFixedUpdate();
-    
+
     //TODO Improve samePlatform and witch attack
     //Ranged have the sensing and attack range the same
     private void Awake()
@@ -73,6 +72,7 @@ public abstract class Enemy : MonoBehaviour
         rigidBody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         mainCamera = FindObjectOfType<Camera>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     private void Start()
@@ -89,26 +89,26 @@ public abstract class Enemy : MonoBehaviour
         UpdateCanFlip(direction);
         //so it doesn't attack when the player is on other platform
         UpdateDiffPlatforms();
-        //player on attack range ou analiza so a frente ou so atras
         if (PlayerOnAttackRange(direction.x) && !diffPlatforms)
         {
-            //try to put this flip only on one side
+            //try to put this flip on one side only
             if (canFlip && movementType == MovementType.FollowPlayerSmart) Flip();
-            if (Time.time >= nextAttackTime && isAlive)
-            {
-                animator.SetTrigger(AnimAttack);
-                animator.SetBool(AnimIsAttacking, true);
-                nextAttackTime = Time.time + cooldown / attackRate;
-            }
+            if (Time.time >= nextAttackTime && isAlive) StartAttacking();
             attackMode = true;
             return;
         }
         //So it doesn't move while still attacking
-        if (Time.time < nextAttackTime) return;	
-
+        if (Time.time < nextAttackTime) return;
         animator.SetBool(AnimIsAttacking, false);
         attackMode = false;
         Move();
+    }
+
+    private void StartAttacking()
+    {
+        animator.SetTrigger(AnimAttack);
+        animator.SetBool(AnimIsAttacking, true);
+        nextAttackTime = Time.time + cooldown / attackRate;
     }
 
     private void Move()
@@ -253,8 +253,8 @@ public abstract class Enemy : MonoBehaviour
         newMov.y = 0f;
         movement = newMov;
     }
-
-    private bool IsOnAnotherPlatform(float playerPosition)
+    
+    private bool IsOnAnotherPlatform()
     {
         return !((player.position.x < triggerPosition && right) ||
         (player.position.x > triggerPosition && !right));
@@ -264,7 +264,7 @@ public abstract class Enemy : MonoBehaviour
 	{
         if (diffPlatforms)
         {
-            if (IsOnAnotherPlatform(player.position.x)) return;
+            if (IsOnAnotherPlatform()) return;
             diffPlatforms = false;
             return;
         }

@@ -148,6 +148,36 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &8012386316146651281
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8893610868187306608}
+  m_Layer: 8
+  m_Name: ThrowPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 4422084297763085224, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8893610868187306608
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8012386316146651281}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.646, y: -0.098, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 9095966846338819694}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8103506338904254199
 GameObject:
   m_ObjectHideFlags: 0
@@ -313,6 +343,7 @@ Transform:
   m_Children:
   - {fileID: 9095966845977397348}
   - {fileID: 3975995061717884560}
+  - {fileID: 8893610868187306608}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -440,12 +471,15 @@ MonoBehaviour:
     m_Bits: 512
   movementType: 0
   speed: 1
-  cooldown: 1
+  cooldown: 3
   attackRange: 6
   attackDamage: 2
   lifebarImage: {fileID: 6772507679635615633}
   lifebarCanvas: {fileID: 8253344273807759131}
-  player: {fileID: 5411998984150073576, guid: e233026cf180fc240bcc4f115605ae7e, type: 3}
+  throwablePrefab: {fileID: 164641265797304320, guid: 5a93d814c7a6eb04abf0996dcd28ac12,
+    type: 3}
+  throwPoint: {fileID: 8893610868187306608}
+  attackAudioClip: {fileID: 0}
 --- !u!114 &4471141532328517465
 MonoBehaviour:
   m_ObjectHideFlags: 0
