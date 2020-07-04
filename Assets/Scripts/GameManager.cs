@@ -98,8 +98,13 @@ public class GameManager : MonoBehaviour
         }
         else if (levelToLoad == -2)
         {
-            ResetScore();
+            //ResetScore();
             asyncLoad = SceneManager.LoadSceneAsync("Option");
+        }
+        else if (levelToLoad == -3)
+        {
+            //ResetScore();
+            asyncLoad = SceneManager.LoadSceneAsync("Credits");
         }
         else
         {

@@ -13,4 +13,10 @@ public class Options : MonoBehaviour
 		Debug.Log("Back");
 		SceneManager.LoadScene("Menu");
 	}
+
+	public void OpenCredits()
+	{
+		StartCoroutine(GameManager.Instance.LoadNextLevelAsync(-3));
+		
+	}
 }
