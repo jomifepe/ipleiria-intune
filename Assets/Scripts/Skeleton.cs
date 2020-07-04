@@ -12,7 +12,7 @@ public class Skeleton: Enemy
 
     protected override void Init()
     {
-        Life = maxHealth = 2f;
+        life = maxHealth = 2f;
         sensingRange = 10f;
     }
 

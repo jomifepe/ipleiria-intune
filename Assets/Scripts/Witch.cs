@@ -9,7 +9,7 @@ public class Witch : Enemy
 {
     protected override void Init()
     {
-        Life = maxHealth = 3f;
+        life = maxHealth = 3f;
         sensingRange = 15f;
     }
 
