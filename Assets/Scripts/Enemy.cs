@@ -93,7 +93,7 @@ public abstract class Enemy : MonoBehaviour
         {
             //try to put this flip only on one side
             if (canFlip && movementType == MovementType.FollowPlayerSmart) Flip();
-            if (Time.time >= nextAttackTime && isAlive)
+            if (Time.time >= nextAttackTime && IsAlive)
             {
                 animator.SetTrigger(AnimAttack);
                 animator.SetBool(AnimIsAttacking, true);
@@ -140,7 +140,7 @@ public abstract class Enemy : MonoBehaviour
     {
         //EnemyFixedUpdate();
         
-        if (!isAlive) return;
+        if (!IsAlive) return;
         if (attackMode) return;
 
         if (movementType == MovementType.SimpleMove)
