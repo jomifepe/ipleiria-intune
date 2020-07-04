@@ -1,12 +1,31 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
+    private const string StateKeyCoins = "coins";
     public static GameManager Instance { get; private set; } = null;
-    private int score = 0;
+
+    public float CurrentPlayerHealth { get; private set; }
+    public float CurrentPlayerThrows { get; private set; }
+    public float MaxPlayerHealth { get; private set; }
+    public float MaxPlayerThrows { get; private set; }
+    
+    private int coins;
+    private int Coins
+    {
+        get => coins;
+        set
+        {
+            if (value == coins) return;
+            coins = value;
+            PlayerPrefs.SetInt(StateKeyCoins, coins);
+            PlayerPrefs.Save();
+        }
+    }
 
     private int level = 1;
 
@@ -32,21 +51,23 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        UpdateGameScoreText();
-    }
-
-    private void UpdateGameScoreText()
-    {
-        UIManager.Instance.UpdateScore(score);
-    }
-
-    public void AddScore(int scoreToAdd)
-    {
-        if (scoreToAdd > 0)
+        if (PlayerPrefs.HasKey(StateKeyCoins))
         {
-            score += scoreToAdd;
-            UpdateGameScoreText();
+            Coins = PlayerPrefs.GetInt(StateKeyCoins);
         }
+        UpdateCoinsText();
+    }
+    
+    private void UpdateCoinsText()
+    {
+        UIManager.Instance.UpdateCoins(Coins);
+    }
+
+    public void IncrementCoins(int amount)
+    {
+        if (amount <= 0) return;
+        Coins += amount;
+        UpdateCoinsText();
     }
 
     public void LoadNextLevel()
@@ -74,31 +95,21 @@ public class GameManager : MonoBehaviour
         level = 1;
     }
 
-    public void ResetScore()
-    {
-        score = 0;
-        UpdateGameScoreText();
-    }
-
     public IEnumerator LoadNextLevelAsync(int levelToLoad)
     {      
         HUD.SetActive(false);
 
-        EnemyManager.Instance.ResetEnemyCounter();
         AsyncOperation asyncLoad;
         if (levelToLoad == 0)
         {
-            ResetScore();
             asyncLoad = SceneManager.LoadSceneAsync("Menu");
         }
         else if (levelToLoad == -1)
         {
-            ResetScore();
             asyncLoad = SceneManager.LoadSceneAsync("Menu_Levels");
         }
         else if (levelToLoad == -2)
         {
-            ResetScore();
             asyncLoad = SceneManager.LoadSceneAsync("Option");
         }
         else
@@ -143,5 +154,29 @@ public class GameManager : MonoBehaviour
             Time.timeScale = oldTimeScale;
             UIManager.Instance.ShowPausePanel(false);
         }
+    }
+
+    public void SetPlayerMaxHealth(float value)
+    {
+        MaxPlayerHealth = value;
+        UIManager.Instance.SetPlayerMaxHealth(value);
+    }
+
+    public void SetPlayerMaxThrows(float value)
+    {
+        MaxPlayerThrows = value;
+        UIManager.Instance.SetPlayerMaxThrows(value);
+    }
+
+    public void UpdatePlayerLife(float value)
+    {
+        CurrentPlayerHealth = value;
+        UIManager.Instance.UpdatePlayerLife(value);
+    }
+
+    public void UpdatePlayerThrows(float value)
+    {
+        CurrentPlayerThrows = value;
+        UIManager.Instance.UpdatePlayerThrows(value);
     }
 }

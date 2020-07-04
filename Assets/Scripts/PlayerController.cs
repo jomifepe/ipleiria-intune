@@ -9,75 +9,77 @@ using Random = UnityEngine.Random;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private GameObject starPrefab;
-
+    [SerializeField] private GameObject throwablePrefab;
     [SerializeField] private Transform throwPoint;
     [SerializeField] private Transform meleeAttackPoint;
-
-    private Rigidbody2D playerRigidbody;
-    private Animator animator;
-
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayerMask;
     [SerializeField] private LayerMask enemyLayerMask;
-
-    private Collider2D[] results = new Collider2D[1];
-
+    [SerializeField] private LayerMask destructibleLayerMask;
     [SerializeField] private float speed = 3.5f;
-    [SerializeField] private float jumpForce = 5f;
-
-    private bool jump = false;
-    private bool isGrounded = false;
-    private float life = 3f;
-    private bool isAlive = true;
-    private float shootVelocity = 5f;
-
-    private AudioSource myAudioSource;
-
+    [SerializeField] private float jumpForce = 6f;
     [SerializeField] private AudioClip jumpAudioClip;
-    [SerializeField] private AudioClip[] shotAudioClips;
-
-    [SerializeField] private float attackRange = 0.5f;
+    [SerializeField] private AudioClip[] meleeAudioClips;
+    [SerializeField] private AudioClip rangedAudioClip;
+    [SerializeField] private float meleeAttackRange = 0.5f;
     [SerializeField] private float meleeDamage = 1f;
-    private float attackRate = 2f;
-    private float nextAttackTime = 0f;
+    [Range(0, .3f)] [SerializeField] private float movementSmoothing = .05f;
+
+    private Rigidbody2D playerRigidbody;
+    private Animator animator;
+    private AudioSource audioSource;
+    private Collider2D[] results = new Collider2D[1];
+    
+    private bool jump, isGrounded, wasJumping, isAlive = true;
+    private float health = 3f, throws = 3f, maxHealth, maxThrows;
+    private float shootVelocity = 5f, attackRate = 2f;
+
+    private float nextMeleeAttackTime, nextRangedAttackTime;
+    private float jumpTimer;
+    
+    private string AnimHurt = "Hurt";
+    private string AnimIsDead = "IsDead";
+    private string AnimIsJumping = "IsJumping";
+    private string AnimHorizontalSpeed = "HorizontalSpeed";
+    private string AnimAttackMelee = "AttackMelee";
 
     private void Awake()
     {
+        maxHealth = health;
+        maxThrows = throws;
+        GameManager.Instance.SetPlayerMaxHealth(maxHealth);
+        GameManager.Instance.SetPlayerMaxThrows(maxThrows);
         playerRigidbody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        myAudioSource = GetComponent<AudioSource>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     private void Start()
     {
-        UpdateLifebarImage();
-    }
-
-    private void UpdateLifebarImage()
-    {
-        UIManager.Instance.UpdatePlayerLife(life);
+        UpdateHealthBar();
     }
 
     private void Update()
     {
+        jumpTimer -= Time.deltaTime;
+        
         if (!GameManager.Instance.IsPaused)
         {
             if (isAlive)
             {
-                if (Time.time >= nextAttackTime)
+                if (Time.time >= nextMeleeAttackTime && Input.GetButtonDown("Fire1"))
+                // if (Time.time >= nextMeleeAttackTime && CrossPlatformInputManager.GetButtonDown("Fire1"))
                 {
-                    // if (Input.GetButtonDown("Fire1"))
-                    
-                    if (CrossPlatformInputManager.GetButtonDown("Fire1"))
-                    {
-                        AttackMelee();
-                        nextAttackTime = Time.time + 1f / attackRate;
-                    }
+                    PerformAttackAnimation();
+                }
+                // if (Time.time >= nextRangedAttackTime && Input.GetButtonDown("Fire2"))
+                if (Time.time >= nextRangedAttackTime && CrossPlatformInputManager.GetButtonDown("Fire2"))
+                {
+                    Throw();
                 }
 
-                // float horizontalInput = Input.GetAxisRaw("Horizontal");
-                float horizontalInput = CrossPlatformInputManager.GetAxisRaw("Horizontal");
+                float horizontalInput = Input.GetAxisRaw("Horizontal");
+                // float horizontalInput = CrossPlatformInputManager.GetAxisRaw("Horizontal");
 
                 if (transform.right.x > 0 && horizontalInput < 0)
                 {
@@ -89,48 +91,17 @@ public class PlayerController : MonoBehaviour
                     Flip();
                 }
 
-                // if (Input.GetButtonDown("Jump"))
-                if (CrossPlatformInputManager.GetButtonDown("Jump"))
+                if (Input.GetButtonDown("Jump"))
+                // if (CrossPlatformInputManager.GetButtonDown("Jump"))
                 {
                     jump = true;
                 }
 
-                playerRigidbody.velocity =
-                new Vector2(horizontalInput * speed, playerRigidbody.velocity.y);
+                playerRigidbody.velocity = new Vector2(horizontalInput * speed, playerRigidbody.velocity.y);
 
-                animator.SetFloat("HorizontalSpeed", Mathf.Abs(playerRigidbody.velocity.x));
+                animator.SetFloat(AnimHorizontalSpeed, Mathf.Abs(playerRigidbody.velocity.x));
             }
         }
-    }
-
-    private void Shoot()
-    {
-        animator.SetTrigger("Attack");    
-    }
-
-    private void AttackMelee()
-    {
-        animator.SetTrigger("AttackMelee");
-        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(meleeAttackPoint.position, attackRange, enemyLayerMask);
-        
-        foreach (Collider2D enemy in hitEnemies)
-        {
-            enemy.GetComponent<Enemy>().TakeDamage(meleeDamage);
-        }
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        if (meleeAttackPoint == null) return;
-        Gizmos.DrawWireSphere(meleeAttackPoint.position, attackRange);
-    }
-
-    private void AnimatorEventShoot()
-    {
-        GameObject star =
-            Instantiate(starPrefab, throwPoint.position, throwPoint.rotation);
-        star.GetComponent<Rigidbody2D>().velocity = throwPoint.right * shootVelocity;
-        myAudioSource.PlayOneShot(shotAudioClips[Random.Range(0, shotAudioClips.Length)]);
     }
 
     private void FixedUpdate()
@@ -139,15 +110,77 @@ public class PlayerController : MonoBehaviour
         {
             isGrounded = CheckForGround();
 
-            if (jump && isGrounded)
+            if (wasJumping && isGrounded && jumpTimer <= 0)
             {
-                playerRigidbody.velocity = Vector2.zero;
-                playerRigidbody.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-                myAudioSource.PlayOneShot(jumpAudioClip);
+                animator.SetBool(AnimIsJumping, false);
+                wasJumping = false;
+            }
+
+            if (jump && isGrounded && jumpTimer <= 0)
+            {
+                wasJumping = true;
+                jumpTimer = 0.1f;
+                animator.SetBool(AnimIsJumping, true);
+                playerRigidbody.velocity = Vector2.up * jumpForce;
+
+                audioSource.PlayOneShot(jumpAudioClip);
             }
 
             jump = false;
         }
+    }
+
+    private void PerformAttackAnimation()
+    {
+        animator.SetTrigger("AttackMelee");
+        nextMeleeAttackTime = Time.time + 1f / attackRate;
+        audioSource.PlayOneShot(meleeAudioClips[0]);
+    }
+    
+    /* Called by animation event */
+    private void AttackMelee()
+    {
+        // animator.SetTrigger("AttackMelee");
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(meleeAttackPoint.position, meleeAttackRange, enemyLayerMask);
+        Collider2D[] hitDestructibles = Physics2D.OverlapCircleAll(meleeAttackPoint.position, meleeAttackRange, destructibleLayerMask);
+        
+        foreach (Collider2D enemy in hitEnemies)
+        {
+            enemy.GetComponent<Enemy>().TakeDamage(meleeDamage);
+        }
+        foreach (Collider2D desctructible in hitDestructibles)
+        {
+            desctructible.GetComponent<Destructible>().Destroy();
+        }
+    }
+    
+    private void Throw()
+    {
+        if (throws == 0f) return;
+        // animator.SetTrigger("Throw"); // TODO: Throw animation
+        AnimatorEventThrow();
+        DecrementThrows();
+        nextRangedAttackTime = Time.time + 1f / attackRate;
+    }
+
+    private void DecrementThrows()
+    {
+        throws -= 1;
+        if (throws < 0) throws = 0;
+        UpdateThrowBar();
+    }
+    
+    private void AnimatorEventThrow()
+    {
+        GameObject throwable = Instantiate(throwablePrefab, throwPoint.position, throwPoint.rotation);
+        throwable.GetComponent<Rigidbody2D>().velocity = throwPoint.right * shootVelocity;
+        audioSource.PlayOneShot(rangedAudioClip);
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (meleeAttackPoint == null) return;
+        Gizmos.DrawWireSphere(meleeAttackPoint.position, meleeAttackRange);
     }
 
     private bool CheckForGround()
@@ -164,28 +197,53 @@ public class PlayerController : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
-        if (isAlive)
-        {
-            animator.SetTrigger("Hurt");
-            life -= damage;
-            if (life < 0f)
-            {
-                life = 0f;
-            }
+        if (!isAlive) return;
+        animator.SetTrigger(AnimHurt);
+        health -= damage;
+        if (health < 0f) health = 0f;
+        UpdateHealthBar();
+        if (health == 0f) Die();
 
-            UpdateLifebarImage();
-
-            if (life == 0f)
-            {
-                Die();
-            }
-        }
     }
 
     private void Die()
     {
         isAlive = false;
-        animator.SetBool("IsDead", true);
+        animator.SetBool(AnimIsDead, true);
         //Destroy(gameObject);
+    }
+
+    public bool IsFullHealth()
+    {
+        return health.Equals(maxHealth);
+    }
+    
+    public bool HasAllThrows()
+    {
+        return throws.Equals(maxThrows);
+    }
+    
+    public void GiveHealth(float value)
+    {
+        health += value;
+        if (health > maxHealth) health = maxHealth;
+        UpdateHealthBar();
+    }
+    
+    public void GiveThrow(float value)
+    {
+        throws += value;
+        if (throws > maxThrows) throws = maxThrows;
+        UpdateThrowBar();
+    }
+    
+    private void UpdateHealthBar()
+    {
+        GameManager.Instance.UpdatePlayerLife(health);
+    }
+    
+    private void UpdateThrowBar()
+    {
+        GameManager.Instance.UpdatePlayerThrows(throws);
     }
 }

@@ -3,32 +3,71 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
-using UnityEngine.UI;
+using UnityEngine.UIElements;
+using Image = UnityEngine.UI.Image;
+using Random = System.Random;
 
 public abstract class Enemy : MonoBehaviour
 {
+    public enum MovementType{SimpleMove, FollowPlayer, FollowPlayerSmart};
+
+    [SerializeField] private MovementType movementType;
+    
     private Rigidbody2D rigidBody;
+    private Vector2 movement;
+
+    private Collider2D[] results = new Collider2D[1];
+    private Camera mainCamera;
     private Animator animator;
 
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayerMask;
 
-    private Collider2D[] results = new Collider2D[1];
+    [SerializeField] protected float speed = 1f;
 
-    [SerializeField] private float speed = 1f;
+    //attack
+    [SerializeField] private float cooldown; //time for cooldown between attacks
+    [SerializeField] protected float attackRange;
+    [SerializeField] protected float attackDamage;
 
-    protected float Life;
-    protected bool IsAlive = true;
     [SerializeField] private Image lifebarImage;
     [SerializeField] private Canvas lifebarCanvas;
 
-    private Camera mainCamera;
+    protected float Life;
+    protected float maxHealth;
+    protected bool IsAlive = true;
+    private bool canFlip;
+    private bool inRange = false;
+    private bool reachedBorder;
+    protected float sensingRange;
+    protected Vector3 direction;
+    private LootDropper coinDropper;
 
-    protected abstract float getMaxHealth();
+    private bool attackMode;
+    private float attackRate = 2f;
+    private float nextAttackTime;
+    
+    private bool diffPlatforms;
+    private float triggerPosition = -1f;
+    private bool right = true;
+
+    public Transform player;
+    
+    private string AnimAttack = "Attack";
+    private string AnimIsAttacking = "IsAttacking";
+    private string AnimHurt = "Hurt";
+    private string AnimIsDead = "IsDead";
+
+    protected abstract void Attack();
+    protected abstract void Init();
+    //protected abstract void EnemyMove();
+    //protected abstract void EnemyFixedUpdate();
     
     private void Awake()
     {
-        Life = getMaxHealth();
+        Init();
+        UpdateDiffPlatforms();
+        coinDropper = GetComponent<LootDropper>();
         rigidBody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         mainCamera = FindObjectOfType<Camera>();
@@ -38,28 +77,143 @@ public abstract class Enemy : MonoBehaviour
     {
         int index = SpriteRenderingOrderManager.Instance.GetEnemyOrderInLayer();
         GetComponent<SpriteRenderer>().sortingOrder = index;
-
-        UpdateLifebarImage();
+        UpdateLifebar();
     }
 
-    private void Update()
+    protected void Update()
     {
-        if (IsAlive)
+        if (!IsAlive) return;
+
+        UpdateDirection();
+        UpdateCanFlip(direction);
+        //so it doesn't attack when the player is on other platform
+        UpdateDiffPlatforms();
+        //player on attack range ou analiza so a frente ou so atras
+        if (PlayerOnAttackRange(direction.x) && !diffPlatforms)
         {
-            rigidBody.velocity = new Vector2(speed * transform.right.x, rigidBody.velocity.y);
-            //myAnimator.SetFloat("HorizontalSpeed", Mathf.Abs(myRigidbody.velocity.x));
+            //try to put this flip only on one side
+            if (canFlip && movementType == MovementType.FollowPlayerSmart) Flip();
+            if (Time.time >= nextAttackTime && IsAlive)
+            {
+                animator.SetTrigger(AnimAttack);
+                animator.SetBool(AnimIsAttacking, true);
+                nextAttackTime = Time.time + cooldown / attackRate;
+            }
+            attackMode = true;
+            return;
         }
+        //So it doesn't move while still attacking
+        if (Time.time < nextAttackTime) return;	
+
+        animator.SetBool(AnimIsAttacking, false);
+        attackMode = false;
+        Move();
+    }
+
+    private void Move()
+    {
+        rigidBody.velocity = new Vector2(speed * transform.right.x, rigidBody.velocity.y);
+        if (movementType == MovementType.SimpleMove) return;
+        
+        if (!PlayerOnSensingRange(direction.x))
+        {
+            // Debug.Log("Player isn't on sensing range");
+            inRange = false;
+            return;
+        }
+
+        if (diffPlatforms) return;
+
+        //Debug.Log(transform.localEulerAngles.y);
+        //Debug.Log(direction.x);
+
+        inRange = true;
+        UpdateMovement(direction);
+    }
+
+    private void UpdateDirection()
+    {
+        direction = player.position - transform.position;
     }
 
     private void FixedUpdate()
     {
-        if (Physics2D.OverlapPointNonAlloc(
+        //EnemyFixedUpdate();
+        
+        if (!IsAlive) return;
+        if (attackMode) return;
+
+        if (movementType == MovementType.SimpleMove)
+        {
+            MoveNormally();
+            return;
+        }
+        
+        //if following player
+        if (diffPlatforms || !inRange)
+        {
+            MoveNormally();
+            return;
+        }
+
+        UpdateReachedBorder();
+        if (!reachedBorder) FollowPlayer();
+    }
+
+    private void MoveNormally()
+    {
+        UpdateReachedBorder();
+        if (reachedBorder) Flip();
+    }
+    private void FollowPlayer()
+    {
+        if (canFlip) Flip();
+        MoveCharacter(movement);
+    }
+
+    //TODO this and trigger area
+    private bool PlayerOnAttackRange(float playerDistanceX)
+    {
+        if (movementType != MovementType.FollowPlayerSmart)
+        {
+            //contabiliza apenas a frente dele
+        }
+        else
+        {
+            //dois lados
+        }
+        
+        return Mathf.Abs(playerDistanceX) <= attackRange;
+    }
+
+    private bool PlayerOnSensingRange(float playerDistanceX)
+    {
+        return Mathf.Abs(playerDistanceX) <= sensingRange;
+    }
+
+    private void MoveCharacter(Vector2 direction)
+    {
+        rigidBody.MovePosition((Vector2)transform.position + (direction * (speed * Time.deltaTime)));
+    }
+
+    private void UpdateReachedBorder()
+	{
+        reachedBorder = (Physics2D.OverlapPointNonAlloc(
             groundCheck.position,
             results,
-            groundLayerMask) == 0)
-        {
-            Flip();
-        }
+            groundLayerMask) == 0);
+    }
+
+    private void UpdateCanFlip(Vector2 direction)
+	{
+        canFlip = !SameDirection(direction);
+    }
+
+    //todo delete this funtion and use this one
+    private bool SameDirection(Vector2 direction)
+    {
+        return !(direction.x < 0 && transform.localEulerAngles.y < 180f ||
+           direction.x > 0 && transform.localEulerAngles.y >= 180f);
     }
 
     private void Flip()
@@ -67,46 +221,66 @@ public abstract class Enemy : MonoBehaviour
         Vector3 localRotation = transform.localEulerAngles;
         localRotation.y += 180f;
         transform.localEulerAngles = localRotation;
-        lifebarCanvas.transform.forward = mainCamera.transform.forward; 
+        lifebarCanvas.transform.forward = mainCamera.transform.forward;
     }
 
     public void TakeDamage(float damage)
     {
-        if (IsAlive)
-        {
-            animator.SetTrigger("Hurt");
-            Life -= damage;
-
-            if (Life < 0f)
-            {
-                Life = 0f;
-            }
-
-            UpdateLifebarImage();
-
-            if (Life == 0f)
-            {
-                Die();
-            }
-        }
+        if (!IsAlive) return;
+        animator.SetTrigger(AnimHurt);
+        Life -= damage;
+        if (Life < 0f) Life = 0f;
+        UpdateLifebar();
+        if (Life == 0f) Die();
     }
 
-    private void UpdateLifebarImage()
+    private void UpdateLifebar()
     {
-        lifebarImage.fillAmount = Life / getMaxHealth();
+        lifebarImage.fillAmount = Life / maxHealth;
     }
 
     private void Die()
     {
         IsAlive = false;
-        animator.SetBool("IsDead", true);
-        EnemyManager.Instance.DecreaseEnemiesCounter();
+        animator.SetBool(AnimIsDead, true);
         rigidBody.velocity = Vector2.zero;
         rigidBody.angularVelocity = 0f;
+        Invoke(nameof(DestroyEnemy), 3);
     }
 
-    private void DestroyEnemy() //called by animation event
+    private void DestroyEnemy()
     {
         Destroy(gameObject);
+    }
+
+    private void UpdateMovement(Vector2 newMov)
+    {
+        newMov.Normalize();
+        //so he doesn't jump
+        newMov.y = 0f;
+        movement = newMov;
+    }
+
+    private bool IsOnAnotherPlatform(float playerPosition)
+    {
+        return !((player.position.x < triggerPosition && right) ||
+        (player.position.x > triggerPosition && !right));
+    }
+
+    private void UpdateDiffPlatforms()
+	{
+        if (diffPlatforms)
+        {
+            if (IsOnAnotherPlatform(player.position.x)) return;
+            diffPlatforms = false;
+            return;
+        }
+
+        UpdateReachedBorder();
+        if (!reachedBorder || !SameDirection(direction)) return;
+        triggerPosition = transform.position.x;
+        right = direction.x >= 0;
+        diffPlatforms = true;
+        Flip();
     }
 }

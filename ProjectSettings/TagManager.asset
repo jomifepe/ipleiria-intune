@@ -21,8 +21,8 @@ TagManager:
   - PlayerProjectiles
   - BackWall
   - Background
-  - 
-  - 
+  - Destructibles
+  - Collectible
   - 
   - 
   - 
@@ -49,14 +49,20 @@ TagManager:
   - name: BackWall
     uniqueID: 2365786081
     locked: 0
+  - name: PlatformLevel2
+    uniqueID: 2280640941
+    locked: 0
+  - name: Object
+    uniqueID: 3105236489
+    locked: 0
   - name: Enemy
     uniqueID: 1203682789
     locked: 0
   - name: Player
     uniqueID: 1595361559
     locked: 0
-  - name: Platforms
-    uniqueID: 2280640941
+  - name: PlatformLevel1
+    uniqueID: 120327743
     locked: 0
   - name: Items
     uniqueID: 1530474173
