@@ -13,8 +13,8 @@ public abstract class Enemy : MonoBehaviour
 
     [SerializeField] private MovementType movementType;
     
-    protected Rigidbody2D rigidBody;
-    protected Vector2 movement;
+    private Rigidbody2D rigidBody;
+    private Vector2 movement;
 
     private Collider2D[] results = new Collider2D[1];
     private Camera mainCamera;
@@ -23,7 +23,6 @@ public abstract class Enemy : MonoBehaviour
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayerMask;
 
-    [SerializeField] protected bool followPlayer;
     [SerializeField] protected float speed = 1f;
 
     //attack
@@ -38,17 +37,17 @@ public abstract class Enemy : MonoBehaviour
     protected float maxHealth;
     private bool isAlive = true;
     private bool canFlip;
-    protected bool inRange = false;
-    protected bool reachedBorder;
+    private bool inRange = false;
+    private bool reachedBorder;
     protected float sensingRange;
-    protected Vector3 direction;
+    private Vector3 direction;
     private CoinDrop coinDropper;
 
-    protected bool attackMode;
+    private bool attackMode;
     private float attackRate = 2f;
     private float nextAttackTime;
     
-    protected bool diffPlatforms;
+    private bool diffPlatforms;
     private float triggerPosition = -1f;
     private bool right = true;
     
@@ -98,7 +97,7 @@ public abstract class Enemy : MonoBehaviour
         if (PlayerOnAttackRange(direction.x) && !diffPlatforms)
         {
             //try to put this flip only on one side
-            if (canFlip && followPlayer) Flip();
+            if (canFlip && movementType == MovementType.FollowPlayerSmart) Flip();
             if (Time.time >= nextAttackTime && isAlive)
             {
                 animator.SetTrigger(AnimAttack);
@@ -119,7 +118,7 @@ public abstract class Enemy : MonoBehaviour
     private void Move()
     {
         rigidBody.velocity = new Vector2(speed * transform.right.x, rigidBody.velocity.y);
-        if (!followPlayer) return;
+        if (movementType == MovementType.SimpleMove) return;
         
         if (!PlayerOnSensingRange(direction.x))
         {
@@ -149,7 +148,7 @@ public abstract class Enemy : MonoBehaviour
         if (!isAlive) return;
         if (attackMode) return;
 
-        if (!followPlayer)
+        if (movementType == MovementType.SimpleMove)
         {
             MoveNormally();
             return;
@@ -166,23 +165,33 @@ public abstract class Enemy : MonoBehaviour
         if (!reachedBorder) FollowPlayer();
     }
 
-    protected void MoveNormally()
+    private void MoveNormally()
     {
         UpdateReachedBorder();
         if (reachedBorder) Flip();
     }
-    protected void FollowPlayer()
+    private void FollowPlayer()
     {
         if (canFlip) Flip();
         MoveCharacter(movement);
     }
 
+    //TODO this and trigger area
     private bool PlayerOnAttackRange(float playerDistanceX)
     {
+        if (movementType != MovementType.FollowPlayerSmart)
+        {
+            //contabiliza apenas a frente dele
+        }
+        else
+        {
+            //dois lados
+        }
+        
         return Mathf.Abs(playerDistanceX) <= attackRange;
     }
 
-    protected bool PlayerOnSensingRange(float playerDistanceX)
+    private bool PlayerOnSensingRange(float playerDistanceX)
     {
         return Mathf.Abs(playerDistanceX) <= sensingRange;
     }
@@ -192,7 +201,7 @@ public abstract class Enemy : MonoBehaviour
         rigidBody.MovePosition((Vector2)transform.position + (direction * (speed * Time.deltaTime)));
     }
 
-    protected void UpdateReachedBorder()
+    private void UpdateReachedBorder()
 	{
         reachedBorder = (Physics2D.OverlapPointNonAlloc(
             groundCheck.position,
@@ -212,7 +221,7 @@ public abstract class Enemy : MonoBehaviour
            direction.x > 0 && transform.localEulerAngles.y >= 180f);
     }
 
-    protected void Flip()
+    private void Flip()
     {
         Vector3 localRotation = transform.localEulerAngles;
         localRotation.y += 180f;
@@ -253,7 +262,7 @@ public abstract class Enemy : MonoBehaviour
         Destroy(gameObject);
     }
 
-    protected void UpdateMovement(Vector2 newMov)
+    private void UpdateMovement(Vector2 newMov)
     {
         newMov.Normalize();
         //so he doesn't jump
