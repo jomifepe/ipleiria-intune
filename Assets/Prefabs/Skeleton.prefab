@@ -417,12 +417,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08215b2a079a4a6f873c50ed531494e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementType: 2
+  movementType: 0
   groundCheck: {fileID: 8044703418025823954}
   groundLayerMask:
     serializedVersion: 2
     m_Bits: 512
-  followPlayer: 1
   speed: 1
   cooldown: 1.5
   attackRange: 2
