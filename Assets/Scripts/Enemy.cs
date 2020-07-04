@@ -9,6 +9,10 @@ using Random = System.Random;
 
 public abstract class Enemy : MonoBehaviour
 {
+    public enum MovementType{SimpleMove, FollowPlayer, FollowPlayerSmart};
+
+    [SerializeField] private MovementType movementType;
+    
     protected Rigidbody2D rigidBody;
     protected Vector2 movement;
 
@@ -62,8 +66,8 @@ public abstract class Enemy : MonoBehaviour
 
     protected abstract void Attack();
     protected abstract void Init();
-    protected abstract void EnemyMove();
-    protected abstract void EnemyFixedUpdate();
+    //protected abstract void EnemyMove();
+    //protected abstract void EnemyFixedUpdate();
     
     private void Awake()
     {
@@ -85,16 +89,16 @@ public abstract class Enemy : MonoBehaviour
     protected void Update()
     {
         if (!isAlive) return;
-        direction = player.position - transform.position;
 
+        UpdateDirection();
         UpdateCanFlip(direction);
-
-        //so it doesn't attack when on another platform
+        //so it doesn't attack when the player is on other platform
         UpdateDiffPlatforms();
+        //player on attack range ou analiza so a frente ou so atras
         if (PlayerOnAttackRange(direction.x) && !diffPlatforms)
         {
             //try to put this flip only on one side
-            if (canFlip) Flip();
+            if (canFlip && followPlayer) Flip();
             if (Time.time >= nextAttackTime && isAlive)
             {
                 animator.SetTrigger(AnimAttack);
@@ -109,13 +113,57 @@ public abstract class Enemy : MonoBehaviour
 
         animator.SetBool(AnimIsAttacking, false);
         attackMode = false;
-        EnemyMove();  
+        Move();
     }
-    
+
+    private void Move()
+    {
+        rigidBody.velocity = new Vector2(speed * transform.right.x, rigidBody.velocity.y);
+        if (!followPlayer) return;
+        
+        if (!PlayerOnSensingRange(direction.x))
+        {
+            // Debug.Log("Player isn't on sensing range");
+            inRange = false;
+            return;
+        }
+
+        if (diffPlatforms) return;
+
+        //Debug.Log(transform.localEulerAngles.y);
+        //Debug.Log(direction.x);
+
+        inRange = true;
+        UpdateMovement(direction);
+    }
+
+    private void UpdateDirection()
+    {
+        direction = player.position - transform.position;
+    }
+
     private void FixedUpdate()
     {
+        //EnemyFixedUpdate();
+        
         if (!isAlive) return;
-        EnemyFixedUpdate();
+        if (attackMode) return;
+
+        if (!followPlayer)
+        {
+            MoveNormally();
+            return;
+        }
+        
+        //if following player
+        if (diffPlatforms || !inRange)
+        {
+            MoveNormally();
+            return;
+        }
+
+        UpdateReachedBorder();
+        if (!reachedBorder) FollowPlayer();
     }
 
     protected void MoveNormally()

@@ -440,9 +440,9 @@ MonoBehaviour:
     m_Bits: 512
   followPlayer: 0
   speed: 1
-  cooldown: 0
-  attackRange: 0
-  attackDamage: 0
+  cooldown: 1
+  attackRange: 2
+  attackDamage: 2
   lifebarImage: {fileID: 6772507679635615633}
   lifebarCanvas: {fileID: 8253344273807759131}
   player: {fileID: 5411998984150073576, guid: e233026cf180fc240bcc4f115605ae7e, type: 3}
