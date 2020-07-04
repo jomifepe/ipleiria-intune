@@ -30,15 +30,15 @@ public abstract class Enemy : MonoBehaviour
     [SerializeField] private Image lifebarImage;
     [SerializeField] private Canvas lifebarCanvas;
 
-    protected float life;
+    protected float Life;
     protected float maxHealth;
-    private bool isAlive = true;
+    protected bool IsAlive = true;
     private bool canFlip;
     protected bool inRange = false;
     protected bool reachedBorder;
     protected float sensingRange;
     protected Vector3 direction;
-    private CoinDrop coinDropper;
+    private LootDropper coinDropper;
 
     protected bool attackMode;
     private float attackRate = 2f;
@@ -47,11 +47,6 @@ public abstract class Enemy : MonoBehaviour
     protected bool diffPlatforms;
     private float triggerPosition = -1f;
     private bool right = true;
-    
-    protected int minCoinDrop;
-    protected int maxCoinDrop;
-    protected int minCoinCount;
-    protected int maxCoinCount;
 
     public Transform player;
     
@@ -69,7 +64,7 @@ public abstract class Enemy : MonoBehaviour
     {
         Init();
         UpdateDiffPlatforms();
-        coinDropper = GetComponent<CoinDrop>();
+        coinDropper = GetComponent<LootDropper>();
         rigidBody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         mainCamera = FindObjectOfType<Camera>();
@@ -84,7 +79,8 @@ public abstract class Enemy : MonoBehaviour
 
     protected void Update()
     {
-        if (!isAlive) return;
+        Debug.Log("Player position: " + player.position.x);
+        if (!IsAlive) return;
         direction = player.position - transform.position;
 
         UpdateCanFlip(direction);
@@ -95,7 +91,7 @@ public abstract class Enemy : MonoBehaviour
         {
             //try to put this flip only on one side
             if (canFlip) Flip();
-            if (Time.time >= nextAttackTime && isAlive)
+            if (Time.time >= nextAttackTime && IsAlive)
             {
                 animator.SetTrigger(AnimAttack);
                 animator.SetBool(AnimIsAttacking, true);
@@ -114,7 +110,7 @@ public abstract class Enemy : MonoBehaviour
     
     private void FixedUpdate()
     {
-        if (!isAlive) return;
+        if (!IsAlive) return;
         EnemyFixedUpdate();
     }
 
@@ -175,30 +171,24 @@ public abstract class Enemy : MonoBehaviour
     public void TakeDamage(float damage)
     {
         if (!IsAlive) return;
-        animator.SetTrigger(Hurt);
-        Life -= damage;
-
         animator.SetTrigger(AnimHurt);
-        life -= damage;
-
-        if (life < 0f) life = 0f;
+        Life -= damage;
+        if (Life < 0f) Life = 0f;
         UpdateLifebar();
-        if (life == 0f) Die();
+        if (Life == 0f) Die();
     }
 
     private void UpdateLifebar()
     {
-        lifebarImage.fillAmount = life / maxHealth;
+        lifebarImage.fillAmount = Life / maxHealth;
     }
 
     private void Die()
     {
-        isAlive = false;
+        IsAlive = false;
         animator.SetBool(AnimIsDead, true);
         rigidBody.velocity = Vector2.zero;
         rigidBody.angularVelocity = 0f;
-        coinDropper.DropCoins(minCoinDrop, maxCoinDrop, 
-            minCoinCount,maxCoinCount);
         Invoke(nameof(DestroyEnemy), 3);
     }
 

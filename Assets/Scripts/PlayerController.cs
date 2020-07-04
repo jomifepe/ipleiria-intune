@@ -29,12 +29,12 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
     private AudioSource audioSource;
     private Collider2D[] results = new Collider2D[1];
+    
     private bool jump, isGrounded, wasJumping, isAlive = true;
-    private float life = 3f, throws = 3f;
+    private float health = 3f, throws = 3f, maxHealth, maxThrows;
     private float shootVelocity = 5f, attackRate = 2f;
 
-    private float nextMeleeAttackTime;
-    private float nextRangedAttackTime;
+    private float nextMeleeAttackTime, nextRangedAttackTime;
     private float jumpTimer;
     
     private string AnimHurt = "Hurt";
@@ -45,6 +45,10 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
+        maxHealth = health;
+        maxThrows = throws;
+        GameManager.Instance.SetPlayerMaxHealth(maxHealth);
+        GameManager.Instance.SetPlayerMaxThrows(maxThrows);
         playerRigidbody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
@@ -52,7 +56,7 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        UpdateLifebarImage();
+        UpdateHealthBar();
     }
 
     private void Update()
@@ -64,12 +68,12 @@ public class PlayerController : MonoBehaviour
             if (isAlive)
             {
                 if (Time.time >= nextMeleeAttackTime && Input.GetButtonDown("Fire1"))
-                if (Time.time >= nextMeleeAttackTime && CrossPlatformInputManager.GetButtonDown("Fire1"))
+                // if (Time.time >= nextMeleeAttackTime && CrossPlatformInputManager.GetButtonDown("Fire1"))
                 {
                     PerformAttackAnimation();
                 }
-                if (Time.time >= nextRangedAttackTime && Input.GetButtonDown("Fire2"))
-                // if (Time.time >= nextRangedAttackTime && CrossPlatformInputManager.GetButtonDown("Fire2"))
+                // if (Time.time >= nextRangedAttackTime && Input.GetButtonDown("Fire2"))
+                if (Time.time >= nextRangedAttackTime && CrossPlatformInputManager.GetButtonDown("Fire2"))
                 {
                     Throw();
                 }
@@ -163,7 +167,7 @@ public class PlayerController : MonoBehaviour
     {
         throws -= 1;
         if (throws < 0) throws = 0;
-        UpdateThrowbar();
+        UpdateThrowBar();
     }
     
     private void AnimatorEventThrow()
@@ -195,10 +199,10 @@ public class PlayerController : MonoBehaviour
     {
         if (!isAlive) return;
         animator.SetTrigger(AnimHurt);
-        life -= damage;
-        if (life < 0f) life = 0f;
-        UpdateLifebarImage();
-        if (life == 0f) Die();
+        health -= damage;
+        if (health < 0f) health = 0f;
+        UpdateHealthBar();
+        if (health == 0f) Die();
 
     }
 
@@ -208,14 +212,38 @@ public class PlayerController : MonoBehaviour
         animator.SetBool(AnimIsDead, true);
         //Destroy(gameObject);
     }
-    
-    private void UpdateLifebarImage()
+
+    public bool IsFullHealth()
     {
-        UIManager.Instance.UpdatePlayerLife(life);
+        return health.Equals(maxHealth);
     }
     
-    private void UpdateThrowbar()
+    public bool HasAllThrows()
     {
-        UIManager.Instance.UpdatePlayerThrows(throws);
+        return throws.Equals(maxThrows);
+    }
+    
+    public void GiveHealth(float value)
+    {
+        health += value;
+        if (health > maxHealth) health = maxHealth;
+        UpdateHealthBar();
+    }
+    
+    public void GiveThrow(float value)
+    {
+        throws += value;
+        if (throws > maxThrows) throws = maxThrows;
+        UpdateThrowBar();
+    }
+    
+    private void UpdateHealthBar()
+    {
+        GameManager.Instance.UpdatePlayerLife(health);
+    }
+    
+    private void UpdateThrowBar()
+    {
+        GameManager.Instance.UpdatePlayerThrows(throws);
     }
 }

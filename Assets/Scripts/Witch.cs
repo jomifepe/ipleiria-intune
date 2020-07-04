@@ -9,11 +9,7 @@ public class Witch : Enemy
 {
     protected override void Init()
     {
-        life = maxHealth = 3f;
-        minCoinDrop = 10;
-        maxCoinDrop = 15;
-        minCoinCount = 1;
-        maxCoinCount = 2;
+        Life = maxHealth = 3f;
         sensingRange = 15f;
     }
 
@@ -69,7 +65,7 @@ public class Witch : Enemy
 
     protected override void EnemyMove()
     {
-        rigidBody.velocity = new Vector2(speed * transform.right.x, rigidBody.velocity.y);
+        // rigidBody.velocity = new Vector2(speed * transform.right.x, rigidBody.velocity.y);
     }
 
     protected override void EnemyFixedUpdate()
