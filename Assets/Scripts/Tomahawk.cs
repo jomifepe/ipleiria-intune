@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class Tomahawk : MonoBehaviour
 {
-    [SerializeField]
-    private float damage = 1f;
+    [SerializeField] private float damage = 1f;
 
     private void OnTriggerEnter2D(Collider2D other)
     {

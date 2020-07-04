@@ -147,7 +147,6 @@ public class GameManager : MonoBehaviour
             oldTimeScale = Time.timeScale;
             Time.timeScale = 0f;
             UIManager.Instance.ShowPausePanel(true);
-            
         }
         else
         {

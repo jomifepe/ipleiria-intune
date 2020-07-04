@@ -7,9 +7,7 @@ public class Paused_Menu : MonoBehaviour
 {
     public void Resume()
     {
-        UIManager.Instance.ShowPausePanel(false);
-        Time.timeScale = 1f;
-        Debug.Log("Reseumed");
+        GameManager.Instance.PauseGame(false);
     }
 
     public void Restart()

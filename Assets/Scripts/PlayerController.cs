@@ -141,6 +141,7 @@ public class PlayerController : MonoBehaviour
     private void AttackMelee()
     {
         // animator.SetTrigger("AttackMelee");
+        CameraFollow.Instance.Shake(.2f, 0.1f);
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(meleeAttackPoint.position, meleeAttackRange, enemyLayerMask);
         Collider2D[] hitDestructibles = Physics2D.OverlapCircleAll(meleeAttackPoint.position, meleeAttackRange, destructibleLayerMask);
         
@@ -211,6 +212,11 @@ public class PlayerController : MonoBehaviour
         isAlive = false;
         animator.SetBool(AnimIsDead, true);
         //Destroy(gameObject);
+    }
+    
+    public void Kill()
+    {
+        TakeDamage(health);
     }
 
     public bool IsFullHealth()
