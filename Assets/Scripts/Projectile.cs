@@ -10,7 +10,7 @@ public class Projectile : MonoBehaviour
     {
         if (other.CompareTag("Enemy") && type == Type.Tomahawk)
         {
-            if(!other.GetComponent<Enemy>().TakeDamage(damage)) return;
+            if(!other.GetComponent<Enemy.Enemy>().TakeDamage(damage)) return;
             Dismiss();
         }
         else if (other.CompareTag("Player") && type == Type.Spell)

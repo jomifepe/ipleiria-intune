@@ -1,9 +1,12 @@
 ﻿
-public class Skeleton: MeleeEnemy
+namespace Enemy
 {
-    protected override void Init()
+    public class Skeleton: MeleeEnemy
     {
-        life = maxHealth = 2f;
-        sensingRange = 10f;
+        protected override void Init()
+        {
+            life = maxHealth = 2f;
+            sensingRange = 10f;
+        }
     }
 }

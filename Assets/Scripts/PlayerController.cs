@@ -146,7 +146,7 @@ public class PlayerController : MonoBehaviour
         
         foreach (Collider2D enemy in hitEnemies)
         {
-            enemy.GetComponent<Enemy>().TakeDamage(meleeDamage);
+            enemy.GetComponent<Enemy.Enemy>().TakeDamage(meleeDamage);
         }
         foreach (Collider2D destructible in hitDestructibles)
         {

@@ -1,9 +1,12 @@
-﻿public class Witch : RangedEnemy
+﻿namespace Enemy
 {
-    protected override void Init()
+    public class Witch : RangedEnemy
     {
-        life = maxHealth = 3f;
-        sensingRange = attackRange;
+        protected override void Init()
+        {
+            life = maxHealth = 3f;
+            sensingRange = attackRange;
+        }
     }
 }
 

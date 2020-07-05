@@ -1,14 +1,17 @@
 ﻿using UnityEngine;
 
-public abstract class RangedEnemy : Enemy
+namespace Enemy
 {
-    [SerializeField] private GameObject throwablePrefab;
-    [SerializeField] private float shootVelocity;
-
-    protected override void Attack()
+    public abstract class RangedEnemy : Enemy
     {
-        GameObject throwable = Instantiate(throwablePrefab, attackPoint.position, attackPoint.rotation);
-        throwable.GetComponent<Rigidbody2D>().velocity = attackPoint.right * shootVelocity;
-        audioSource.PlayOneShot(attackAudioClip);
+        [SerializeField] private GameObject throwablePrefab;
+        [SerializeField] private float shootVelocity;
+
+        protected override void Attack()
+        {
+            GameObject throwable = Instantiate(throwablePrefab, attackPoint.position, attackPoint.rotation);
+            throwable.GetComponent<Rigidbody2D>().velocity = attackPoint.right * shootVelocity;
+            audioSource.PlayOneShot(attackAudioClip);
+        }
     }
 }
