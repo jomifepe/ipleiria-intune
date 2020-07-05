@@ -78,15 +78,14 @@ public abstract class Enemy : MonoBehaviour
         GetComponent<SpriteRenderer>().sortingOrder = index;
         UpdateLifebar();
     }
-
     protected void Update()
     {
         if (!isAlive) return;
         UpdateDirection();
-        UpdateCanFlip(direction);
-        UpdateSamePlatform();
+        CheckCanFlip(direction);
+        CheckSamePlatform();
         
-        //it doesn't attack when the player is on other platform
+        /*It doesn't attack when the player is on other platform*/
         if (PlayerOnAttackRange(direction.x) && samePlatform)
         {
             if (canFlip && movementType == MovementType.FollowPlayerSmart) Flip();
@@ -94,35 +93,57 @@ public abstract class Enemy : MonoBehaviour
             attackMode = true;
             return;
         }
-        //So it doesn't move while still attacking
+        /*So it doesn't move while still attacking*/
         if (Time.time < nextAttackTime) return;
         animator.SetBool(AnimIsAttacking, false);
         attackMode = false;
         Move();
     }
+    
+    private void FixedUpdate()
+    {
+        if (attackMode || !isAlive) return;
+        CheckReachedBorder();
+        if (movementType == MovementType.SimpleMove)
+        {
+            MoveNormally();
+            return;
+        }
+        FollowPlayer();
+    }
+    
+    private void FollowPlayer()
+    {
+        if (!SamePlatform() || !inSensingRange)
+        {
+            MoveNormally();
+            return;
+        }
+        if (reachedBorder) return;
+        if (canFlip) Flip();
+        MoveCharacter(movement);
+    }
 
-    private void UpdateSamePlatform()
+    private void MoveNormally()
+    {
+        if (reachedBorder) Flip();
+    }
+
+    private void CheckSamePlatform()
     {
         samePlatform = SamePlatform();
         if(!samePlatform) return;
         
-        UpdateReachedBorder();
+        CheckReachedBorder();
         if (!reachedBorder || !SameDirection(direction)) return;
         Flip();
     }
 
     private bool SamePlatform()
     {
-        var enemyPosition = transform.position;
+        var enemyXPosition = transform.position.x;
         var (leftLimit, rightLimit) = GameManager.Instance.platformBounds;
-        return enemyPosition.x >= leftLimit && enemyPosition.x <= rightLimit;
-    }
-
-    private void StartAttacking()
-    {
-        animator.SetTrigger(AnimAttack);
-        animator.SetBool(AnimIsAttacking, true);
-        nextAttackTime = Time.time + attackCooldown / attackRate;
+        return enemyXPosition >= leftLimit && enemyXPosition <= rightLimit;
     }
 
     private void Move()
@@ -145,42 +166,9 @@ public abstract class Enemy : MonoBehaviour
         direction = player.position - transform.position;
     }
 
-    private void FixedUpdate()
-    {
-        if (!isAlive) return;
-        if (attackMode) return;
-
-        if (movementType == MovementType.SimpleMove)
-        {
-            MoveNormally();
-            return;
-        }
-        
-        //if following player
-        if (!SamePlatform() || !inSensingRange)
-        {
-            MoveNormally();
-            return;
-        }
-
-        UpdateReachedBorder();
-        if (!reachedBorder) FollowPlayer();
-    }
-
-    private void MoveNormally()
-    {
-        UpdateReachedBorder();
-        if (reachedBorder) Flip();
-    }
-    private void FollowPlayer()
-    {
-        if (canFlip) Flip();
-        MoveCharacter(movement);
-    }
-    
     private bool PlayerOnAttackRange(float playerDistanceX)
     {
-        //If not FollowPlayerSmart the player has to be in front of the enemy
+        /*If not FollowPlayerSmart the player has to be in front of the enemy*/
         if (movementType != MovementType.FollowPlayerSmart && !SameDirection(direction)) return false;
         return Mathf.Abs(playerDistanceX) <= attackRange;
     }
@@ -194,8 +182,16 @@ public abstract class Enemy : MonoBehaviour
     {
         rigidBody.MovePosition((Vector2)transform.position + (dir * (speed * Time.deltaTime)));
     }
+    
+    private void UpdateMovement(Vector2 newMov)
+    {
+        newMov.Normalize();
+        /*so he doesn't jump*/
+        newMov.y = 0f; 
+        movement = newMov;
+    }
 
-    private void UpdateReachedBorder()
+    private void CheckReachedBorder()
 	{
         reachedBorder = Physics2D.OverlapPointNonAlloc(
             groundCheck.position,
@@ -203,7 +199,7 @@ public abstract class Enemy : MonoBehaviour
             groundLayerMask) == 0;
     }
 
-    private void UpdateCanFlip(Vector2 dir)
+    private void CheckCanFlip(Vector2 dir)
 	{
         canFlip = !SameDirection(dir);
     }
@@ -223,6 +219,13 @@ public abstract class Enemy : MonoBehaviour
         lifebarCanvas.transform.forward = mainCamera.transform.forward;
     }
 
+    private void StartAttacking()
+    {
+        animator.SetTrigger(AnimAttack);
+        animator.SetBool(AnimIsAttacking, true);
+        nextAttackTime = Time.time + attackCooldown / attackRate;
+    }
+    
     public void TakeDamage(float damage)
     {
         if (!isAlive) return;
@@ -250,13 +253,5 @@ public abstract class Enemy : MonoBehaviour
     private void DestroyEnemy()
     {
         Destroy(gameObject);
-    }
-
-    private void UpdateMovement(Vector2 newMov)
-    {
-        newMov.Normalize();
-        /*so he doesn't jump*/
-        newMov.y = 0f; 
-        movement = newMov;
     }
 }
