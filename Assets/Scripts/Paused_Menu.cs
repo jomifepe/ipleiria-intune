@@ -12,7 +12,7 @@ public class Paused_Menu : MonoBehaviour
         //UIManager.Instance.ShowPausePanel(false);
 		//HUD.SetActive(true);
         //Time.timeScale = 1f;
-        Debug.Log("Reseumed");
+        Debug.Log("Resumed");
 		GameManager.Instance.PauseGame(false);
     }
 

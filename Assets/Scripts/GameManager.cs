@@ -3,12 +3,18 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using System.Collections.Generic;
+using Model;
 
 public class GameManager : MonoBehaviour
 {
-    private const string StateKeyCoins = "coins";
     public static GameManager Instance { get; private set; } = null;
-
+    private const string StateKeyCoins = "coins";
+    
+    [SerializeField] private GameObject HUD;
+    [SerializeField] private GameObject controls;
+    [SerializeField] private List<Song> songList;
+    
     public float CurrentPlayerHealth { get; private set; }
     public float CurrentPlayerThrows { get; private set; }
     public float MaxPlayerHealth { get; private set; }
@@ -34,9 +40,8 @@ public class GameManager : MonoBehaviour
     public bool IsPaused { get; set; } = false;
 
     private float oldTimeScale;
-
-    [SerializeField] private GameObject HUD;
-    [SerializeField] private GameObject controls;
+    public Song CurrentSong { get; private set; }
+    private int currentSongIndex = -1;
 
     private void Awake()
     {
@@ -53,11 +58,19 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        StartDefaultSong();
         if (PlayerPrefs.HasKey(StateKeyCoins))
         {
             Coins = PlayerPrefs.GetInt(StateKeyCoins);
         }
         UpdateCoinsText();
+    }
+
+    private void StartDefaultSong()
+    {
+        if (songList.Count == 0) return;
+        AudioManager.Instance.ChangeSong(songList[0].clip, false);
+        currentSongIndex = 0;
     }
     
     private void UpdateCoinsText()
@@ -154,7 +167,6 @@ public class GameManager : MonoBehaviour
             oldTimeScale = Time.timeScale;
             Time.timeScale = 0f;
             UIManager.Instance.ShowPausePanel(true);
-            
         }
         else
         {
@@ -185,6 +197,21 @@ public class GameManager : MonoBehaviour
     {
         CurrentPlayerThrows = value;
         UIManager.Instance.UpdatePlayerThrows(value);
+    }
+
+    public void AddSong(Song song)
+    {
+        /* make the button visible if it's the first song that's been collected */
+        if (songList.Count == 1) UIManager.Instance.ChangeSongButtonVisibility(true);
+        songList.Add(song);
+    }
+
+    public void ChangeSong()
+    {
+        currentSongIndex++;
+        if (currentSongIndex == songList.Count) currentSongIndex = 0; // repeat the song list
+        CurrentSong = songList[currentSongIndex];
+        AudioManager.Instance.ChangeSong(CurrentSong.clip);
     }
 
     public void OpenOptionsOnMenu()

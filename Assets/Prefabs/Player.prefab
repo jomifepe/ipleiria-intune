@@ -315,7 +315,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a65297a18c266446a7cd641858e4143, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  throwablePrefab: {fileID: 164641265797304320, guid: 5a93d814c7a6eb04abf0996dcd28ac12,
+  throwablePrefab: {fileID: 4152751771967737515, guid: b3050e2122ae00143b8ca41c421515b3,
     type: 3}
   throwPoint: {fileID: 5411998983248718920}
   meleeAttackPoint: {fileID: 4613662496042363686}

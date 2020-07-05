@@ -68,3 +68,6 @@ TagManager:
   - name: Items
     uniqueID: 1530474173
     locked: 0
+  - name: Projectile
+    uniqueID: 3996689405
+    locked: 0
