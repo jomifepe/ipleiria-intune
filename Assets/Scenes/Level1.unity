@@ -7477,7 +7477,7 @@ GameObject:
   - component: {fileID: 799418523}
   m_Layer: 9
   m_Name: RockPlatform1
-  m_TagString: Untagged
+  m_TagString: Platform
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -14863,7 +14863,7 @@ GameObject:
   - component: {fileID: 1552158577}
   m_Layer: 9
   m_Name: Bottom
-  m_TagString: Untagged
+  m_TagString: Platform
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -18807,7 +18807,7 @@ PrefabInstance:
     - target: {fileID: 8044703417865281756, guid: 9a91f00f4bab3b44d87c5f7694852005,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9a91f00f4bab3b44d87c5f7694852005, type: 3}
@@ -20131,7 +20131,7 @@ PrefabInstance:
     - target: {fileID: 9095966846338819690, guid: 5ed380fd29cbf4f478908d43c1c9a803,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9095966846338819694, guid: 5ed380fd29cbf4f478908d43c1c9a803,
         type: 3}

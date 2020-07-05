@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.UIElements;
+﻿using UnityEngine;
 using Image = UnityEngine.UI.Image;
-using Random = System.Random;
 
 public abstract class Enemy : MonoBehaviour
 {
@@ -16,7 +10,6 @@ public abstract class Enemy : MonoBehaviour
 
     protected readonly Collider2D[] results = new Collider2D[1];
     private Camera mainCamera;
-    private Animator animator;
 
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayerMask;
@@ -24,8 +17,14 @@ public abstract class Enemy : MonoBehaviour
     [SerializeField] private MovementType movementType;
     [SerializeField] protected float speed = 1f;
     
-    [SerializeField] private Image lifebarImage;
-    [SerializeField] private Canvas lifebarCanvas;
+    private bool canFlip;
+    private bool reachedBorder;
+    private bool samePlatform;
+    private bool inSensingRange;
+    protected float sensingRange;
+
+    private Vector3 direction;
+    private Transform player;
 
     #region Attack
     [SerializeField] private float attackCooldown; //time for cooldown between attacks
@@ -38,37 +37,33 @@ public abstract class Enemy : MonoBehaviour
     private float nextAttackTime;
     #endregion
     
-    protected float life;
-    protected float maxHealth;
-    private bool isAlive = true;
-    private bool canFlip;
-    private bool reachedBorder;
-    protected float sensingRange;
-    private bool inSensingRange;
-    private Vector3 direction;
-    
-    private bool diffPlatforms;
-    private float triggerPosition = -1f;
-    private bool right = true;
-
-    private Transform player;
-    
-    protected AudioSource audioSource;
+    #region Audio
     [SerializeField] protected AudioClip attackAudioClip;
-
+    protected AudioSource audioSource;
+    #endregion
+    
+    #region Animations
+    private Animator animator;
     private const string AnimAttack = "Attack";
     private const string AnimIsAttacking = "IsAttacking";
     private const string AnimHurt = "Hurt";
     private const string AnimIsDead = "IsDead";
+    #endregion
 
+    #region Life
+    [SerializeField] private Image lifebarImage;
+    [SerializeField] private Canvas lifebarCanvas;
+    private bool isAlive = true;
+    protected float life;
+    protected float maxHealth;
+    #endregion
+    
     protected abstract void Attack();
     protected abstract void Init();
 
-    //TODO Improve samePlatform check
     private void Awake()
     {
         Init();
-        UpdateDiffPlatforms();
         player = GameObject.Find("Player").transform;
         rigidBody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
@@ -88,11 +83,11 @@ public abstract class Enemy : MonoBehaviour
         if (!isAlive) return;
         UpdateDirection();
         UpdateCanFlip(direction);
-        //so it doesn't attack when the player is on other platform
-        UpdateDiffPlatforms();
-        if (PlayerOnAttackRange(direction.x) && !diffPlatforms)
+        UpdateSamePlatform();
+        
+        //it doesn't attack when the player is on other platform
+        if (PlayerOnAttackRange(direction.x) && samePlatform)
         {
-            //try to put this flip on one side only
             if (canFlip && movementType == MovementType.FollowPlayerSmart) Flip();
             if (Time.time >= nextAttackTime && isAlive) StartAttacking();
             attackMode = true;
@@ -103,6 +98,23 @@ public abstract class Enemy : MonoBehaviour
         animator.SetBool(AnimIsAttacking, false);
         attackMode = false;
         Move();
+    }
+
+    private void UpdateSamePlatform()
+    {
+        samePlatform = SamePlatform();
+        if(!samePlatform) return;
+        
+        UpdateReachedBorder();
+        if (!reachedBorder || !SameDirection(direction)) return;
+        Flip();
+    }
+
+    private bool SamePlatform()
+    {
+        var enemyPosition = transform.position;
+        var (leftLimit, rightLimit) = GameManager.Instance.platformBounds;
+        return enemyPosition.x >= leftLimit && enemyPosition.x <= rightLimit;
     }
 
     private void StartAttacking()
@@ -116,19 +128,13 @@ public abstract class Enemy : MonoBehaviour
     {
         rigidBody.velocity = new Vector2(speed * transform.right.x, rigidBody.velocity.y);
         if (movementType == MovementType.SimpleMove) return;
-        
         if (!PlayerOnSensingRange(direction.x))
         {
-            // Debug.Log("Player isn't on sensing range");
             inSensingRange = false;
             return;
         }
-
-        if (diffPlatforms) return;
-
-        //Debug.Log(transform.localEulerAngles.y);
-        //Debug.Log(direction.x);
-
+        
+        if (!samePlatform) return;
         inSensingRange = true;
         UpdateMovement(direction);
     }
@@ -140,8 +146,6 @@ public abstract class Enemy : MonoBehaviour
 
     private void FixedUpdate()
     {
-        //EnemyFixedUpdate();
-        
         if (!isAlive) return;
         if (attackMode) return;
 
@@ -152,7 +156,7 @@ public abstract class Enemy : MonoBehaviour
         }
         
         //if following player
-        if (diffPlatforms || !inSensingRange)
+        if (!SamePlatform() || !inSensingRange)
         {
             MoveNormally();
             return;
@@ -166,7 +170,6 @@ public abstract class Enemy : MonoBehaviour
     {
         UpdateReachedBorder();
         if (reachedBorder) Flip();
-        
     }
     private void FollowPlayer()
     {
@@ -186,9 +189,9 @@ public abstract class Enemy : MonoBehaviour
         return Mathf.Abs(playerDistanceX) <= sensingRange;
     }
 
-    private void MoveCharacter(Vector2 direction)
+    private void MoveCharacter(Vector2 dir)
     {
-        rigidBody.MovePosition((Vector2)transform.position + (direction * (speed * Time.deltaTime)));
+        rigidBody.MovePosition((Vector2)transform.position + (dir * (speed * Time.deltaTime)));
     }
 
     private void UpdateReachedBorder()
@@ -199,15 +202,16 @@ public abstract class Enemy : MonoBehaviour
             groundLayerMask) == 0;
     }
 
-    private void UpdateCanFlip(Vector2 direction)
+    private void UpdateCanFlip(Vector2 dir)
 	{
-        canFlip = !SameDirection(direction);
+        canFlip = !SameDirection(dir);
     }
     
-    private bool SameDirection(Vector2 direction)
+    private bool SameDirection(Vector2 dir)
     {
-        return !(direction.x < 0 && transform.localEulerAngles.y < 180f ||
-           direction.x > 0 && transform.localEulerAngles.y >= 180f);
+        var localEulerAngles = transform.localEulerAngles;
+        return !(dir.x < 0 && localEulerAngles.y < 180f ||
+                 dir.x > 0 && localEulerAngles.y >= 180f);
     }
 
     private void Flip()
@@ -253,28 +257,5 @@ public abstract class Enemy : MonoBehaviour
         //so he doesn't jump
         newMov.y = 0f;
         movement = newMov;
-    }
-    
-    private bool IsOnAnotherPlatform()
-    {
-        return !((player.position.x < triggerPosition && right) ||
-        (player.position.x > triggerPosition && !right));
-    }
-
-    private void UpdateDiffPlatforms()
-	{
-        if (diffPlatforms)
-        {
-            if (IsOnAnotherPlatform()) return;
-            diffPlatforms = false;
-            return;
-        }
-
-        UpdateReachedBorder();
-        if (!reachedBorder || !SameDirection(direction)) return;
-        triggerPosition = transform.position.x;
-        right = direction.x >= 0;
-        diffPlatforms = true;
-        Flip();
     }
 }

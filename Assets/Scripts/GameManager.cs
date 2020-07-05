@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour
     public float CurrentPlayerThrows { get; private set; }
     public float MaxPlayerHealth { get; private set; }
     public float MaxPlayerThrows { get; private set; }
+
+    public (float, float) platformBounds;
     
     private int coins;
     private int Coins
