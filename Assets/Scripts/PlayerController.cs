@@ -246,4 +246,11 @@ public class PlayerController : MonoBehaviour
     {
         GameManager.Instance.UpdatePlayerThrows(throws);
     }
+
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (!other.collider.CompareTag("Platform")) return;
+        var bounds = other.collider.bounds;
+        GameManager.Instance.platformBounds = (bounds.min.x, bounds.max.x);
+    }
 }
