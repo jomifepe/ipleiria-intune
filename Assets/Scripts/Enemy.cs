@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using JetBrains.Annotations;
+using UnityEngine;
 using Image = UnityEngine.UI.Image;
 
 public abstract class Enemy : MonoBehaviour
@@ -44,10 +45,10 @@ public abstract class Enemy : MonoBehaviour
     
     #region Animations
     private Animator animator;
-    private const string AnimAttack = "Attack";
-    private const string AnimIsAttacking = "IsAttacking";
-    private const string AnimHurt = "Hurt";
-    private const string AnimIsDead = "IsDead";
+    private static readonly int AnimAttack = Animator.StringToHash("Attack");
+    private static readonly int AnimIsAttacking = Animator.StringToHash("IsAttacking");
+    private static readonly int AnimHurt = Animator.StringToHash("Hurt");
+    private static readonly int AnimIsDead = Animator.StringToHash("IsDead");
     #endregion
 
     #region Life
@@ -57,7 +58,7 @@ public abstract class Enemy : MonoBehaviour
     protected float life;
     protected float maxHealth;
     #endregion
-    
+    [UsedImplicitly] 
     protected abstract void Attack();
     protected abstract void Init();
 
@@ -254,8 +255,8 @@ public abstract class Enemy : MonoBehaviour
     private void UpdateMovement(Vector2 newMov)
     {
         newMov.Normalize();
-        //so he doesn't jump
-        newMov.y = 0f;
+        /*so he doesn't jump*/
+        newMov.y = 0f; 
         movement = newMov;
     }
 }
