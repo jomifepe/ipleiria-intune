@@ -1,5 +1,4 @@
-﻿
-public class Witch : RangedEnemy
+﻿public class Witch : RangedEnemy
 {
     protected override void Init()
     {

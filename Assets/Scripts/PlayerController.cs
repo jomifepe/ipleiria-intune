@@ -132,7 +132,7 @@ public class PlayerController : MonoBehaviour
 
     private void PerformAttackAnimation()
     {
-        animator.SetTrigger("AttackMelee");
+        animator.SetTrigger(AnimAttackMelee);
         nextMeleeAttackTime = Time.time + 1f / attackRate;
         audioSource.PlayOneShot(meleeAudioClips[0]);
     }
@@ -148,9 +148,9 @@ public class PlayerController : MonoBehaviour
         {
             enemy.GetComponent<Enemy>().TakeDamage(meleeDamage);
         }
-        foreach (Collider2D desctructible in hitDestructibles)
+        foreach (Collider2D destructible in hitDestructibles)
         {
-            desctructible.GetComponent<Destructible>().Destroy();
+            destructible.GetComponent<Destructible>().Destroy();
         }
     }
     
