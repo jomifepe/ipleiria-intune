@@ -9,6 +9,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Image lifeBar;
     [SerializeField] private Image throwBar;
     [SerializeField] private GameObject pausePanel;
+    [SerializeField] private GameObject changeSongButton;
     private float playerMaxHealth = 3f;
     private float playerMaxThrows = 3f;
     
@@ -54,6 +55,11 @@ public class UIManager : MonoBehaviour
     {
         if (value < 0) return;
         playerMaxThrows = value;
+    }
+
+    public void ChangeSongButtonVisibility(bool visible)
+    {
+        changeSongButton.SetActive(visible);
     }
 }
 

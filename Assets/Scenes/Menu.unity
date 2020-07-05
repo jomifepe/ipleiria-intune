@@ -960,7 +960,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 551126566}
-          m_MethodName: SetAxisNegativeState
+          m_MethodName: SetDownState
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -975,7 +975,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 551126566}
-          m_MethodName: SetAxisNeutralState
+          m_MethodName: SetUpState
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -1041,12 +1041,12 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: 
+      - m_Target: {fileID: 1928077185}
+        m_MethodName: ChangeSong
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -2800,6 +2800,7 @@ MonoBehaviour:
   lifeBar: {fileID: 335307468}
   throwBar: {fileID: 960786207}
   pausePanel: {fileID: 1265457826}
+  changeSongButton: {fileID: 551126563}
 --- !u!4 &1626773606
 Transform:
   m_ObjectHideFlags: 0
@@ -2897,18 +2898,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1647604314}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: 
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1647604314
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3341,7 +3331,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HUD: {fileID: 1376194959}
   controls: {fileID: 0}
-  songList: []
+  songList:
+  - clip: {fileID: 8300000, guid: 6fbe32c70b4145e458335494a2862dc6, type: 3}
+    debuff: 0
 --- !u!4 &1928077186
 Transform:
   m_ObjectHideFlags: 0
@@ -3472,7 +3464,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -1225381214361610779, guid: fc9f5770e8ee9bf42b09b2e2a0092b09,
     type: 2}
-  m_audioClip: {fileID: 8300000, guid: 6fbe32c70b4145e458335494a2862dc6, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1

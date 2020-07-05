@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Model;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -26,6 +28,7 @@ public class PlayerController : MonoBehaviour
     [Range(0, .3f)] [SerializeField] private float movementSmoothing = .05f;
 
     private Rigidbody2D playerRigidbody;
+    private SpriteRenderer spriteRenderer;
     private Animator animator;
     private AudioSource audioSource;
     private Collider2D[] results = new Collider2D[1];
@@ -33,15 +36,17 @@ public class PlayerController : MonoBehaviour
     private bool jump, isGrounded, wasJumping, isAlive = true;
     private float health = 3f, throws = 3f, maxHealth, maxThrows;
     private float shootVelocity = 5f, attackRate = 2f;
-
     private float nextMeleeAttackTime, nextRangedAttackTime;
     private float jumpTimer;
-    
+    private Buff currentBuff;
+    private Dictionary<Buff, Sprite> buffResources;
+
     private string AnimHurt = "Hurt";
     private string AnimIsDead = "IsDead";
     private string AnimIsJumping = "IsJumping";
     private string AnimHorizontalSpeed = "HorizontalSpeed";
     private string AnimAttackMelee = "AttackMelee";
+
 
     private void Awake()
     {
@@ -52,6 +57,16 @@ public class PlayerController : MonoBehaviour
         playerRigidbody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+
+        currentBuff = Buff.None;
+        AssetDatabase.LoadA
+        buffResources = new Dictionary<Buff, Sprite>
+        {
+            {Buff.None, Resources.Load<Sprite>("Sprites/Weapons/Tomahawk1.png")},
+            {Buff.Slow, Resources.Load<Sprite>("Sprites/Weapons/Tomahawk1Icy.png")},
+            {Buff.Physical, Resources.Load<Sprite>("Sprites/Weapons/Tomahawk1Bloody.png")}
+        };
     }
 
     private void Start()
@@ -63,44 +78,49 @@ public class PlayerController : MonoBehaviour
     {
         jumpTimer -= Time.deltaTime;
         
-        if (!GameManager.Instance.IsPaused)
+        if (!GameManager.Instance.IsPaused && isAlive)
         {
-            if (isAlive)
+            if (Time.time >= nextMeleeAttackTime && Input.GetButtonDown("Fire1"))
+            // if (Time.time >= nextMeleeAttackTime && CrossPlatformInputManager.GetButtonDown("Fire1"))
             {
-                if (Time.time >= nextMeleeAttackTime && Input.GetButtonDown("Fire1"))
-                // if (Time.time >= nextMeleeAttackTime && CrossPlatformInputManager.GetButtonDown("Fire1"))
-                {
-                    PerformAttackAnimation();
-                }
-                // if (Time.time >= nextRangedAttackTime && Input.GetButtonDown("Fire2"))
-                if (Time.time >= nextRangedAttackTime && CrossPlatformInputManager.GetButtonDown("Fire2"))
-                {
-                    Throw();
-                }
-
-                float horizontalInput = Input.GetAxisRaw("Horizontal");
-                // float horizontalInput = CrossPlatformInputManager.GetAxisRaw("Horizontal");
-
-                if (transform.right.x > 0 && horizontalInput < 0)
-                {
-                    Flip();
-                }
-
-                if (transform.right.x < 0 && horizontalInput > 0)
-                {
-                    Flip();
-                }
-
-                if (Input.GetButtonDown("Jump"))
-                // if (CrossPlatformInputManager.GetButtonDown("Jump"))
-                {
-                    jump = true;
-                }
-
-                playerRigidbody.velocity = new Vector2(horizontalInput * speed, playerRigidbody.velocity.y);
-
-                animator.SetFloat(AnimHorizontalSpeed, Mathf.Abs(playerRigidbody.velocity.x));
+                PerformAttackAnimation();
             }
+            // if (Time.time >= nextRangedAttackTime && Input.GetButtonDown("Fire2"))
+            if (Time.time >= nextRangedAttackTime && CrossPlatformInputManager.GetButtonDown("Fire2"))
+            {
+                Throw();
+            }
+
+            float horizontalInput = Input.GetAxisRaw("Horizontal");
+            // float horizontalInput = CrossPlatformInputManager.GetAxisRaw("Horizontal");
+
+            if (transform.right.x > 0 && horizontalInput < 0)
+            {
+                Flip();
+            }
+
+            if (transform.right.x < 0 && horizontalInput > 0)
+            {
+                Flip();
+            }
+
+            if (Input.GetButtonDown("Jump"))
+            // if (CrossPlatformInputManager.GetButtonDown("Jump"))
+            {
+                jump = true;
+            }
+            
+            var currentSong = GameManager.Instance.CurrentSong;
+            if (currentSong != null && currentSong.buff != currentBuff)
+            {
+                currentBuff = currentSong.buff;
+                spriteRenderer.sprite = buffResources[currentBuff];
+                Debug.Log("Changed debuff " + currentBuff);
+            }
+
+            playerRigidbody.velocity = new Vector2(horizontalInput * speed, playerRigidbody.velocity.y);
+
+            animator.SetFloat(AnimHorizontalSpeed, Mathf.Abs(playerRigidbody.velocity.x));
         }
     }
 
@@ -132,7 +152,7 @@ public class PlayerController : MonoBehaviour
 
     private void PerformAttackAnimation()
     {
-        animator.SetTrigger("AttackMelee");
+        animator.SetTrigger(AnimAttackMelee);
         nextMeleeAttackTime = Time.time + 1f / attackRate;
         audioSource.PlayOneShot(meleeAudioClips[0]);
     }
@@ -140,7 +160,6 @@ public class PlayerController : MonoBehaviour
     /* Called by animation event */
     private void AttackMelee()
     {
-        // animator.SetTrigger("AttackMelee");
         CameraFollow.Instance.Shake(.2f, 0.1f);
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(meleeAttackPoint.position, meleeAttackRange, enemyLayerMask);
         Collider2D[] hitDestructibles = Physics2D.OverlapCircleAll(meleeAttackPoint.position, meleeAttackRange, destructibleLayerMask);
@@ -175,6 +194,7 @@ public class PlayerController : MonoBehaviour
     {
         GameObject throwable = Instantiate(throwablePrefab, throwPoint.position, throwPoint.rotation);
         throwable.GetComponent<Rigidbody2D>().velocity = throwPoint.right * shootVelocity;
+        throwable.GetComponent<SpriteRenderer>().sprite = buffResources[currentBuff];
         audioSource.PlayOneShot(rangedAudioClip);
     }
 

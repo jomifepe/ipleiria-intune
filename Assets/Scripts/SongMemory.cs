@@ -1,18 +1,21 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Model;
 using UnityEngine;
 
 public class SongMemory : MonoBehaviour
 {
     [SerializeField] private AudioClip song;
-    
-    private void OnTriggerEnter(Collider other)
+    [SerializeField] private Buff buff;
+
+    private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
-            var player = other.GetComponent<PlayerController>();
-            // AudioManager.Instance.
+            AudioManager.Instance.PreviewSong(song);
+            GameManager.Instance.AddSong(new Song(song, buff));
+            Destroy(gameObject);
         }
     }
 }
