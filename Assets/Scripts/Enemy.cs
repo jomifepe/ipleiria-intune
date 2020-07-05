@@ -4,7 +4,7 @@ using Image = UnityEngine.UI.Image;
 
 public abstract class Enemy : MonoBehaviour
 {
-    private enum MovementType{SimpleMove, FollowPlayer, FollowPlayerSmart};
+    private enum MovementType{SimpleMove, FollowPlayer, FollowPlayerSmart}
     
     private Rigidbody2D rigidBody;
     private Vector2 movement;
@@ -58,6 +58,7 @@ public abstract class Enemy : MonoBehaviour
     protected float life;
     protected float maxHealth;
     #endregion
+    
     [UsedImplicitly] 
     protected abstract void Attack();
     protected abstract void Init();
@@ -226,14 +227,15 @@ public abstract class Enemy : MonoBehaviour
         nextAttackTime = Time.time + attackCooldown / attackRate;
     }
     
-    public void TakeDamage(float damage)
+    public bool TakeDamage(float damage)
     {
-        if (!isAlive) return;
+        if (!isAlive) return false;
         animator.SetTrigger(AnimHurt);
         life -= damage;
         if (life < 0f) life = 0f;
         UpdateLifebar();
         if (life == 0f) Die();
+        return true;
     }
 
     private void UpdateLifebar()

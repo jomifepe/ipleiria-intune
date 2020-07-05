@@ -203,7 +203,6 @@ public class PlayerController : MonoBehaviour
         if (health < 0f) health = 0f;
         UpdateHealthBar();
         if (health == 0f) Die();
-
     }
 
     private void Die()
