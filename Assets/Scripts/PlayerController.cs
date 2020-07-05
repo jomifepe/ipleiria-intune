@@ -39,7 +39,7 @@ public class PlayerController : MonoBehaviour
     private float nextMeleeAttackTime, nextRangedAttackTime;
     private float jumpTimer;
     private Buff currentBuff;
-    private Dictionary<Buff, Sprite> buffResources;
+    private Dictionary<Buff, (Sprite sprite, RuntimeAnimatorController animation)> buffResources;
 
     private string AnimHurt = "Hurt";
     private string AnimIsDead = "IsDead";
@@ -60,12 +60,21 @@ public class PlayerController : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
 
         currentBuff = Buff.None;
-        AssetDatabase.LoadA
-        buffResources = new Dictionary<Buff, Sprite>
+
+        buffResources = new Dictionary<Buff, (Sprite sprite, RuntimeAnimatorController animation)>
         {
-            {Buff.None, Resources.Load<Sprite>("Sprites/Weapons/Tomahawk1.png")},
-            {Buff.Slow, Resources.Load<Sprite>("Sprites/Weapons/Tomahawk1Icy.png")},
-            {Buff.Physical, Resources.Load<Sprite>("Sprites/Weapons/Tomahawk1Bloody.png")}
+            {Buff.None, (
+                sprite: Resources.Load<Sprite>("Sprites/Weapons/Tomahawk1"), 
+                animation: Resources.Load<RuntimeAnimatorController>("Animations/Tomahawk1")
+            )},
+            {Buff.Slow, (
+                sprite: Resources.Load<Sprite>("Sprites/Weapons/Tomahawk1Icy"),
+                animation: Resources.Load<RuntimeAnimatorController>("Animations/Tomahawk1Icy")
+            )},
+            {Buff.Physical, (
+                sprite: Resources.Load<Sprite>("Sprites/Weapons/Tomahawk1Bloody"),
+                animation: Resources.Load<RuntimeAnimatorController>("Animations/Tomahawk1Bloody")
+            )}
         };
     }
 
@@ -111,12 +120,7 @@ public class PlayerController : MonoBehaviour
             }
             
             var currentSong = GameManager.Instance.CurrentSong;
-            if (currentSong != null && currentSong.buff != currentBuff)
-            {
-                currentBuff = currentSong.buff;
-                spriteRenderer.sprite = buffResources[currentBuff];
-                Debug.Log("Changed debuff " + currentBuff);
-            }
+            if (currentSong != null && currentSong.buff != currentBuff) currentBuff = currentSong.buff;
 
             playerRigidbody.velocity = new Vector2(horizontalInput * speed, playerRigidbody.velocity.y);
 
@@ -194,7 +198,8 @@ public class PlayerController : MonoBehaviour
     {
         GameObject throwable = Instantiate(throwablePrefab, throwPoint.position, throwPoint.rotation);
         throwable.GetComponent<Rigidbody2D>().velocity = throwPoint.right * shootVelocity;
-        throwable.GetComponent<SpriteRenderer>().sprite = buffResources[currentBuff];
+        throwable.GetComponent<SpriteRenderer>().sprite = buffResources[currentBuff].sprite;
+        throwable.GetComponent<Animator>().runtimeAnimatorController = buffResources[currentBuff].animation;
         audioSource.PlayOneShot(rangedAudioClip);
     }
 

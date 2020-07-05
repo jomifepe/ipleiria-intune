@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4215345554625269231}
   - component: {fileID: 1237873881439835686}
   m_Layer: 11
-  m_Name: Tomahawk2 1
+  m_Name: Tomahawk1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -74,7 +74,7 @@ SpriteRenderer:
   m_SortingLayerID: -298277891
   m_SortingLayer: 9
   m_SortingOrder: 0
-  m_Sprite: {fileID: -703784946607835507, guid: 0d97a5cac46944a48942e9d0e806e517,
+  m_Sprite: {fileID: -2556494204530786228, guid: cc222c993b884224a91bdec579f81ebc,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -146,7 +146,7 @@ Animator:
   m_GameObject: {fileID: 4152751771967737515}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: db605d61c58e36644b74713e40f71397, type: 2}
+  m_Controller: {fileID: 9100000, guid: 192fe9365d520fe428faa15bfb808749, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
