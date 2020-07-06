@@ -5,19 +5,14 @@ namespace Enemy
 {
     public class EnemyAI : Enemy
     {
-        //[SerializeField] private Transform target;
-       
-        //maybe not needed
-        //[SerializeField] private Transform enemy;
-        
         /*how close the enemy needs to be into a waypoint before it moves on to the next one*/
         [SerializeField] private float nextWayPointDistance = 3f;
         [SerializeField] private LayerMask playerLayerMask;
 
-        //public AIPath aiPath;
         private Path path;
-        private int currentWaypoint = 0;
-        private bool reachedEndOfPath = false;
+        private int currentWaypoint;
+        private bool following;
+        //private bool reachedEndOfPath = false;
 
         private Seeker seeker;
         private Vector2 force;
@@ -26,24 +21,21 @@ namespace Enemy
         {
             if (Physics2D.OverlapCircleNonAlloc(attackPoint.position, attackRange, results, playerLayerMask) == 0) return;
             results[0].GetComponent<PlayerController>().TakeDamage(attackDamage);
-            audioSource.PlayOneShot(attackAudioClip);        }
+            audioSource.PlayOneShot(attackAudioClip);        
+        }
 
         protected override void Init()
         {
-            //throw new System.NotImplementedException();
+            life = maxHealth = 2f;
+            sensingRange = 5f;
+            pushForce = new Vector2(300f, 150f);
         }
 
-        protected override void Start()
+        private new void Start()
         {
-            //same on the non AI
-            int index = SpriteRenderingOrderManager.Instance.GetEnemyOrderInLayer();
-            GetComponent<SpriteRenderer>().sortingOrder = index;
-            UpdateLifebar();
-
-            //Debug.Log("AI Started");
+            base.Start();
+            
             seeker = GetComponent<Seeker>();
-            //rb = GetComponent<Rigidbody2D>();
-
             /*generate a path*/
             InvokeRepeating(nameof(UpdatePath), 0f, .5f);
             UpdatePath();
@@ -70,7 +62,6 @@ namespace Enemy
         {
             if (seeker.IsDone())
             {
-                //seeker.StartPath(rigidBody.position, target.position, OnPathComplete);
                 seeker.StartPath(rigidBody.position, player.position, OnPathComplete);
             }
         }
@@ -85,17 +76,18 @@ namespace Enemy
         protected override void FixedUpdate()
         {
             if (path == null) return;
-
-            /*if reached the end of the path*/
+            if(!PlayerOnSensingRange() && !following) return;
+            following = true;
+            
+            /*If reached the end of the path*/
             if (currentWaypoint >= path.vectorPath.Count)
             {
-                reachedEndOfPath = true;
+                //reachedEndOfPath = true;
                 return;
             }
 
-            reachedEndOfPath = false;
+            //reachedEndOfPath = false;
             Vector2 direction = ((Vector2) path.vectorPath[currentWaypoint] - rigidBody.position).normalized;
-            //Vector2 force = direction * (speed * Time.deltaTime);
             force = direction * (speed * Time.deltaTime);
             rigidBody.AddForce(force);
 
@@ -105,20 +97,26 @@ namespace Enemy
             {
                 currentWaypoint++;
             }
+            Flip();
+        }
 
-            /*Flipping*/
+        protected override void Flip()
+        {
+            Vector3 localRotation = transform.localEulerAngles;
             if (force.x >= 0.01f)
             {
-                //enemy.localScale = new Vector3(-1f, 1f, 1f);
-                transform.localScale = new Vector3(-1f, 1f, 1f);
+                localRotation.y = 0f;
+                //transform.localScale = new Vector3(1f, 1f, 1f);
             }
             else if (force.x <= -0.01f)
             {
-                //enemy.localScale = new Vector3(1f, 1f, 1f);
-                transform.localScale = new Vector3(1f, 1f, 1f);
+                localRotation.y = 180f;
+                //ransform.localScale = new Vector3(-1f, 1f, 1f);
             }
+            transform.localEulerAngles = localRotation;
+            lifebarCanvas.transform.forward = mainCamera.transform.forward;
         }
-
+        
         protected override bool PlayerOnAttackRange()
         {
             return Vector2.Distance(rigidBody.position, player.position) <= attackRange;
@@ -126,8 +124,6 @@ namespace Enemy
 
         protected override bool PlayerOnSensingRange()
         {
-            //var distance = Vector2.Distance(rigidBody.position, player.position);
-            //Debug.Log("Distance: " + distance);
             return Vector2.Distance(rigidBody.position, player.position) <= sensingRange;
         }
     }

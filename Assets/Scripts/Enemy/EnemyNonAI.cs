@@ -14,14 +14,7 @@ namespace Enemy
 
         protected enum MovementType{SimpleMove, FollowPlayer, FollowPlayerSmart}
         [SerializeField] protected MovementType movementType;
-        
-        protected override void Start()
-        {
-            int index = SpriteRenderingOrderManager.Instance.GetEnemyOrderInLayer();
-            GetComponent<SpriteRenderer>().sortingOrder = index;
-            UpdateLifebar();
-        }
-        
+
         protected override void Update()
         {
             if (!isAlive) return;
@@ -44,6 +37,8 @@ namespace Enemy
             Move();
         }
         
+        
+        //follows forever when detected
         protected override void FixedUpdate()
         {
             if (attackMode || !isAlive) return;
@@ -130,7 +125,12 @@ namespace Enemy
         {
             rigidBody.MovePosition((Vector2)transform.position + (dir * (speed * Time.deltaTime)));
         }
-        
+
+        private void CheckCanFlip(Vector2 dir)
+        {
+            canFlip = !SameDirection(dir);
+        }
+
         protected override bool PlayerOnAttackRange()
         {
             /*If not FollowPlayerSmart the player has to be in front of the enemy*/
@@ -143,9 +143,20 @@ namespace Enemy
             return Mathf.Abs(direction.x) <= sensingRange;
         }
         
-        private void CheckCanFlip(Vector2 dir)
+        private bool SameDirection(Vector2 dir)
         {
-            canFlip = !SameDirection(dir);
+            var localEulerAngles = transform.localEulerAngles;
+            return !(dir.x < 0 && localEulerAngles.y < 180f ||
+                     dir.x > 0 && localEulerAngles.y >= 180f);
         }
+        
+        protected override void Flip()
+        {
+            Vector3 localRotation = transform.localEulerAngles;
+            localRotation.y += 180f;
+            transform.localEulerAngles = localRotation;
+            lifebarCanvas.transform.forward = mainCamera.transform.forward;
+        }
+
     }
 }
