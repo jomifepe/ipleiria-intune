@@ -436,19 +436,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08215b2a079a4a6f873c50ed531494e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speed: 1
+  attackCooldown: 2
+  attackRange: 2
+  attackDamage: 1
+  attackPoint: {fileID: 7065451944867234441}
+  attackAudioClip: {fileID: 0}
+  lifebarImage: {fileID: 5504275465695881511}
+  lifebarCanvas: {fileID: 7139927683293155757}
   groundCheck: {fileID: 8044703418025823954}
   groundLayerMask:
     serializedVersion: 2
     m_Bits: 512
   movementType: 2
-  speed: 1
-  cooldown: 1.5
-  attackRange: 2
-  attackDamage: 1
-  lifebarImage: {fileID: 5504275465695881511}
-  lifebarCanvas: {fileID: 7139927683293155757}
-  attackAudioClip: {fileID: 0}
-  attackPoint: {fileID: 7065451944867234441}
   playerLayerMask:
     serializedVersion: 2
     m_Bits: 256

@@ -2,7 +2,7 @@
 
 namespace Enemy
 {
-    public abstract class MeleeEnemy : Enemy
+    public abstract class MeleeEnemy : EnemyNonAI
     {
         [SerializeField] private LayerMask playerLayerMask;
         protected override void Attack()

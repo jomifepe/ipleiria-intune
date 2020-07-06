@@ -10,12 +10,17 @@ public class AudioManager : MonoBehaviour
 
     [SerializeField] private AudioMixer audioMixer;
     [SerializeField] public AudioSource audioSource;
+    private float volumeSong = 1f;
 
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
+            if (audioMixer != null)
+            {
+                audioMixer.GetFloat("MasterVolume", out volumeSong);
+            }
         }
         else
         {
@@ -88,5 +93,10 @@ public class AudioManager : MonoBehaviour
         }
 
         if (audioSource.volume > maxVolume) audioSource.volume = maxVolume;
+    }
+
+    public float GetVolume()
+    {
+        return volumeSong;
     }
 }
