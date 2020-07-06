@@ -2,21 +2,15 @@
 
 public class Projectile : MonoBehaviour
 {
-    private enum Type
-    {
-        Tomahawk, Spell
-    }
+    private enum Type { Tomahawk, Spell }
     [SerializeField] private Type type;
-
-    
-    [SerializeField]
-    private float damage = 1f;
+    [SerializeField] private float damage = 1f;
     
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Enemy") && type == Type.Tomahawk)
         {
-            other.GetComponent<Enemy>().TakeDamage(damage);
+            if(!other.GetComponent<Enemy.Enemy>().TakeDamage(damage)) return;
             Dismiss();
         }
         else if (other.CompareTag("Player") && type == Type.Spell)

@@ -478,7 +478,7 @@ MonoBehaviour:
   attackAudioClip: {fileID: 0}
   lifebarImage: {fileID: 6772507679635615633}
   lifebarCanvas: {fileID: 8253344273807759131}
-  throwablePrefab: {fileID: 164641265797304320, guid: 5a93d814c7a6eb04abf0996dcd28ac12,
+  throwablePrefab: {fileID: 2581428994220222083, guid: 8a456e9b4e8ac49ec98b5b136d323f59,
     type: 3}
   shootVelocity: 3
 --- !u!114 &4471141532328517465

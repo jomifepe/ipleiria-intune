@@ -170,7 +170,7 @@ public class PlayerController : MonoBehaviour
         
         foreach (Collider2D enemy in hitEnemies)
         {
-            enemy.GetComponent<Enemy>().TakeDamage(meleeDamage);
+            enemy.GetComponent<Enemy.Enemy>().TakeDamage(meleeDamage);
         }
         foreach (Collider2D destructible in hitDestructibles)
         {
@@ -229,7 +229,6 @@ public class PlayerController : MonoBehaviour
         if (health < 0f) health = 0f;
         UpdateHealthBar();
         if (health == 0f) Die();
-
     }
 
     private void Die()
