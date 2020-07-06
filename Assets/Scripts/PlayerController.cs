@@ -27,17 +27,18 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float meleeDamage = 1f;
     [Range(0, .3f)] [SerializeField] private float movementSmoothing = .05f;
 
-    private Rigidbody2D playerRigidbody;
+    private Rigidbody2D rigidBody;
     private SpriteRenderer spriteRenderer;
     private Animator animator;
     private AudioSource audioSource;
     private Collider2D[] results = new Collider2D[1];
-    
+
+    private float horizontalInput;
     private bool jump, isGrounded, wasJumping, isAlive = true;
     private float health = 3f, throws = 3f, maxHealth, maxThrows;
     private float shootVelocity = 5f, attackRate = 2f;
     private float nextMeleeAttackTime, nextRangedAttackTime;
-    private float jumpTimer;
+    private float jumpTimer, extraJumps;
     private Buff currentBuff;
     private Dictionary<Buff, (Sprite sprite, RuntimeAnimatorController animation)> buffResources;
 
@@ -54,7 +55,7 @@ public class PlayerController : MonoBehaviour
         maxThrows = throws;
         GameManager.Instance.SetPlayerMaxHealth(maxHealth);
         GameManager.Instance.SetPlayerMaxThrows(maxThrows);
-        playerRigidbody = GetComponent<Rigidbody2D>();
+        rigidBody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -89,42 +90,23 @@ public class PlayerController : MonoBehaviour
         
         if (!GameManager.Instance.IsPaused && isAlive)
         {
-            if (Time.time >= nextMeleeAttackTime && Input.GetButtonDown("Fire1"))
-            // if (Time.time >= nextMeleeAttackTime && CrossPlatformInputManager.GetButtonDown("Fire1"))
-            {
-                PerformAttackAnimation();
-            }
-            // if (Time.time >= nextRangedAttackTime && Input.GetButtonDown("Fire2"))
-            if (Time.time >= nextRangedAttackTime && CrossPlatformInputManager.GetButtonDown("Fire2"))
-            {
-                Throw();
-            }
-
-            float horizontalInput = Input.GetAxisRaw("Horizontal");
-            // float horizontalInput = CrossPlatformInputManager.GetAxisRaw("Horizontal");
-
-            if (transform.right.x > 0 && horizontalInput < 0)
-            {
-                Flip();
-            }
-
-            if (transform.right.x < 0 && horizontalInput > 0)
-            {
-                Flip();
-            }
-
-            if (Input.GetButtonDown("Jump"))
-            // if (CrossPlatformInputManager.GetButtonDown("Jump"))
-            {
-                jump = true;
-            }
+            if (Time.time >= nextMeleeAttackTime && (
+                Input.GetButtonDown("Fire1") || CrossPlatformInputManager.GetButtonDown("Fire1")
+            )) PerformAttackAnimation();
             
+            if (Time.time >= nextRangedAttackTime && (
+                Input.GetButtonDown("Fire2") || CrossPlatformInputManager.GetButtonDown("Fire2")
+            )) Throw();
+
+                horizontalInput = Input.GetAxisRaw("Horizontal");
+            // horizontalInput = CrossPlatformInputManager.GetAxisRaw("Horizontal");
+
+            if (transform.right.x * horizontalInput < 0) Flip();
+
+            if (Input.GetButtonDown("Jump") || CrossPlatformInputManager.GetButtonDown("Jump")) jump = true;
+
             var currentSong = GameManager.Instance.CurrentSong;
             if (currentSong != null && currentSong.buff != currentBuff) currentBuff = currentSong.buff;
-
-            playerRigidbody.velocity = new Vector2(horizontalInput * speed, playerRigidbody.velocity.y);
-
-            animator.SetFloat(AnimHorizontalSpeed, Mathf.Abs(playerRigidbody.velocity.x));
         }
     }
 
@@ -132,6 +114,10 @@ public class PlayerController : MonoBehaviour
     {
         if (isAlive)
         {
+            var velocity = rigidBody.velocity;
+            rigidBody.velocity = new Vector2(horizontalInput * speed, velocity.y);
+            animator.SetFloat(AnimHorizontalSpeed, Mathf.Abs(velocity.x));
+            
             isGrounded = CheckForGround();
 
             if (wasJumping && isGrounded && jumpTimer <= 0)
@@ -145,7 +131,7 @@ public class PlayerController : MonoBehaviour
                 wasJumping = true;
                 jumpTimer = 0.1f;
                 animator.SetBool(AnimIsJumping, true);
-                playerRigidbody.velocity = Vector2.up * jumpForce;
+                rigidBody.velocity = Vector2.up * jumpForce;
 
                 audioSource.PlayOneShot(jumpAudioClip);
             }
