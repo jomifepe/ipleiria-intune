@@ -38,7 +38,8 @@ public class PlayerController : MonoBehaviour
     private float health = 3f, throws = 3f, maxHealth, maxThrows;
     private float shootVelocity = 5f, attackRate = 2f;
     private float nextMeleeAttackTime, nextRangedAttackTime;
-    private float jumpTimer, extraJumps;
+    private float jumpTimer;
+    private int extraJumps;
     private Buff currentBuff;
     private Dictionary<Buff, (Sprite sprite, RuntimeAnimatorController animation)> buffResources;
 
@@ -90,21 +91,26 @@ public class PlayerController : MonoBehaviour
         
         if (!GameManager.Instance.IsPaused && isAlive)
         {
+            /* melee attack */
             if (Time.time >= nextMeleeAttackTime && (
                 Input.GetButtonDown("Fire1") || CrossPlatformInputManager.GetButtonDown("Fire1")
             )) PerformAttackAnimation();
             
+            /* projectile throw */
             if (Time.time >= nextRangedAttackTime && (
                 Input.GetButtonDown("Fire2") || CrossPlatformInputManager.GetButtonDown("Fire2")
             )) Throw();
 
-                horizontalInput = Input.GetAxisRaw("Horizontal");
-            // horizontalInput = CrossPlatformInputManager.GetAxisRaw("Horizontal");
+            /* horizontal movement */
+            horizontalInput = Input.GetAxisRaw("Horizontal") + CrossPlatformInputManager.GetAxisRaw("Horizontal");
 
+            /* character horizontal flip */
             if (transform.right.x * horizontalInput < 0) Flip();
 
+            /* jumping */
             if (Input.GetButtonDown("Jump") || CrossPlatformInputManager.GetButtonDown("Jump")) jump = true;
 
+            /* check if the song/buff has changed */
             var currentSong = GameManager.Instance.CurrentSong;
             if (currentSong != null && currentSong.buff != currentBuff) currentBuff = currentSong.buff;
         }
@@ -114,19 +120,21 @@ public class PlayerController : MonoBehaviour
     {
         if (isAlive)
         {
+            /* horizontal movement */
             var velocity = rigidBody.velocity;
             rigidBody.velocity = new Vector2(horizontalInput * speed, velocity.y);
             animator.SetFloat(AnimHorizontalSpeed, Mathf.Abs(velocity.x));
             
             isGrounded = CheckForGround();
-
-            if (wasJumping && isGrounded && jumpTimer <= 0)
+            
+            if (/* has hit the ground after jumping */ wasJumping && isGrounded && jumpTimer <= 0)
             {
                 animator.SetBool(AnimIsJumping, false);
                 wasJumping = false;
+                extraJumps = 2;
             }
 
-            if (jump && isGrounded && jumpTimer <= 0)
+            if (/* has jumped from the ground */ jump && isGrounded && jumpTimer <= 0)
             {
                 wasJumping = true;
                 jumpTimer = 0.1f;
