@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 using UnityEngine;
 using Image = UnityEngine.UI.Image;
 
@@ -6,38 +7,34 @@ namespace Enemy
 {
     public abstract class Enemy : MonoBehaviour
     {
-        private enum MovementType{SimpleMove, FollowPlayer, FollowPlayerSmart}
-    
-        private Rigidbody2D rigidBody;
-        private Vector2 movement;
+        protected Rigidbody2D rigidBody;
+        
+        //maybe only used on the non ai
+        //protected Vector2 movement;
 
         protected readonly Collider2D[] results = new Collider2D[1];
         private Camera mainCamera;
-
-        [SerializeField] private Transform groundCheck;
-        [SerializeField] private LayerMask groundLayerMask;
-    
-        [SerializeField] private MovementType movementType;
+        
         [SerializeField] protected float speed = 1f;
     
-        private bool canFlip;
-        private bool reachedBorder;
-        private bool samePlatform;
-        private bool inSensingRange;
+        //maybe only used on the non ai
+        protected bool inSensingRange;
         protected float sensingRange;
 
-        private Vector3 direction;
-        private Transform player;
+        //maybe only used on the non ai
+        protected Transform player;
 
         #region Attack
         [SerializeField] private float attackCooldown; //time for cooldown between attacks
         [SerializeField] protected float attackRange;
         [SerializeField] protected float attackDamage;
+        
+        //by code put htis only on enemyNonAi
         [SerializeField] protected Transform attackPoint;
     
-        private bool attackMode;
+        protected bool attackMode;
         private float attackRate = 2f;
-        private float nextAttackTime;
+        protected float nextAttackTime;
         #endregion
     
         #region Audio
@@ -46,17 +43,17 @@ namespace Enemy
         #endregion
     
         #region Animations
-        private Animator animator;
-        private static readonly int AnimAttack = Animator.StringToHash("Attack");
-        private static readonly int AnimIsAttacking = Animator.StringToHash("IsAttacking");
-        private static readonly int AnimHurt = Animator.StringToHash("Hurt");
-        private static readonly int AnimIsDead = Animator.StringToHash("IsDead");
+        protected Animator animator;
+        protected static readonly int AnimAttack = Animator.StringToHash("Attack");
+        protected static readonly int AnimIsAttacking = Animator.StringToHash("IsAttacking");
+        protected static readonly int AnimHurt = Animator.StringToHash("Hurt");
+        protected static readonly int AnimIsDead = Animator.StringToHash("IsDead");
         #endregion
 
         #region Life
         [SerializeField] private Image lifebarImage;
         [SerializeField] private Canvas lifebarCanvas;
-        private bool isAlive = true;
+        protected bool isAlive = true;
         protected float life;
         protected float maxHealth;
         #endregion
@@ -75,20 +72,25 @@ namespace Enemy
             audioSource = GetComponent<AudioSource>();
         }
 
-        private void Start()
+        [UsedImplicitly]
+        protected abstract void Start();
+        /*private void Start()
         {
             int index = SpriteRenderingOrderManager.Instance.GetEnemyOrderInLayer();
             GetComponent<SpriteRenderer>().sortingOrder = index;
             UpdateLifebar();
-        }
-        protected void Update()
+        }*/
+
+        [UsedImplicitly]
+        protected abstract void Update();
+        /*protected void Update()
         {
             if (!isAlive) return;
             UpdateDirection();
             CheckCanFlip(direction);
             CheckSamePlatform();
         
-            /*It doesn't attack when the player is on other platform*/
+            /*It doesn't attack when the player is on other platform
             if (PlayerOnAttackRange(direction.x) && samePlatform)
             {
                 if (canFlip && movementType == MovementType.FollowPlayerSmart) Flip();
@@ -96,14 +98,17 @@ namespace Enemy
                 attackMode = true;
                 return;
             }
-            /*So it doesn't move while still attacking*/
+            /*So it doesn't move while still attacking
             if (Time.time < nextAttackTime) return;
             animator.SetBool(AnimIsAttacking, false);
             attackMode = false;
             Move();
-        }
-    
-        private void FixedUpdate()
+        }*/
+
+        [UsedImplicitly]
+        protected abstract void FixedUpdate();
+        
+        /*private void FixedUpdate()
         {
             if (attackMode || !isAlive) return;
             CheckReachedBorder();
@@ -113,9 +118,9 @@ namespace Enemy
                 return;
             }
             FollowPlayer();
-        }
+        }*/
     
-        private void FollowPlayer()
+        /*private void FollowPlayer()
         {
             if (!SamePlatform() || !inSensingRange)
             {
@@ -132,7 +137,7 @@ namespace Enemy
             if (reachedBorder) Flip();
         }
 
-        private void CheckSamePlatform()
+        protected void CheckSamePlatform()
         {
             samePlatform = SamePlatform();
             if(!samePlatform) return;
@@ -140,16 +145,16 @@ namespace Enemy
             CheckReachedBorder();
             if (!reachedBorder || !SameDirection(direction)) return;
             Flip();
-        }
-
+        }*/
+/*
         private bool SamePlatform()
         {
             var enemyXPosition = transform.position.x;
             var (leftLimit, rightLimit) = GameManager.Instance.platformBounds;
             return enemyXPosition >= leftLimit && enemyXPosition <= rightLimit;
-        }
+        }*/
 
-        private void Move()
+        /*private void Move()
         {
             rigidBody.velocity = new Vector2(speed * transform.right.x, rigidBody.velocity.y);
             if (movementType == MovementType.SimpleMove) return;
@@ -162,59 +167,66 @@ namespace Enemy
             if (!samePlatform) return;
             inSensingRange = true;
             UpdateMovement(direction);
-        }
+        }*/
 
-        private void UpdateDirection()
+        /*private void UpdateDirection()
         {
             direction = player.position - transform.position;
-        }
+        }*/
 
-        private bool PlayerOnAttackRange(float playerDistanceX)
+        
+        //overriden by the 2
+        [UsedImplicitly] 
+        protected abstract bool PlayerOnAttackRange();
+        /*protected bool PlayerOnAttackRange(float playerDistanceX)
         {
-            /*If not FollowPlayerSmart the player has to be in front of the enemy*/
+            /*If not FollowPlayerSmart the player has to be in front of the enemy
             if (movementType != MovementType.FollowPlayerSmart && !SameDirection(direction)) return false;
             return Mathf.Abs(playerDistanceX) <= attackRange;
-        }
+        }*/
 
-        private bool PlayerOnSensingRange(float playerDistanceX)
+        
+        //can be oerriden for the 2 classes
+        [UsedImplicitly]
+        protected abstract bool PlayerOnSensingRange();
+        /*protected bool PlayerOnSensingRange(float playerDistanceX)
         {
             return Mathf.Abs(playerDistanceX) <= sensingRange;
-        }
+        }*/
 
-        private void MoveCharacter(Vector2 dir)
+        /*private void MoveCharacter(Vector2 dir)
         {
             rigidBody.MovePosition((Vector2)transform.position + (dir * (speed * Time.deltaTime)));
-        }
+        }*/
     
-        private void UpdateMovement(Vector2 newMov)
+        /*private void UpdateMovement(Vector2 newMov)
         {
             newMov.Normalize();
-            /*so he doesn't jump*/
+           //so he doesn't jump
             newMov.y = 0f; 
             movement = newMov;
-        }
+        }*/
 
-        private void CheckReachedBorder()
+        /*private void CheckReachedBorder()
         {
             reachedBorder = Physics2D.OverlapPointNonAlloc(
                 groundCheck.position,
                 results,
                 groundLayerMask) == 0;
-        }
+        }*/
 
-        private void CheckCanFlip(Vector2 dir)
-        {
-            canFlip = !SameDirection(dir);
-        }
+
     
-        private bool SameDirection(Vector2 dir)
+        //overriden by th 2
+        protected bool SameDirection(Vector2 dir)
         {
             var localEulerAngles = transform.localEulerAngles;
             return !(dir.x < 0 && localEulerAngles.y < 180f ||
                      dir.x > 0 && localEulerAngles.y >= 180f);
         }
 
-        private void Flip()
+        //overriden by the 2
+        protected void Flip()
         {
             Vector3 localRotation = transform.localEulerAngles;
             localRotation.y += 180f;
@@ -222,8 +234,9 @@ namespace Enemy
             lifebarCanvas.transform.forward = mainCamera.transform.forward;
         }
 
-        private void StartAttacking()
+        protected void StartAttacking()
         {
+            //Debug.Log("start attackig");
             animator.SetTrigger(AnimAttack);
             animator.SetBool(AnimIsAttacking, true);
             nextAttackTime = Time.time + attackCooldown / attackRate;
@@ -240,7 +253,7 @@ namespace Enemy
             return true;
         }
 
-        private void UpdateLifebar()
+        protected void UpdateLifebar()
         {
             lifebarImage.fillAmount = life / maxHealth;
         }
