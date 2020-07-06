@@ -471,7 +471,7 @@ MonoBehaviour:
     m_Bits: 512
   movementType: 0
   speed: 1
-  attackCooldown: 3
+  attackCooldown: 5
   attackRange: 6
   attackDamage: 2
   attackPoint: {fileID: 8893610868187306608}
