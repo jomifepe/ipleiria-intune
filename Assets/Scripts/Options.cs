@@ -17,6 +17,5 @@ public class Options : MonoBehaviour
 	public void OpenCredits()
 	{
 		StartCoroutine(GameManager.Instance.LoadNextLevelAsync(-3));
-		
 	}
 }
