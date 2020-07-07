@@ -95,14 +95,11 @@ namespace Enemy
             
             float distance = Vector2.Distance(rigidBody.position, path.vectorPath[currentWaypoint]);
             /*It reached the waypoint*/
-            if (distance < nextWayPointDistance)
-            {
-                currentWaypoint++;
-            }
+            if (distance < nextWayPointDistance) currentWaypoint++;
             Flip();
         }
 
-        protected override void Flip()
+        private new void Flip()
         {
             Vector3 localRotation = transform.localEulerAngles;
             if (force.x >= 0.01f)
