@@ -39,7 +39,7 @@ public class PlayerController : MonoBehaviour
     private float shootVelocity = 5f, attackRate = 2f;
     private float nextMeleeAttackTime, nextRangedAttackTime;
     private int extraJumps, maxJumps = 2;
-    private Buff currentBuff;
+    private Buff currentBuff = Buff.None;
     private Dictionary<Buff, (Sprite sprite, RuntimeAnimatorController animation)> buffResources;
 
     private static readonly int AnimHurt = Animator.StringToHash("Hurt");
@@ -215,6 +215,7 @@ public class PlayerController : MonoBehaviour
     private void AnimatorEventThrow()
     {
         GameObject throwable = Instantiate(throwablePrefab, throwPoint.position, throwPoint.rotation);
+        throwable.GetComponent<Projectile>().buff = currentBuff;
         throwable.GetComponent<Rigidbody2D>().velocity = throwPoint.right * shootVelocity;
         throwable.GetComponent<SpriteRenderer>().sprite = buffResources[currentBuff].sprite;
         throwable.GetComponent<Animator>().runtimeAnimatorController = buffResources[currentBuff].animation;

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using JetBrains.Annotations;
+using Model;
 using UnityEngine;
 using Image = UnityEngine.UI.Image;
 
@@ -13,11 +15,13 @@ namespace Enemy
         protected Vector2 pushForce = Vector2.zero;
 
         [SerializeField] protected float speed = 1f;
-    
+        protected float originalSpeed;
+        
         protected bool inSensingRange;
         protected float sensingRange;
         
         protected Transform player;
+        protected Coroutine slowDebuffCoroutine;
 
         #region Attack
         [SerializeField] private float attackCooldown; //time for cooldown between attacks
@@ -46,6 +50,8 @@ namespace Enemy
         #endregion
 
         #region Life
+        [SerializeField] private GameObject slowIconObject;
+        [SerializeField] private Image lifebarFrame;
         [SerializeField] private Image lifebarImage;
         [SerializeField] protected Canvas lifebarCanvas;
         protected bool isAlive = true;
@@ -61,6 +67,7 @@ namespace Enemy
             animator = GetComponent<Animator>();
             mainCamera = FindObjectOfType<Camera>();
             audioSource = GetComponent<AudioSource>();
+            originalSpeed = speed;
         }
         
         protected void Start()
@@ -99,9 +106,21 @@ namespace Enemy
             nextAttackTime = Time.time + attackCooldown / attackRate;
         }
     
-        public bool TakeDamage(float damage)
+        public bool TakeDamage(float damage, Buff attackerBuff = Buff.None)
         {
             if (!isAlive) return false;
+
+            switch (attackerBuff)
+            {
+                case Buff.Physical:
+                    damage += 0.5f;
+                    break;
+                case Buff.Slow:
+                    if (slowDebuffCoroutine != null) StopCoroutine(slowDebuffCoroutine);
+                    slowDebuffCoroutine = StartCoroutine(ApplySlowDebuff());
+                    break;
+            }
+
             animator.SetTrigger(AnimHurt);
             life -= damage;
             if (life < 0f) life = 0f;
@@ -109,6 +128,15 @@ namespace Enemy
             Knockback();
             if (life <= 0.01f) Die();
             return true;
+        }
+
+        private IEnumerator ApplySlowDebuff()
+        {
+            speed = originalSpeed - .5f;
+            slowIconObject.SetActive(true);
+            yield return new WaitForSeconds(4);
+            speed = originalSpeed;
+            slowIconObject.SetActive(false);
         }
 
         private void Knockback()
@@ -143,6 +171,11 @@ namespace Enemy
         private void DestroyEnemy()
         {
             Destroy(gameObject);
+        }
+
+        public void ApplyBuff(Buff buff)
+        {
+            throw new NotImplementedException();
         }
     }
 }
