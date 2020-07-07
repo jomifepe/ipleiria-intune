@@ -5,7 +5,7 @@ namespace Enemy
     public abstract class RangedEnemy : EnemyNonAI
     {
         [SerializeField] private GameObject throwablePrefab;
-        [SerializeField] private float shootVelocity;
+        [SerializeField] private float shootVelocity = 3f;
 
         protected override void Attack()
         {
