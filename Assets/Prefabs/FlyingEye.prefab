@@ -159,13 +159,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 200
   attackCooldown: 4
-  attackRange: 1
+  attackRange: 0.8
   attackDamage: 1
   attackPoint: {fileID: 1152020219788257372}
   attackAudioClip: {fileID: 0}
   lifebarImage: {fileID: 6377677199755599237}
   lifebarCanvas: {fileID: 8429623685720226247}
-  nextWayPointDistance: 2
+  nextWayPointDistance: 0.75
   playerLayerMask:
     serializedVersion: 2
     m_Bits: 256
