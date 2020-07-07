@@ -32,6 +32,7 @@ public class AudioManager : MonoBehaviour
     public void ChangeMasterVolume(float volumeValue)
     {
         audioMixer.SetFloat("MasterVolume", volumeValue);
+        this.volumeSong = volumeValue;
     }
 
     public void PreviewSong(AudioClip song)
@@ -99,4 +100,9 @@ public class AudioManager : MonoBehaviour
     {
         return volumeSong;
     }
+    
+    /*public void SetVolume(float value)
+    {
+        volumeSong = value;
+    }*/
 }
