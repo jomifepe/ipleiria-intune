@@ -115,9 +115,6 @@ namespace Enemy
         {
             return Mathf.Abs(direction.x) <= sensingRange;
         }
-        
-
-        
         /*protected override void Flip()
         {
             Vector3 localRotation = transform.localEulerAngles;

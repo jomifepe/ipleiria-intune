@@ -164,7 +164,6 @@ namespace Enemy
         
         protected void MoveCharacter(Vector2 dir)
         {
-            if(canFlip) Flip();
             rigidBody.MovePosition((Vector2)transform.position + (dir * (speed * Time.deltaTime)));
         }
         
