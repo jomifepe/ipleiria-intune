@@ -5,7 +5,7 @@ namespace Enemy
 {
     public class EnemyAI : Enemy
     {
-        /*how close the enemy needs to be into a waypoint before it moves on to the next one*/
+        /*How close the enemy needs to be into a waypoint before it moves on to the next one*/
         [SerializeField] private float nextWayPointDistance = 3f;
         [SerializeField] private LayerMask playerLayerMask;
 
@@ -27,7 +27,7 @@ namespace Enemy
         protected override void Init()
         {
             life = maxHealth = 2f;
-            sensingRange = 5f;
+            sensingRange = 6f;
             pushForce = new Vector2(300f, 150f);
         }
 
@@ -36,7 +36,7 @@ namespace Enemy
             base.Start();
             
             seeker = GetComponent<Seeker>();
-            /*generate a path*/
+            /*Generate a path*/
             InvokeRepeating(nameof(UpdatePath), 0f, .5f);
             UpdatePath();
         }
@@ -48,14 +48,16 @@ namespace Enemy
             /*It doesn't attack when the player is on other platform*/
             if (PlayerOnAttackRange())
             {
+                if(!attackMode) rigidBody.constraints = RigidbodyConstraints2D.FreezeAll;
                 if (Time.time >= nextAttackTime && isAlive) StartAttacking();
-                //attackMode = true;
+                attackMode = true;
                 return;
             }
+            if(attackMode) rigidBody.constraints = RigidbodyConstraints2D.FreezeRotation;
             /*So it doesn't move while still attacking*/
             if (Time.time < nextAttackTime) return;
             animator.SetBool(AnimIsAttacking, false);
-            //attackMode = false;
+            attackMode = false;
         }
 
         private void UpdatePath()
@@ -90,7 +92,7 @@ namespace Enemy
             Vector2 direction = ((Vector2) path.vectorPath[currentWaypoint] - rigidBody.position).normalized;
             force = direction * (speed * Time.deltaTime);
             rigidBody.AddForce(force);
-
+            
             float distance = Vector2.Distance(rigidBody.position, path.vectorPath[currentWaypoint]);
             /*It reached the waypoint*/
             if (distance < nextWayPointDistance)
@@ -106,12 +108,10 @@ namespace Enemy
             if (force.x >= 0.01f)
             {
                 localRotation.y = 0f;
-                //transform.localScale = new Vector3(1f, 1f, 1f);
             }
             else if (force.x <= -0.01f)
             {
                 localRotation.y = 180f;
-                //ransform.localScale = new Vector3(-1f, 1f, 1f);
             }
             transform.localEulerAngles = localRotation;
             lifebarCanvas.transform.forward = mainCamera.transform.forward;

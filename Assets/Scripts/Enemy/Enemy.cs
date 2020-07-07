@@ -113,6 +113,7 @@ namespace Enemy
 
         private void Knockback()
         {
+            rigidBody.constraints = RigidbodyConstraints2D.FreezeRotation;
             if (transform.position.x < player.position.x)
             {
                 pushForce.x = -pushForce.x;
@@ -130,6 +131,7 @@ namespace Enemy
 
         private void Die()
         {
+            rigidBody.constraints = RigidbodyConstraints2D.FreezeRotation;
             isAlive = false;
             animator.SetBool(AnimIsDead, true);
             rigidBody.velocity = Vector2.zero;

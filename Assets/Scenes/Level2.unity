@@ -4130,6 +4130,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: FlyingEye
       objectReference: {fileID: 0}
+    - target: {fileID: 1482677862990265186, guid: 5e35dda892b4ad14cb5b32c9d6a1e4f9,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5e35dda892b4ad14cb5b32c9d6a1e4f9, type: 3}
 --- !u!1 &230703134
