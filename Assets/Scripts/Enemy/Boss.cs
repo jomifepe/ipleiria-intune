@@ -18,11 +18,12 @@ namespace Enemy
         private bool rangedMode = true;
         private int spellsPerAttack = 3;
         private float timeBetweenSpells = 0.4f;
-        
+        protected float rangedAttackCooldown = 4f;
+
         private Vector3 leftThrowPoint;
         
-        private int attackSteps = 0;
-        private int maxAttackSteps = 3;
+        private int attackTimes;
+        private int maxAttackTimes = 3;
         protected override void Init()
         {
             life = maxHealth = 100f;
@@ -36,104 +37,23 @@ namespace Enemy
 
             if (rangedMode)
             {
-                /*if (attackSteps < maxAttackSteps)
-                {
-                    ++attackSteps;
-                }
-                else
-                {
-                    rangedMode = false;
-                }*/
-                
                 if (canFlip) Flip();
                 if(Time.time >= nextAttackTime && !attackMode) StartAttacking();
                 Move();
                 return;
             }
-            //MeleeMode
-            /*if (attackSteps < maxAttackSteps)
-            {
-                ++attackSteps;
-            }
-            else
-            {
-                rangedMode = true;
-            }*/
-            
+            /*MeleeMode*/
             if (PlayerOnAttackRange())
             {
                 if (canFlip) Flip();
                 if(Time.time >= nextAttackTime) StartAttacking();
-                //attackMode = true;
                 return;
             }
             if(Time.time < nextAttackTime) return;
+            //TODO
             //animator.SetBool(AnimIsAttacking, false);
-
-            if (attackMode)
-            {
-                UpdateAttackMode();
-            }
-            
-            
-            
             attackMode = false;
-
             Move();
-            
-            //Debug.Log("attack mode: " + attackMode);
-            /*if (rangedMode)
-            {
-                if (canFlip) Flip();
-                if(Time.time >= nextAttackTime && !attackMode) StartAttacking();
-            }
-            Move();*/
-
-            /*if (rangedMode && Time.time >= nextAttackTime)
-            {
-                //if (canFlip) Flip();
-                StartAttacking();
-                attackMode = true;
-                return;
-            }
-            //if (Time.time < nextAttackTime) return;
-            animator.SetBool(AnimIsAttacking, false);
-            attackMode = false;
-            Move();*/
-            
-            /*if (!isAlive) return;
-            UpdateDirection();
-            
-            if ((rangedMode || (!rangedMode && PlayerOnAttackRange())) && Time.time >= nextAttackTime)
-            {
-                //if (canFlip) Flip();
-                StartAttacking();
-                attackMode = true;
-                return;
-            }
-            //if (Time.time < nextAttackTime) return;
-            if (Time.time >= nextAttackTime) return;
-            animator.SetBool(AnimIsAttacking, false);
-            attackMode = false;
-            Move();*/
-            
-            /*if (rangedMode && Time.time >= nextAttackTime)
-            {
-                //RangedAttack();
-                StartAttacking();
-                return;
-            }
-            if (PlayerOnAttackRange() && Time.time >= nextAttackTime)
-            {
-                //if (canFlip) Flip();
-                //if (Time.time >= nextAttackTime && isAlive) MeleeAttack();
-                //MeleeAttack();
-                return;
-            }
-            if (Time.time < nextAttackTime) return;
-            animator.SetBool(AnimIsAttacking, false);
-            attackMode = false;
-            Move();*/
         }
         
         protected override void FixedUpdate()
@@ -158,6 +78,7 @@ namespace Enemy
             if (Physics2D.OverlapCircleNonAlloc(attackPoint.position, attackRange, results, playerLayerMask) == 0) return;
             results[0].GetComponent<PlayerController>().TakeDamage(attackDamage);
             //audioSource.PlayOneShot(attackAudioClip); 
+            UpdateAttackType();
         }
         
         private void RangedAttack()
@@ -186,19 +107,19 @@ namespace Enemy
             }
             attackMode = false;
             animator.SetBool(AnimIsAttacking, false);
-            UpdateAttackMode();
+            UpdateAttackType();
         }
 
-        private void UpdateAttackMode()
+        private void UpdateAttackType()
         {
-            if (attackSteps < maxAttackSteps)
-            {
-                attackSteps++;
-                return;
-            }
+            attackTimes++;
+            if (attackTimes < maxAttackTimes) return;
+            
             rangedMode = !rangedMode;
-            attackSteps = 0;
-            Debug.Log("Switch to: " + rangedMode);
+            attackTimes = 0;
+            nextAttackTime = Time.time;
+            attackMode = false;
+            //Debug.Log("Switch to: " + rangedMode);
         }
 
         private void Shoot()
@@ -239,13 +160,20 @@ namespace Enemy
         
         private void StartAttacking()
         {
-            Debug.Log("start attacking");
+            //Debug.Log("start attacking");
             //animator.SetTrigger(AnimAttack);
             //animator.SetBool(AnimIsAttacking, true);
             attackMode = true;
-            nextAttackTime = Time.time + attackCooldown;
-            
-            //ONLY FOR NOW
+
+            if (rangedMode)
+            {
+                nextAttackTime = Time.time + rangedAttackCooldown;    
+            }
+            else
+            {
+                nextAttackTime = Time.time + attackCooldown;
+            }
+            //TODO ONLY FOR NOW THAT THERE ARE NO ANIMATIONS
             Attack();
         }
     }

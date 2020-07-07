@@ -6457,7 +6457,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 1
-  attackCooldown: 4
+  attackCooldown: 1
   attackRange: 1
   attackDamage: 2
   attackPoint: {fileID: 1891190492}
@@ -6466,7 +6466,7 @@ MonoBehaviour:
   lifebarCanvas: {fileID: 1748599642}
   playerLayerMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   throwablePrefab: {fileID: 4152751771967737515, guid: b3050e2122ae00143b8ca41c421515b3,
     type: 3}
   shootVelocity: 3
