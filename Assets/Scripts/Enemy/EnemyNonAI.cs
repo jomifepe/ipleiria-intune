@@ -12,6 +12,8 @@ namespace Enemy
         protected enum MovementType{SimpleMove, FollowPlayer, FollowPlayerSmart}
         [SerializeField] protected MovementType movementType;
 
+        private const float YDiffTreshold = .5f;
+
         protected override void Update()
         {
             if (!isAlive) return;
@@ -99,9 +101,11 @@ namespace Enemy
         
         private bool SamePlatform()
         {
-            var enemyXPosition = transform.position.x;
+            var position = transform.position;
+            var enemyXPosition = position.x;
             var (leftLimit, rightLimit) = GameManager.Instance.platformBounds;
-            return enemyXPosition >= leftLimit && enemyXPosition <= rightLimit;
+            var distanceY = Mathf.Abs(position.y - player.position.y);
+            return enemyXPosition >= leftLimit && enemyXPosition <= rightLimit && distanceY < YDiffTreshold;
         }
 
         protected override bool PlayerOnAttackRange()
