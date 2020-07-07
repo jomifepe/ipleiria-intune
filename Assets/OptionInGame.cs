@@ -7,11 +7,12 @@ using UnityEngine.UI;
 public class OptionInGame : MonoBehaviour
 {
     private float soundVolume;
-    private GameObject volumeSliderObject = GameObject.Find("Slider");
+    private GameObject volumeSliderObject;
 
     private void Awake()
     {
         soundVolume = AudioManager.Instance.GetVolume();
+        volumeSliderObject = GameObject.Find("Slider");
         //Slider volumeSlider = volumeSliderObject.GetComponent<Slider>();
     }
 

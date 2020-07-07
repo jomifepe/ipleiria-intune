@@ -54,7 +54,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5411998983802361851}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.044, y: -1.151, z: 0}
+  m_LocalPosition: {x: -0.044, y: -1.09, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5411998984150073576}
@@ -180,7 +180,7 @@ CapsuleCollider2D:
   m_GameObject: {fileID: 5411998984150073578}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 72b09f5ecbe73d24f9fcc65a27dd1944, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -335,7 +335,7 @@ MonoBehaviour:
   meleeAudioClips:
   - {fileID: 8300000, guid: 3ec7c2e1a5a307649846cb2121408a02, type: 3}
   rangedAudioClip: {fileID: 8300000, guid: 3e55987c24725e7468673a3327392110, type: 3}
-  meleeAttackRange: 0.5
+  meleeAttackRange: 0.74
   meleeDamage: 1
   movementSmoothing: 0
 --- !u!114 &8371594012753148061

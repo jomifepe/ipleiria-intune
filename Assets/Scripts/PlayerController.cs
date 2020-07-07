@@ -38,22 +38,25 @@ public class PlayerController : MonoBehaviour
     private float health = 3f, throws = 3f, maxHealth, maxThrows;
     private float shootVelocity = 5f, attackRate = 2f;
     private float nextMeleeAttackTime, nextRangedAttackTime;
-    private float jumpTimer;
-    private int extraJumps;
+    private int extraJumps, maxJumps = 2;
     private Buff currentBuff;
     private Dictionary<Buff, (Sprite sprite, RuntimeAnimatorController animation)> buffResources;
 
-    private string AnimHurt = "Hurt";
-    private string AnimIsDead = "IsDead";
-    private string AnimIsJumping = "IsJumping";
-    private string AnimHorizontalSpeed = "HorizontalSpeed";
-    private string AnimAttackMelee = "AttackMelee";
+    private static readonly int AnimHurt = Animator.StringToHash("Hurt");
+    private static readonly int AnimIsDead = Animator.StringToHash("IsDead");
+    private static readonly int AnimIsJumping = Animator.StringToHash("IsJumping");
+    private static readonly int AnimHorizontalSpeed = Animator.StringToHash("HorizontalSpeed");
+    private static readonly int AnimAttackMelee = Animator.StringToHash("AttackMelee");
+    private static readonly int AnimDeath = Animator.StringToHash("Death");
+    private static readonly int AnimIsAttackingMelee = Animator.StringToHash("IsAttackingMelee");
+    private static readonly int AnimJump = Animator.StringToHash("Jump");
 
-
+    #region Lifecycle
     private void Awake()
     {
         maxHealth = health;
         maxThrows = throws;
+        extraJumps = maxJumps;
         GameManager.Instance.SetPlayerMaxHealth(maxHealth);
         GameManager.Instance.SetPlayerMaxThrows(maxThrows);
         rigidBody = GetComponent<Rigidbody2D>();
@@ -87,8 +90,6 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        jumpTimer -= Time.deltaTime;
-        
         if (!GameManager.Instance.IsPaused && isAlive)
         {
             /* melee attack */
@@ -108,7 +109,7 @@ public class PlayerController : MonoBehaviour
             if (transform.right.x * horizontalInput < 0) Flip();
 
             /* jumping */
-            if (Input.GetButtonDown("Jump") || CrossPlatformInputManager.GetButtonDown("Jump")) jump = true;
+            if (!jump && (Input.GetButtonDown("Jump") || CrossPlatformInputManager.GetButtonDown("Jump"))) jump = true;
 
             /* check if the song/buff has changed */
             var currentSong = GameManager.Instance.CurrentSong;
@@ -125,33 +126,56 @@ public class PlayerController : MonoBehaviour
             rigidBody.velocity = new Vector2(horizontalInput * speed, velocity.y);
             animator.SetFloat(AnimHorizontalSpeed, Mathf.Abs(velocity.x));
             
+            /* jumping */
             isGrounded = CheckForGround();
-            
-            if (/* has hit the ground after jumping */ wasJumping && isGrounded && jumpTimer <= 0)
+            if (isGrounded && wasJumping)
             {
-                animator.SetBool(AnimIsJumping, false);
                 wasJumping = false;
-                extraJumps = 2;
+                animator.SetBool(AnimIsJumping, false);
+                extraJumps = maxJumps;
             }
 
-            if (/* has jumped from the ground */ jump && isGrounded && jumpTimer <= 0)
+            if (jump && extraJumps > 0)
             {
-                wasJumping = true;
-                jumpTimer = 0.1f;
-                animator.SetBool(AnimIsJumping, true);
-                rigidBody.velocity = Vector2.up * jumpForce;
-
-                audioSource.PlayOneShot(jumpAudioClip);
+                extraJumps--;
+                PerformJump();
+            } else if (jump && extraJumps == 0 && isGrounded)
+            {
+                PerformJump();
             }
 
             jump = false;
         }
     }
+    #endregion
+
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (!other.collider.CompareTag("Platform")) return;
+        var bounds = other.collider.bounds;
+        GameManager.Instance.platformBounds = (bounds.min.x, bounds.max.x);
+    }
+    
+    private void OnDrawGizmosSelected()
+    {
+        if (meleeAttackPoint == null) return;
+        Gizmos.DrawWireSphere(meleeAttackPoint.position, meleeAttackRange);
+    }
+
+    private void PerformJump()
+    {
+        wasJumping = true;
+        animator.SetTrigger(AnimJump);
+        rigidBody.velocity = Vector2.up * jumpForce;
+        audioSource.PlayOneShot(jumpAudioClip);
+    }
 
     private void PerformAttackAnimation()
     {
+        animator.SetBool(AnimIsAttackingMelee, true);
         animator.SetTrigger(AnimAttackMelee);
-        nextMeleeAttackTime = Time.time + 1f / attackRate;
+        Debug.Log("Attack started");
+            nextMeleeAttackTime = Time.time + 1f / attackRate;
         audioSource.PlayOneShot(meleeAudioClips[0]);
     }
     
@@ -174,7 +198,7 @@ public class PlayerController : MonoBehaviour
     
     private void Throw()
     {
-        if (throws == 0f) return;
+        if (throws.Equals(0f)) return;
         // animator.SetTrigger("Throw"); // TODO: Throw animation
         AnimatorEventThrow();
         DecrementThrows();
@@ -194,15 +218,10 @@ public class PlayerController : MonoBehaviour
         throwable.GetComponent<Rigidbody2D>().velocity = throwPoint.right * shootVelocity;
         throwable.GetComponent<SpriteRenderer>().sprite = buffResources[currentBuff].sprite;
         throwable.GetComponent<Animator>().runtimeAnimatorController = buffResources[currentBuff].animation;
+
         audioSource.PlayOneShot(rangedAudioClip);
     }
-
-    private void OnDrawGizmosSelected()
-    {
-        if (meleeAttackPoint == null) return;
-        Gizmos.DrawWireSphere(meleeAttackPoint.position, meleeAttackRange);
-    }
-
+    
     private bool CheckForGround()
     {
         return Physics2D.OverlapPointNonAlloc(groundCheck.position, results, groundLayerMask) > 0;
@@ -228,8 +247,9 @@ public class PlayerController : MonoBehaviour
     private void Die()
     {
         isAlive = false;
+        rigidBody.velocity = Vector2.zero;
+        animator.SetTrigger(AnimDeath);
         animator.SetBool(AnimIsDead, true);
-        //Destroy(gameObject);
     }
     
     public void Kill()
@@ -271,10 +291,9 @@ public class PlayerController : MonoBehaviour
         GameManager.Instance.UpdatePlayerThrows(throws);
     }
 
-    private void OnCollisionEnter2D(Collision2D other)
+    public void SetAttackEnded()
     {
-        if (!other.collider.CompareTag("Platform")) return;
-        var bounds = other.collider.bounds;
-        GameManager.Instance.platformBounds = (bounds.min.x, bounds.max.x);
+        animator.SetBool(AnimIsAttackingMelee, false);
+        Debug.Log("Attack Ended");
     }
 }

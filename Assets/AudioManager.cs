@@ -10,7 +10,9 @@ public class AudioManager : MonoBehaviour
 
     [SerializeField] private AudioMixer audioMixer;
     [SerializeField] public AudioSource audioSource;
+    
     private float volumeSong = 1f;
+    private Coroutine currentCoroutine;
 
     private void Awake()
     {
@@ -36,12 +38,14 @@ public class AudioManager : MonoBehaviour
 
     public void PreviewSong(AudioClip song)
     {
-        StartCoroutine(PreviewSongAsync(song));
+        if (currentCoroutine != null) StopCoroutine(currentCoroutine);
+        currentCoroutine = StartCoroutine(PreviewSongAsync(song));
     }
     
     public void ChangeSong(AudioClip song, bool fade = true)
     {
-        StartCoroutine(ChangeCurrentSongAsync(song, fade));
+        if (currentCoroutine != null) StopCoroutine(currentCoroutine);
+        currentCoroutine = StartCoroutine(ChangeCurrentSongAsync(song, fade));
     }
     
     private IEnumerator ChangeCurrentSongAsync(AudioClip song, bool fade)
