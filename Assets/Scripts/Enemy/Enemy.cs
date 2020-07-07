@@ -17,22 +17,26 @@ namespace Enemy
         [SerializeField] protected float speed = 1f;
         protected float originalSpeed;
         
+        protected Vector2 movement;
+        protected Vector3 direction;
+
         protected bool inSensingRange;
         protected float sensingRange;
+
+        protected bool canFlip;
         
         protected Transform player;
         protected Coroutine slowDebuffCoroutine;
 
         #region Attack
-        [SerializeField] private float attackCooldown; //time for cooldown between attacks
+        [SerializeField] protected float attackCooldown; //time for cooldown between attacks
         [SerializeField] protected float attackRange;
         [SerializeField] protected float attackDamage;
         
-        //by code put htis only on enemyNonAi
         [SerializeField] protected Transform attackPoint;
     
         protected bool attackMode;
-        private float attackRate = 2f;
+        protected float attackRate = 2f;
         protected float nextAttackTime;
         #endregion
     
@@ -96,8 +100,14 @@ namespace Enemy
         protected abstract bool PlayerOnSensingRange();
 
         [UsedImplicitly]
-        protected abstract void Flip();
-
+        //protected abstract void Flip();
+        protected void Flip()
+        {
+            Vector3 localRotation = transform.localEulerAngles;
+            localRotation.y += 180f;
+            transform.localEulerAngles = localRotation;
+            lifebarCanvas.transform.forward = mainCamera.transform.forward;
+        }
         protected void StartAttacking()
         {
             animator.SetTrigger(AnimAttack);
@@ -151,6 +161,25 @@ namespace Enemy
             }
             rigidBody.AddForce(pushForce);
         }
+        
+        protected void MoveCharacter(Vector2 dir)
+        {
+            if(canFlip) Flip();
+            rigidBody.MovePosition((Vector2)transform.position + (dir * (speed * Time.deltaTime)));
+        }
+        
+        protected void UpdateMovement(Vector2 newMov)
+        {
+            newMov.Normalize();
+            /*So he doesn't jump*/
+            newMov.y = 0f; 
+            movement = newMov;
+        }
+        
+        protected void UpdateDirection()
+        {
+            direction = player.position - transform.position;
+        }
 
         private void UpdateLifebar()
         {
@@ -176,6 +205,18 @@ namespace Enemy
         public void ApplyBuff(Buff buff)
         {
             throw new NotImplementedException();
+        }
+     
+        protected bool SameDirection(Vector2 dir)
+        {
+            var localEulerAngles = transform.localEulerAngles;
+            return !(dir.x < 0 && localEulerAngles.y < 180f ||
+                     dir.x > 0 && localEulerAngles.y >= 180f);
+        }
+        
+        protected void CheckCanFlip(Vector2 dir)
+        {
+            canFlip = !SameDirection(dir);
         }
     }
 }

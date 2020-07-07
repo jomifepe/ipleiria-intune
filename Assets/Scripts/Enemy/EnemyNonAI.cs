@@ -8,9 +8,6 @@ namespace Enemy
         [SerializeField] private LayerMask groundLayerMask;
         private bool reachedBorder;
         private bool samePlatform;
-        private bool canFlip;
-        private Vector2 movement;
-        private Vector3 direction;
 
         protected enum MovementType{SimpleMove, FollowPlayer, FollowPlayerSmart}
         [SerializeField] protected MovementType movementType;
@@ -26,7 +23,7 @@ namespace Enemy
             if (PlayerOnAttackRange() && samePlatform)
             {
                 if (canFlip && movementType == MovementType.FollowPlayerSmart) Flip();
-                if (Time.time >= nextAttackTime && isAlive) StartAttacking();
+                if (Time.time >= nextAttackTime) StartAttacking();
                 attackMode = true;
                 return;
             }
@@ -37,8 +34,6 @@ namespace Enemy
             Move();
         }
         
-        
-        //follows forever when detected
         protected override void FixedUpdate()
         {
             if (attackMode || !isAlive) return;
@@ -66,18 +61,6 @@ namespace Enemy
             UpdateMovement(direction);
         }
         
-        private void UpdateMovement(Vector2 newMov)
-        {
-            newMov.Normalize();
-            /*so he doesn't jump*/
-            newMov.y = 0f; 
-            movement = newMov;
-        }
-        
-        private void UpdateDirection()
-        {
-            direction = player.position - transform.position;
-        }
         
         private void CheckReachedBorder()
         {
@@ -121,16 +104,6 @@ namespace Enemy
             return enemyXPosition >= leftLimit && enemyXPosition <= rightLimit;
         }
 
-        private void MoveCharacter(Vector2 dir)
-        {
-            rigidBody.MovePosition((Vector2)transform.position + (dir * (speed * Time.deltaTime)));
-        }
-
-        private void CheckCanFlip(Vector2 dir)
-        {
-            canFlip = !SameDirection(dir);
-        }
-
         protected override bool PlayerOnAttackRange()
         {
             /*If not FollowPlayerSmart the player has to be in front of the enemy*/
@@ -143,20 +116,15 @@ namespace Enemy
             return Mathf.Abs(direction.x) <= sensingRange;
         }
         
-        private bool SameDirection(Vector2 dir)
-        {
-            var localEulerAngles = transform.localEulerAngles;
-            return !(dir.x < 0 && localEulerAngles.y < 180f ||
-                     dir.x > 0 && localEulerAngles.y >= 180f);
-        }
+
         
-        protected override void Flip()
+        /*protected override void Flip()
         {
             Vector3 localRotation = transform.localEulerAngles;
             localRotation.y += 180f;
             transform.localEulerAngles = localRotation;
             lifebarCanvas.transform.forward = mainCamera.transform.forward;
-        }
+        }*/
 
     }
 }
