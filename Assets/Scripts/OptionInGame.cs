@@ -8,12 +8,14 @@ public class OptionInGame : MonoBehaviour
 {
     private float soundVolume;
     [SerializeField] private Slider slide;
+    [SerializeField] private Toggle toggle;
 
     private void Awake()
     {
         soundVolume = AudioManager.Instance.GetVolume();
         Debug.Log("sound" + soundVolume);
         slide.value = normalize(soundVolume);
+        toggle.isOn = AudioManager.Instance.GetIsSFXEnable();
     }
     
     /*void Start()
@@ -28,6 +30,11 @@ public class OptionInGame : MonoBehaviour
     public void SliderChange(float value)
     {
         AudioManager.Instance.ChangeMasterVolume(denormalize(value));
+    }
+    
+    public void ToggleChanged(Boolean toggleButton)
+    {
+        AudioManager.Instance.SFX(toggleButton);
     }
     
     private float normalize(float value)

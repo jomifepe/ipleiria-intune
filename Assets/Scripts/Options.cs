@@ -8,14 +8,17 @@ using UnityEngine.UI;
 public class Options : MonoBehaviour
 {
 	[SerializeField] private Slider slide;
+	[SerializeField] private Toggle toggle;
 	private float soundVolume;
 	
 	void Start() {
 		//Time.timeScale = 1;
 		soundVolume = AudioManager.Instance.GetVolume();
+		toggle.isOn = AudioManager.Instance.GetIsSFXEnable();
 		//slide = GetComponent<Slider>();
 		Debug.Log(soundVolume);
 		slide.value = normalize(soundVolume);
+		
 	}
 
 	private void Update()
@@ -28,6 +31,11 @@ public class Options : MonoBehaviour
 	{
 		//Debug.Log(value);
 		AudioManager.Instance.ChangeMasterVolume(denormalize(value));
+	}
+
+	public void ToggleChanged(Boolean toggleButton)
+	{
+		AudioManager.Instance.SFX(toggleButton);
 	}
 
 	public void GoBack(){

@@ -13,6 +13,7 @@ public class AudioManager : MonoBehaviour
     
     private float volumeSong = 1f;
     private Coroutine currentCoroutine;
+    private Boolean isSFXEnable = true;
 
     private void Awake()
     {
@@ -109,4 +110,22 @@ public class AudioManager : MonoBehaviour
     {
         volumeSong = value;
     }*/
+    public void SFX(bool toggleButton)
+    {
+        if (toggleButton)
+        {
+            audioMixer.SetFloat("SFX", 0f);
+            isSFXEnable = true;
+        }
+        else
+        {
+            audioMixer.SetFloat("SFX", -80f);
+            isSFXEnable = false;
+        }
+    }
+
+    public Boolean GetIsSFXEnable()
+    {
+        return isSFXEnable;
+    }
 }
