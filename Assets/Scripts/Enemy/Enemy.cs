@@ -185,7 +185,7 @@ namespace Enemy
             lifebarImage.fillAmount = life / maxHealth;
         }
 
-        private void Die()
+        protected virtual void Die()
         {
             rigidBody.constraints = RigidbodyConstraints2D.FreezeRotation;
             isAlive = false;
@@ -201,11 +201,6 @@ namespace Enemy
             Destroy(gameObject);
         }
 
-        public void ApplyBuff(Buff buff)
-        {
-            throw new NotImplementedException();
-        }
-     
         protected bool SameDirection(Vector2 dir)
         {
             var localEulerAngles = transform.localEulerAngles;
