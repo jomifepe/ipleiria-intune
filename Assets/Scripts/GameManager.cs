@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject HUD;
     [SerializeField] private GameObject controls;
     [SerializeField] private List<Song> songList;
+    private String currentLevel;
     
     public float CurrentPlayerHealth { get; private set; }
     public float CurrentPlayerThrows { get; private set; }
@@ -153,11 +154,13 @@ public class GameManager : MonoBehaviour
             if (Application.CanStreamedLevelBeLoaded("Level" + levelToLoad))
             {
                 HUD.SetActive(true);
-                asyncLoad = SceneManager.LoadSceneAsync("Level" + levelToLoad);                
+                asyncLoad = SceneManager.LoadSceneAsync("Level" + levelToLoad);
+                currentLevel = "Level" + levelToLoad;
             }
             else
             {               
-                asyncLoad = SceneManager.LoadSceneAsync("TheEnd");
+                asyncLoad = SceneManager.LoadSceneAsync("TheEnd"); 
+                // possivelmente não será assim.
             }
         }
 
@@ -236,5 +239,15 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("[GAMEMANAGER] Click Open options");
         UIManager.Instance.OpenOptionMenu();
+    }
+
+    public String GetCurrentLevel()
+    {
+        return currentLevel;
+    }
+
+    public int GetCoins()
+    {
+        return coins;
     }
 }
