@@ -5,6 +5,7 @@ public class SpriteRenderingOrderManager : MonoBehaviour
     public static SpriteRenderingOrderManager Instance { get; private set; } = null;
 
     private int enemyOrderInLayer = 0;
+    private int backgroundOrderInLayer = 0;
 
     private void Awake()
     {
@@ -23,5 +24,11 @@ public class SpriteRenderingOrderManager : MonoBehaviour
     {
         enemyOrderInLayer++;
         return enemyOrderInLayer;
+    }
+    
+    public int GetBackgroundOrderInLayer()
+    {
+        backgroundOrderInLayer++;
+        return backgroundOrderInLayer;
     }
 }
