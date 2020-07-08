@@ -14,6 +14,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject changeSongButton;
     [SerializeField] private GameObject endGameWin;
     [SerializeField] private GameObject endGameLoose;
+    [SerializeField] private GameObject levelCompleted;
     [SerializeField] private GameObject HUD;
     private float playerMaxHealth = 3f;
     private float playerMaxThrows = 3f;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using Model;
 using UnityEditor;
 using UnityEngine;
@@ -35,7 +36,7 @@ public class PlayerController : MonoBehaviour
 
     private float horizontalInput;
     private bool jump, isGrounded, wasJumping, isAlive = true;
-    private float health = 6f, throws = 3f, maxHealth, maxThrows;
+    private float health = 3f, throws = 3f, maxHealth, maxThrows;
     private float shootVelocity = 5f, attackRate = 2f;
     private float nextMeleeAttackTime, nextRangedAttackTime;
     private int extraJumps, maxJumps = 2;
@@ -297,5 +298,11 @@ public class PlayerController : MonoBehaviour
     {
         animator.SetBool(AnimIsAttackingMelee, false);
         Debug.Log("Attack Ended");
+    }
+    
+    [UsedImplicitly]
+    protected void FinishDying()
+    {
+        GameManager.Instance.EndGame(false);
     }
 }

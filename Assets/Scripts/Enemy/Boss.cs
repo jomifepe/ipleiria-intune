@@ -35,7 +35,7 @@ namespace Enemy
 
         protected override void Init()
         {
-            life = maxHealth = 50f;
+            life = maxHealth = 3f;
             UpdateDirection();
             CheckCanFlip(direction);
             if(canFlip) Flip();
@@ -220,10 +220,10 @@ namespace Enemy
             attackMode = false;
         }
         
-        /*protected override void Die()
+        [UsedImplicitly]
+        protected void FinishDying()
         {
-            base.Die();
-            GameManager.Instance.
-        }*/
+            GameManager.Instance.EndGame(true);
+        }
     }
 }
