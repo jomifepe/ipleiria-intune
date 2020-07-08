@@ -342,12 +342,6 @@ public class PlayerController : MonoBehaviour
         GameManager.Instance.UpdatePlayerThrows(throws);
     }
 
-    public void SetAttackEnded()
-    {
-        animator.SetBool(AnimIsAttackingMelee, false);
-        Debug.Log("Attack Ended");
-    }
-    
     [UsedImplicitly]
     protected void FinishDying()
     {
