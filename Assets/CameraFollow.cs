@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class CameraFollow : MonoBehaviour
 {
@@ -19,6 +21,11 @@ public class CameraFollow : MonoBehaviour
     private Vector3 lastOffsetPosition = Vector3.zero;
     private Coroutine lastShakeCoroutine;
     private float topLimit, rightLimit, bottomLimit, leftLimit;
+
+    private void Start()
+    {
+        myCamera.transparencySortMode = TransparencySortMode.Orthographic;
+    }
 
     private void Awake()
     {

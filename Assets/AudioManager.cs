@@ -53,52 +53,51 @@ public class AudioManager : MonoBehaviour
     private IEnumerator ChangeCurrentSongAsync(AudioClip song, bool fade)
     {
         var currentVolume = audioSource.volume;
-        if (fade) yield return FadeOut(0.02f);
+        if (fade) yield return FadeOut(.02f);
         audioSource.clip = song;
         audioSource.time = 0;
         audioSource.Play(); 
-        if (fade) yield return FadeIn(currentVolume, 0.02f);
+        if (fade) yield return FadeIn(.02f);
     }
 
     private IEnumerator PreviewSongAsync(AudioClip song)
     {
-        var currentVolume = audioSource.volume;
         var previousSong = audioSource.clip;
         var previousTime = audioSource.time;
 
-        yield return FadeOut(0.03f);
+        yield return FadeOut(.03f);
         audioSource.clip = song;
         audioSource.time = song.length / 2f;
         audioSource.Play(); 
-        yield return FadeIn(currentVolume);
+        yield return FadeIn();
         
         yield return new WaitForSeconds(song.length < 2f ? song.length : 2f);
 
-        yield return FadeOut(0.03f);
+        yield return FadeOut(.03f);
         audioSource.clip = previousSong;
         audioSource.time = previousTime;
         audioSource.Play(); 
-        yield return FadeIn(currentVolume);
+        yield return FadeIn();
     }
     
-    private IEnumerator FadeOut(float speed = 0.05f)
+    private IEnumerator FadeOut(float speed = .05f)
     {
-        while (audioSource.volume > 0.1)
+        while (audioSource.volume > .1f)
         {
-            audioSource.volume -= 0.1f;
+            audioSource.volume -= .1f;
             yield return new WaitForSeconds(speed);
         }
     }
     
-    private IEnumerator FadeIn(float maxVolume, float speed = 0.05f)
+    private IEnumerator FadeIn(float speed = .05f)
     {
-        while (audioSource.volume < maxVolume)
+        while (audioSource.volume < 1f)
         {
-            audioSource.volume += 0.1f;
+            audioSource.volume += .1f;
             yield return new WaitForSeconds(speed);
         }
 
-        if (audioSource.volume > maxVolume) audioSource.volume = maxVolume;
+        if (audioSource.volume > 1f) audioSource.volume = 1f;
     }
 
     public float GetVolume()

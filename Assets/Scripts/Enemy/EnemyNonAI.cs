@@ -12,6 +12,8 @@ namespace Enemy
         protected enum MovementType{SimpleMove, FollowPlayer, FollowPlayerSmart}
         [SerializeField] protected MovementType movementType;
 
+        private const float YDiffTreshold = .5f;
+
         protected override void Update()
         {
             if (!isAlive) return;
@@ -60,14 +62,19 @@ namespace Enemy
             inSensingRange = true;
             UpdateMovement(direction);
         }
-        
-        
+
         private void CheckReachedBorder()
         {
-            reachedBorder = Physics2D.OverlapPointNonAlloc(
-                groundCheck.position,
-                results,
-                groundLayerMask) == 0;
+            Collider2D[] hitPlatforms = Physics2D.OverlapPointAll(groundCheck.position, groundLayerMask);
+            var size = hitPlatforms.Length;
+            if (size != 1)
+            {
+                reachedBorder = true;
+                return;
+            }
+            var position = transform.position;
+            reachedBorder = !(hitPlatforms[0].bounds.min.x <= position.x &&
+                              hitPlatforms[0].bounds.max.x >= position.x);
         }
         
         private void FollowPlayer()
@@ -99,9 +106,11 @@ namespace Enemy
         
         private bool SamePlatform()
         {
-            var enemyXPosition = transform.position.x;
+            var position = transform.position;
+            var enemyXPosition = position.x;
             var (leftLimit, rightLimit) = GameManager.Instance.platformBounds;
-            return enemyXPosition >= leftLimit && enemyXPosition <= rightLimit;
+            var distanceY = Mathf.Abs(position.y - player.position.y);
+            return enemyXPosition >= leftLimit && enemyXPosition <= rightLimit && distanceY < YDiffTreshold;
         }
 
         protected override bool PlayerOnAttackRange()
@@ -115,16 +124,5 @@ namespace Enemy
         {
             return Mathf.Abs(direction.x) <= sensingRange;
         }
-        
-
-        
-        /*protected override void Flip()
-        {
-            Vector3 localRotation = transform.localEulerAngles;
-            localRotation.y += 180f;
-            transform.localEulerAngles = localRotation;
-            lifebarCanvas.transform.forward = mainCamera.transform.forward;
-        }*/
-
     }
 }

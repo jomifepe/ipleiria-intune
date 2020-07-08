@@ -8,7 +8,8 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private Text coinText;
     [SerializeField] private Image lifeBar;
-    [SerializeField] private Image throwBar;
+    [SerializeField] private Image throwBarImage;
+    [SerializeField] private Image throwButtonImage;
     [SerializeField] private GameObject pausePanel;
     [SerializeField] private GameObject changeSongButton;
     private float playerMaxHealth = 3f;
@@ -39,7 +40,7 @@ public class UIManager : MonoBehaviour
     
     public void UpdatePlayerThrows(float amount)
     {
-        throwBar.fillAmount = amount / playerMaxThrows;
+        throwBarImage.fillAmount = amount / playerMaxThrows;
     }
 
     public void ShowPausePanel(bool value)
@@ -67,6 +68,16 @@ public class UIManager : MonoBehaviour
     public void ChangeSongButtonVisibility(bool visible)
     {
         changeSongButton.SetActive(visible);
+    }
+
+    public void SetThrowBarImage(Sprite image)
+    {
+        throwBarImage.sprite = image;
+    }
+
+    public void SetThrowButtonImage(Sprite image)
+    {
+        throwButtonImage.sprite = image;
     }
 }
 

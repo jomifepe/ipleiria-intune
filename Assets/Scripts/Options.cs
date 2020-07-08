@@ -18,7 +18,6 @@ public class Options : MonoBehaviour
 		//slide = GetComponent<Slider>();
 		Debug.Log(soundVolume);
 		slide.value = normalize(soundVolume);
-		
 	}
 
 	private void Update()

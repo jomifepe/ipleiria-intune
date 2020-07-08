@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject HUD;
     [SerializeField] private GameObject controls;
     [SerializeField] private List<Song> songList;
+    private String currentLevel;
     
     public float CurrentPlayerHealth { get; private set; }
     public float CurrentPlayerThrows { get; private set; }
@@ -42,6 +43,7 @@ public class GameManager : MonoBehaviour
     private float oldTimeScale;
     public Song CurrentSong { get; private set; }
     private int currentSongIndex = -1;
+    private Dictionary<Buff, (Sprite throwBar, Sprite throwButton)> buffResources;
 
     private void Awake()
     {
@@ -64,6 +66,21 @@ public class GameManager : MonoBehaviour
             Coins = PlayerPrefs.GetInt(StateKeyCoins);
         }
         UpdateCoinsText();
+        buffResources = new Dictionary<Buff, (Sprite throwBar, Sprite throwButton)>
+        {
+            {Buff.None, (
+                throwBar: Resources.Load<Sprite>("UI/ThrowBarFill"),
+                throwButton: Resources.Load<Sprite>("UI/ranged_attack")
+            )},
+            {Buff.Physical, (
+                throwBar: Resources.Load<Sprite>("UI/ThrowBarFillBloody"),
+                throwButton: Resources.Load<Sprite>("UI/ranged_attack_bloody")
+            )},
+            {Buff.Slow, (
+                throwBar: Resources.Load<Sprite>("UI/ThrowBarFillIcy"),
+                throwButton: Resources.Load<Sprite>("UI/ranged_attack_icy")
+            )}
+        };
     }
 
     private void StartDefaultSong()
@@ -137,11 +154,13 @@ public class GameManager : MonoBehaviour
             if (Application.CanStreamedLevelBeLoaded("Level" + levelToLoad))
             {
                 HUD.SetActive(true);
-                asyncLoad = SceneManager.LoadSceneAsync("Level" + levelToLoad);                
+                asyncLoad = SceneManager.LoadSceneAsync("Level" + levelToLoad);
+                currentLevel = "Level" + levelToLoad;
             }
             else
             {               
-                asyncLoad = SceneManager.LoadSceneAsync("TheEnd");
+                asyncLoad = SceneManager.LoadSceneAsync("TheEnd"); 
+                // possivelmente não será assim.
             }
         }
 
@@ -212,11 +231,23 @@ public class GameManager : MonoBehaviour
         if (currentSongIndex == songList.Count) currentSongIndex = 0; // repeat the song list
         CurrentSong = songList[currentSongIndex];
         AudioManager.Instance.ChangeSong(CurrentSong.clip);
+        UIManager.Instance.SetThrowBarImage(buffResources[CurrentSong.buff].throwBar);
+        UIManager.Instance.SetThrowButtonImage(buffResources[CurrentSong.buff].throwButton);
     }
 
     public void OpenOptionsOnMenu()
     {
         Debug.Log("[GAMEMANAGER] Click Open options");
         UIManager.Instance.OpenOptionMenu();
+    }
+
+    public String GetCurrentLevel()
+    {
+        return currentLevel;
+    }
+
+    public int GetCoins()
+    {
+        return coins;
     }
 }

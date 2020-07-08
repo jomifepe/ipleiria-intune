@@ -157,8 +157,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   coinPrefab: {fileID: 6173687096675158454, guid: c3701e3175864e440a1049bc6d8f424c,
     type: 3}
-  lifePrefab: {fileID: 0}
-  throwChargePrefab: {fileID: 0}
+  lifePrefab: {fileID: 4245808345878450828, guid: 4922788a0a471b7478fb01632add7999,
+    type: 3}
+  throwChargePrefab: {fileID: 8873143802504178685, guid: 7f2a67eb744abbb41a0edc94d500aabb,
+    type: 3}
   valueMultiplier: 1
   lifeDropChance: 0.2
   throwChargeDropChance: 0.15
