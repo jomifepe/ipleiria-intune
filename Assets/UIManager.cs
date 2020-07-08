@@ -12,6 +12,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Image throwButtonImage;
     [SerializeField] private GameObject pausePanel;
     [SerializeField] private GameObject changeSongButton;
+    [SerializeField] private GameObject endGameWin;
+    [SerializeField] private GameObject endGameLoose;
+    [SerializeField] private GameObject HUD;
     private float playerMaxHealth = 3f;
     private float playerMaxThrows = 3f;
     
@@ -78,6 +81,20 @@ public class UIManager : MonoBehaviour
     public void SetThrowButtonImage(Sprite image)
     {
         throwButtonImage.sprite = image;
+    }
+
+    public void EndGame(bool winner)
+    {
+        HUD.SetActive(false);
+        if (winner) endGameWin.SetActive(true);
+        else endGameLoose.SetActive(true);
+    }
+
+    public void NotEndGame()
+    {
+        HUD.SetActive(true);
+        endGameLoose.SetActive(false);
+        endGameWin.SetActive(false);
     }
 }
 

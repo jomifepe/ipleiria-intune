@@ -6025,6 +6025,9 @@ MonoBehaviour:
   throwButtonImage: {fileID: 908619106}
   pausePanel: {fileID: 1265457826}
   changeSongButton: {fileID: 551126563}
+  endGameWin: {fileID: 1830903378}
+  endGameLoose: {fileID: 1821500451}
+  HUD: {fileID: 1957322811}
 --- !u!4 &1626773606
 Transform:
   m_ObjectHideFlags: 0

@@ -31,9 +31,14 @@ public class GameManager : MonoBehaviour
         {
             if (value == coins) return;
             coins = value;
-            PlayerPrefs.SetInt(StateKeyCoins, coins);
-            PlayerPrefs.Save();
+           
         }
+    }
+
+    private void SaveCoins()
+    {
+        PlayerPrefs.SetInt(StateKeyCoins, coins);
+        PlayerPrefs.Save();            
     }
 
     private int level = 1;
@@ -265,5 +270,10 @@ public class GameManager : MonoBehaviour
         // discos
         
         
+    }
+
+    public void EndGame(bool winner)
+    {
+        UIManager.Instance.EndGame(winner);
     }
 }

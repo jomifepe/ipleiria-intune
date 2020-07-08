@@ -22,11 +22,13 @@ public class EndGame : MonoBehaviour
 
     public void RestartGame()
     {
+        UIManager.Instance.NotEndGame();
         SceneManager.LoadSceneAsync(currentLevel);
     }
 
     public void NextLevel()
     {
+        UIManager.Instance.NotEndGame();
         GameManager.Instance.LoadNextLevel();
     }
 }
