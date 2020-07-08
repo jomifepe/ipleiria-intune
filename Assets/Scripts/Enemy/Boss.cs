@@ -44,8 +44,6 @@ namespace Enemy
             if (!isAlive) return;
             UpdateDirection();
             CheckCanFlip(direction);
-
-            Dropbox();
             
             if (rangedMode)
             {
@@ -65,11 +63,6 @@ namespace Enemy
             animator.SetBool(AnimIsAttacking, false);
             attackMode = false;
             Move();
-        }
-
-        private void Dropbox()
-        {
-            GameObject box = Instantiate(boxPrefab, player.position, attackPoint.rotation);
         }
 
         protected override void FixedUpdate()
