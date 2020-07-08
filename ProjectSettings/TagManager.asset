@@ -7,6 +7,7 @@ TagManager:
   - Enemy
   - Wall
   - Platform
+  - FallPlatform
   layers:
   - Default
   - TransparentFX
@@ -41,14 +42,14 @@ TagManager:
   - 
   - 
   m_SortingLayers:
-  - name: Default
-    uniqueID: 0
-    locked: 0
   - name: Background
     uniqueID: 3129080417
     locked: 0
   - name: BackWall
     uniqueID: 2365786081
+    locked: 0
+  - name: Default
+    uniqueID: 0
     locked: 0
   - name: PlatformLevel2
     uniqueID: 2280640941
