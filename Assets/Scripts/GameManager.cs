@@ -256,7 +256,8 @@ public class GameManager : MonoBehaviour
         return coins;
     }
 
-    public void ResetGame()
+    // Para remover
+    /*public void ResetGame()
     {
         Debug.Log("[GameManager] Restart..");
         StartCoroutine(GameManager.Instance.LoadNextLevelAsync(--level));
@@ -270,7 +271,7 @@ public class GameManager : MonoBehaviour
         // discos
         
         
-    }
+    }*/
 
     public void EndGame(bool winner)
     {
