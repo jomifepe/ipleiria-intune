@@ -6,7 +6,7 @@ public class Background : MonoBehaviour
 {
     void Start()
     {
-        int index = SpriteRenderingOrderManager.Instance.GetBackgroundOrderInLayer();
-        GetComponent<SpriteRenderer>().sortingOrder = index;
+        //int index = SpriteRenderingOrderManager.Instance.GetBackgroundOrderInLayer();
+        //GetComponent<SpriteRenderer>().sortingOrder = index;
     }
 }
