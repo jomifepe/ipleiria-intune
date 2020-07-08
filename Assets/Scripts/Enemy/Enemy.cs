@@ -65,13 +65,13 @@ namespace Enemy
 
         private void Awake()
         {
-            Init();
             player = GameObject.Find("Player").transform;
             rigidBody = GetComponent<Rigidbody2D>();
             animator = GetComponent<Animator>();
             mainCamera = FindObjectOfType<Camera>();
             audioSource = GetComponent<AudioSource>();
             originalSpeed = speed;
+            Init();
         }
         
         protected void Start()

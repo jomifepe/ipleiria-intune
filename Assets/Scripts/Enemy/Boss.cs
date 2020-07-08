@@ -17,16 +17,22 @@ namespace Enemy
 
         private bool rangedMode = true;
         private int spellsPerAttack = 3;
-        private float timeBetweenSpells = 0.8f;
+        private float timeBetweenSpells = 0.4f;
         protected float rangedAttackCooldown = 4f;
 
         private Vector3 leftThrowPoint;
         
         private int attackTimes;
-        private int maxAttackTimes = 3;
+        private int maxAttackTimes = 10;
+        
+        protected static readonly int AnimIsMelee = Animator.StringToHash("Melee");
+
         protected override void Init()
         {
             life = maxHealth = 100f;
+            UpdateDirection();
+            CheckCanFlip(direction);
+            if(canFlip) Flip();
         }
         
         protected override void Update()
@@ -50,8 +56,7 @@ namespace Enemy
                 return;
             }
             if(Time.time < nextAttackTime) return;
-            //TODO
-            //animator.SetBool(AnimIsAttacking, false);
+            animator.SetBool(AnimIsAttacking, false);
             attackMode = false;
             Move();
         }
@@ -76,7 +81,7 @@ namespace Enemy
         private void MeleeAttack()
         {
             if (Physics2D.OverlapCircleNonAlloc(attackPoint.position, attackRange, results, playerLayerMask) == 0) return;
-            //results[0].GetComponent<PlayerController>().TakeDamage(attackDamage);
+            results[0].GetComponent<PlayerController>().TakeDamage(attackDamage);
             //audioSource.PlayOneShot(attackAudioClip); 
             UpdateAttackType();
         }
@@ -105,8 +110,9 @@ namespace Enemy
                 yield return new WaitForSeconds(timeBetweenSpells);
                 spellsThrown++;
             }
-            attackMode = false;
             animator.SetBool(AnimIsAttacking, false);
+            Debug.Log("attackMode changed to false on RangedAttackAsync");
+            attackMode = false;
             UpdateAttackType();
         }
 
@@ -118,6 +124,7 @@ namespace Enemy
             rangedMode = !rangedMode;
             attackTimes = 0;
             nextAttackTime = Time.time;
+            Debug.Log("attackMode changed to false on UpdateAttackType");
             attackMode = false;
             //Debug.Log("Switch to: " + rangedMode);
         }
@@ -160,21 +167,23 @@ namespace Enemy
         
         private void StartAttacking()
         {
-            //Debug.Log("start attacking");
-            //animator.SetTrigger(AnimAttack);
-            //animator.SetBool(AnimIsAttacking, true);
+            Debug.Log("attackMode changed to true on start attacking");
             attackMode = true;
-
+            
             if (rangedMode)
             {
-                nextAttackTime = Time.time + rangedAttackCooldown;    
+                nextAttackTime = Time.time + rangedAttackCooldown;
+                animator.SetBool(AnimIsAttacking, true);
+                animator.SetBool(AnimIsMelee, false);
+                Attack();
+                return;
             }
-            else
-            {
-                nextAttackTime = Time.time + attackCooldown;
-            }
-            //TODO ONLY FOR NOW THAT THERE ARE NO ANIMATIONS
-            Attack();
+            
+            nextAttackTime = Time.time + attackCooldown;
+            animator.SetTrigger(AnimAttack);
+            animator.SetBool(AnimIsAttacking, true);
+            animator.SetBool(AnimIsMelee, true);
+            
         }
     }
 }
