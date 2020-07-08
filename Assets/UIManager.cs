@@ -84,6 +84,12 @@ public class UIManager : MonoBehaviour
         throwButtonImage.sprite = image;
     }
 
+    public void LevelCompleted()
+    {
+        HUD.SetActive(false);
+        levelCompleted.SetActive(true);
+    }
+    
     public void EndGame(bool winner)
     {
         HUD.SetActive(false);
@@ -96,6 +102,8 @@ public class UIManager : MonoBehaviour
         HUD.SetActive(true);
         endGameLoose.SetActive(false);
         endGameWin.SetActive(false);
+        levelCompleted.SetActive(false);
+        GameManager.Instance.PauseGame(false, false);
     }
 }
 

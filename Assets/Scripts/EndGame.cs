@@ -34,6 +34,7 @@ public class EndGame : MonoBehaviour
 
     public void QuitLevel()
     {
+        UIManager.Instance.NotEndGame();
         GameManager.Instance.LoadMainMenu();
     }
 }

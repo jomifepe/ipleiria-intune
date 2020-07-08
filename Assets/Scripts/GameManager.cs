@@ -110,6 +110,7 @@ public class GameManager : MonoBehaviour
     public void LoadNextLevel()
     {
         //SceneManager.LoadScene(1);
+        PauseGame(false, false);
         StartCoroutine(LoadNextLevelAsync(level));
         level++;
     }
@@ -273,6 +274,12 @@ public class GameManager : MonoBehaviour
         
     }*/
 
+    public void LevelCompleted()
+    {
+        PauseGame(true, false);
+        UIManager.Instance.LevelCompleted();
+    }
+    
     public void EndGame(bool winner)
     {
         PauseGame(true, false);
