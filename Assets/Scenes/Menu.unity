@@ -3110,9 +3110,9 @@ RectTransform:
   m_Father: {fileID: 720583993}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 656, y: -440}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 325, y: 151}
   m_SizeDelta: {x: 334, y: 136}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &771665055
@@ -6025,6 +6025,9 @@ MonoBehaviour:
   throwButtonImage: {fileID: 908619106}
   pausePanel: {fileID: 1265457826}
   changeSongButton: {fileID: 551126563}
+  endGameWin: {fileID: 1830903378}
+  endGameLoose: {fileID: 1821500451}
+  HUD: {fileID: 1957322811}
 --- !u!4 &1626773606
 Transform:
   m_ObjectHideFlags: 0
