@@ -62,14 +62,19 @@ namespace Enemy
             inSensingRange = true;
             UpdateMovement(direction);
         }
-        
-        
+
         private void CheckReachedBorder()
         {
-            reachedBorder = Physics2D.OverlapPointNonAlloc(
-                groundCheck.position,
-                results,
-                groundLayerMask) == 0;
+            Collider2D[] hitPlatforms = Physics2D.OverlapPointAll(groundCheck.position, groundLayerMask);
+            var size = hitPlatforms.Length;
+            if (size != 1)
+            {
+                reachedBorder = true;
+                return;
+            }
+            var position = transform.position;
+            reachedBorder = !(hitPlatforms[0].bounds.min.x <= position.x &&
+                              hitPlatforms[0].bounds.max.x >= position.x);
         }
         
         private void FollowPlayer()
@@ -119,13 +124,5 @@ namespace Enemy
         {
             return Mathf.Abs(direction.x) <= sensingRange;
         }
-        /*protected override void Flip()
-        {
-            Vector3 localRotation = transform.localEulerAngles;
-            localRotation.y += 180f;
-            transform.localEulerAngles = localRotation;
-            lifebarCanvas.transform.forward = mainCamera.transform.forward;
-        }*/
-
     }
 }
