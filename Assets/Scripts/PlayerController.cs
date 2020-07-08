@@ -45,11 +45,10 @@ public class PlayerController : MonoBehaviour
 
     private static readonly int AnimHurt = Animator.StringToHash("Hurt");
     private static readonly int AnimIsDead = Animator.StringToHash("IsDead");
-    private static readonly int AnimIsJumping = Animator.StringToHash("IsJumping");
+    // private static readonly int AnimIsJumping = Animator.StringToHash("IsJumping");
     private static readonly int AnimHorizontalSpeed = Animator.StringToHash("HorizontalSpeed");
     private static readonly int AnimAttackMelee = Animator.StringToHash("AttackMelee");
     private static readonly int AnimDeath = Animator.StringToHash("Death");
-    private static readonly int AnimIsAttackingMelee = Animator.StringToHash("IsAttackingMelee");
     private static readonly int AnimJump = Animator.StringToHash("Jump");
 
     #region Lifecycle
@@ -88,41 +87,21 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         UpdateHealthBar();
+        UpdateThrowBar();
     }
 
     private void Update()
     {
-        CheckFallThroughPlatform();
         if (!GameManager.Instance.IsPaused && isAlive)
         {
-            // if (Input.GetButtonDown("Fire3") && isOnFallPlatform) FallThroughPlatform();
-            
-            /* melee attack */
-            if (Time.time >= nextMeleeAttackTime && (CrossPlatformInputManager.GetButtonDown("Fire1")
-            )) PerformAttackAnimation();
-            
-            /* projectile throw */
-            if (Time.time >= nextRangedAttackTime && (CrossPlatformInputManager.GetButtonDown("Fire2")
-            )) Throw();
-
-            /* horizontal movement */
-            horizontalInput = CrossPlatformInputManager.GetAxisRaw("Horizontal");
-
+            HandleKeyboardControls();
             /* character horizontal flip */
             if (transform.right.x * horizontalInput < 0) Flip();
-
-            /* jumping */
-            if (!jump && (CrossPlatformInputManager.GetButtonDown("Jump"))) jump = true;
 
             /* check if the song/buff has changed */
             var currentSong = GameManager.Instance.CurrentSong;
             if (currentSong != null && currentSong.buff != currentBuff) currentBuff = currentSong.buff;
         }
-    }
-
-    private void CheckFallThroughPlatform()
-    {
-        // if (isOnFallPlatform)
     }
 
     private void FixedUpdate()
@@ -139,7 +118,7 @@ public class PlayerController : MonoBehaviour
             if (isGrounded && wasJumping)
             {
                 wasJumping = false;
-                animator.SetBool(AnimIsJumping, false);
+                // animator.SetBool(AnimIsJumping, false);
                 extraJumps = maxJumps;
             }
 
@@ -193,6 +172,40 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void HandleKeyboardControls()
+    {
+        if (Input.GetButtonDown("Fire3") && isOnFallPlatform) FallThroughPlatform();
+            
+        /* melee attack */
+        if (Time.time >= nextMeleeAttackTime && Input.GetButtonDown("Fire1")) PerformAttackAnimation();
+            
+        /* projectile throw */
+        if (Time.time >= nextRangedAttackTime && Input.GetButtonDown("Fire2")) Throw();
+
+        /* horizontal movement */
+        horizontalInput = Input.GetAxisRaw("Horizontal");
+
+        /* jumping */
+        if (!jump && Input.GetButtonDown("Jump")) jump = true;
+    }
+    
+    private void HandleTouchControls()
+    {
+        if (Input.GetButtonDown("Fire3") && isOnFallPlatform) FallThroughPlatform();
+            
+        /* melee attack */
+        if (Time.time >= nextMeleeAttackTime && CrossPlatformInputManager.GetButtonDown("Fire1")) PerformAttackAnimation();
+            
+        /* projectile throw */
+        if (Time.time >= nextRangedAttackTime && CrossPlatformInputManager.GetButtonDown("Fire2")) Throw();
+
+        /* horizontal movement */
+        horizontalInput = CrossPlatformInputManager.GetAxisRaw("Horizontal");
+
+        /* jumping */
+        if (!jump && CrossPlatformInputManager.GetButtonDown("Jump")) jump = true;
+    }
+
     private void FallThroughPlatform()
     {
         collider.isTrigger = true;
@@ -209,7 +222,6 @@ public class PlayerController : MonoBehaviour
 
     private void PerformAttackAnimation()
     {
-        animator.SetBool(AnimIsAttackingMelee, true);
         animator.SetTrigger(AnimAttackMelee);
         nextMeleeAttackTime = Time.time + 1f / attackRate;
         audioSource.PlayOneShot(meleeAudioClips[0]);

@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: -3538456848869857656}
   - component: {fileID: 7407451862851824552}
   - component: {fileID: 9202025771266660407}
+  - component: {fileID: 6191638665221698327}
   m_Layer: 10
   m_Name: FlyingEye
   m_TagString: Enemy
@@ -75,7 +76,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1203682789
-  m_SortingLayer: 5
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: -4795363162621231457, guid: 6ded1afe821265149b218f6bd3849a79,
     type: 3}
@@ -199,6 +200,28 @@ MonoBehaviour:
   tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   graphMask:
     value: -1
+--- !u!114 &6191638665221698327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1482677862990265186}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2671dc92f7184c93bd0c11051f37d896, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  coinPrefab: {fileID: 0}
+  lifePrefab: {fileID: 0}
+  throwChargePrefab: {fileID: 0}
+  valueMultiplier: 1
+  lifeDropChance: 0.5
+  throwChargeDropChance: 0.3
+  minCoinValue: 2
+  maxCoinValue: 12
+  minCoinCount: 1
+  maxCoinCount: 2
 --- !u!1 &6473772161825406347
 GameObject:
   m_ObjectHideFlags: 0

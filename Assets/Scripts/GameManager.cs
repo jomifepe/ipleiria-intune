@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
 
     private int level = 1;
 
-    public bool IsPaused { get; set; } = false;
+    public bool IsPaused { get; set; }
 
     private float oldTimeScale;
     public Song CurrentSong { get; private set; }
