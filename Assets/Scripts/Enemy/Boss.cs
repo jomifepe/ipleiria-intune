@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using Model;
 using UnityEngine;
 using Image = UnityEngine.UI.Image;
 
@@ -15,18 +16,27 @@ namespace Enemy
         [SerializeField] private GameObject throwablePrefab;
         [SerializeField] private float shootVelocity = 3f;
 
+        [SerializeField] private GameObject boxPrefab;
+        
         private bool rangedMode = true;
         private int spellsPerAttack = 3;
         private float timeBetweenSpells = 0.4f;
-        protected float rangedAttackCooldown = 4f;
+        private float rangedAttackCooldown = 4f;
+        private readonly float triggerlifeValue = 0.2f;
 
         private Vector3 leftThrowPoint;
         
         private int attackTimes;
         private int maxAttackTimes = 3;
+        
+        private static readonly int AnimIsMelee = Animator.StringToHash("Melee");
+
         protected override void Init()
         {
-            life = maxHealth = 100f;
+            life = maxHealth = 50f;
+            UpdateDirection();
+            CheckCanFlip(direction);
+            if(canFlip) Flip();
         }
         
         protected override void Update()
@@ -35,6 +45,8 @@ namespace Enemy
             UpdateDirection();
             CheckCanFlip(direction);
 
+            Dropbox();
+            
             if (rangedMode)
             {
                 if (canFlip) Flip();
@@ -50,12 +62,16 @@ namespace Enemy
                 return;
             }
             if(Time.time < nextAttackTime) return;
-            //TODO
-            //animator.SetBool(AnimIsAttacking, false);
+            animator.SetBool(AnimIsAttacking, false);
             attackMode = false;
             Move();
         }
-        
+
+        private void Dropbox()
+        {
+            GameObject box = Instantiate(boxPrefab, player.position, attackPoint.rotation);
+        }
+
         protected override void FixedUpdate()
         {
             if (!isAlive) return;
@@ -75,8 +91,10 @@ namespace Enemy
 
         private void MeleeAttack()
         {
-            if (Physics2D.OverlapCircleNonAlloc(attackPoint.position, attackRange, results, playerLayerMask) == 0) return;
-            results[0].GetComponent<PlayerController>().TakeDamage(attackDamage);
+            if (Physics2D.OverlapCircleNonAlloc(attackPoint.position, attackRange, results, playerLayerMask) != 0)
+            {
+                results[0].GetComponent<PlayerController>().TakeDamage(attackDamage);
+            }
             //audioSource.PlayOneShot(attackAudioClip); 
             UpdateAttackType();
         }
@@ -105,8 +123,9 @@ namespace Enemy
                 yield return new WaitForSeconds(timeBetweenSpells);
                 spellsThrown++;
             }
-            attackMode = false;
             animator.SetBool(AnimIsAttacking, false);
+            Debug.Log("attackMode changed to false on RangedAttackAsync");
+            attackMode = false;
             UpdateAttackType();
         }
 
@@ -160,21 +179,33 @@ namespace Enemy
         
         private void StartAttacking()
         {
-            //Debug.Log("start attacking");
-            //animator.SetTrigger(AnimAttack);
-            //animator.SetBool(AnimIsAttacking, true);
             attackMode = true;
-
             if (rangedMode)
             {
-                nextAttackTime = Time.time + rangedAttackCooldown;    
+                nextAttackTime = Time.time + rangedAttackCooldown;
+                animator.SetBool(AnimIsAttacking, true);
+                animator.SetBool(AnimIsMelee, false);
+                Attack();
+                return;
             }
-            else
+            
+            nextAttackTime = Time.time + attackCooldown;
+            animator.SetTrigger(AnimAttack);
+            animator.SetBool(AnimIsAttacking, true);
+            animator.SetBool(AnimIsMelee, true);
+        }
+
+        public override bool TakeDamage(float damage, Buff attackerBuff = Buff.None)
+        {
+            if (life > maxHealth * triggerlifeValue && life - damage <= maxHealth * triggerlifeValue)
             {
-                nextAttackTime = Time.time + attackCooldown;
+                speed *= 1.4f;
+                attackCooldown *= 0.8f;
+                rangedAttackCooldown *= 0.8f;
+                spellsPerAttack += 3;
+                Debug.Log("Entered Furious mode");
             }
-            //TODO ONLY FOR NOW THAT THERE ARE NO ANIMATIONS
-            Attack();
+            return base.TakeDamage(damage, attackerBuff);
         }
     }
 }

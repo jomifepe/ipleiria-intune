@@ -65,13 +65,13 @@ namespace Enemy
 
         private void Awake()
         {
-            Init();
             player = GameObject.Find("Player").transform;
             rigidBody = GetComponent<Rigidbody2D>();
             animator = GetComponent<Animator>();
             mainCamera = FindObjectOfType<Camera>();
             audioSource = GetComponent<AudioSource>();
             originalSpeed = speed;
+            Init();
         }
         
         protected void Start()
@@ -116,7 +116,7 @@ namespace Enemy
             nextAttackTime = Time.time + attackCooldown / attackRate;
         }
     
-        public bool TakeDamage(float damage, Buff attackerBuff = Buff.None)
+        public virtual bool TakeDamage(float damage, Buff attackerBuff = Buff.None)
         {
             if (!isAlive) return false;
 
@@ -139,7 +139,7 @@ namespace Enemy
             if (life <= 0.01f) Die();
             return true;
         }
-
+        
         private IEnumerator ApplySlowDebuff()
         {
             speed = originalSpeed - .5f;
