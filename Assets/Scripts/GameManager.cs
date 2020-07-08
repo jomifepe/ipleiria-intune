@@ -235,11 +235,11 @@ public class GameManager : MonoBehaviour
         UIManager.Instance.SetThrowButtonImage(buffResources[CurrentSong.buff].throwButton);
     }
 
-    public void OpenOptionsOnMenu()
+    /*public void OpenOptionsOnMenu()
     {
         Debug.Log("[GAMEMANAGER] Click Open options");
         UIManager.Instance.OpenOptionMenu();
-    }
+    }*/
 
     public String GetCurrentLevel()
     {
@@ -249,5 +249,21 @@ public class GameManager : MonoBehaviour
     public int GetCoins()
     {
         return coins;
+    }
+
+    public void ResetGame()
+    {
+        Debug.Log("[GameManager] Restart..");
+        StartCoroutine(GameManager.Instance.LoadNextLevelAsync(--level));
+        PauseGame(false);
+        
+        // Vida -- Auto, não precisa
+        // machados
+        
+        // coins
+        
+        // discos
+        
+        
     }
 }

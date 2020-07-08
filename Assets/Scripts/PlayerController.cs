@@ -86,6 +86,7 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         UpdateHealthBar();
+        UpdateThrowBar();
     }
 
     private void Update()
