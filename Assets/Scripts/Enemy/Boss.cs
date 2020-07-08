@@ -23,9 +23,11 @@ namespace Enemy
         private float timeBetweenSpells = 0.4f;
         private float rangedAttackCooldown = 4f;
         private readonly float triggerlifeValue = 0.2f;
-
-        private Vector3 leftThrowPoint;
         
+        private const float RestTime = 3f;
+        /*In this time the boss only walks, used in the beginning and when swapping from melee to ranged mode*/
+        private float restTimer;
+        private Vector3 leftThrowPoint;
         private int attackTimes;
         private int maxAttackTimes = 3;
         
@@ -37,6 +39,7 @@ namespace Enemy
             UpdateDirection();
             CheckCanFlip(direction);
             if(canFlip) Flip();
+            Rest();
         }
         
         protected override void Update()
@@ -44,6 +47,13 @@ namespace Enemy
             if (!isAlive) return;
             UpdateDirection();
             CheckCanFlip(direction);
+
+            if (Time.time < restTimer)
+            {
+                if (canFlip) Flip();
+                Move();
+                return;
+            }
             
             if (rangedMode)
             {
@@ -52,6 +62,7 @@ namespace Enemy
                 Move();
                 return;
             }
+            
             /*MeleeMode*/
             if (PlayerOnAttackRange())
             {
@@ -88,6 +99,7 @@ namespace Enemy
             {
                 results[0].GetComponent<PlayerController>().TakeDamage(attackDamage);
             }
+            //TODO Sound
             //audioSource.PlayOneShot(attackAudioClip); 
             UpdateAttackType();
         }
@@ -117,7 +129,7 @@ namespace Enemy
                 spellsThrown++;
             }
             animator.SetBool(AnimIsAttacking, false);
-            Debug.Log("attackMode changed to false on RangedAttackAsync");
+            //Debug.Log("attackMode changed to false on RangedAttackAsync");
             attackMode = false;
             UpdateAttackType();
         }
@@ -127,6 +139,8 @@ namespace Enemy
             attackTimes++;
             if (attackTimes < maxAttackTimes) return;
             
+            //Stops for a bit when transitioning from melee to ranged
+            if(!rangedMode) Rest();
             rangedMode = !rangedMode;
             attackTimes = 0;
             nextAttackTime = Time.time;
@@ -155,8 +169,6 @@ namespace Enemy
         private void Move()
         {
             if(attackMode) return;
-            //this isnt needed?
-            //rigidBody.velocity = new Vector2(speed * transform.right.x, rigidBody.velocity.y);
             UpdateMovement(direction);
         }
 
@@ -196,9 +208,22 @@ namespace Enemy
                 attackCooldown *= 0.8f;
                 rangedAttackCooldown *= 0.8f;
                 spellsPerAttack += 3;
-                Debug.Log("Entered Furious mode");
+                //Debug.Log("Entered Furious mode");
             }
             return base.TakeDamage(damage, attackerBuff);
         }
+
+        private void Rest()
+        {
+            restTimer = Time.time + RestTime;
+            animator.SetBool(AnimIsAttacking, false);
+            attackMode = false;
+        }
+        
+        /*protected override void Die()
+        {
+            base.Die();
+            GameManager.Instance.
+        }*/
     }
 }
