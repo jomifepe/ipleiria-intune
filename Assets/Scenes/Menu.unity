@@ -2135,7 +2135,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &657513115
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5307,7 +5307,7 @@ MonoBehaviour:
   changeSongButton: {fileID: 551126563}
   endGameWin: {fileID: 1830903378}
   endGameLoose: {fileID: 1821500451}
-  levelCompleted: {fileID: 0}
+  levelCompleted: {fileID: 1716308919}
   HUD: {fileID: 1957322811}
 --- !u!4 &1626773606
 Transform:
@@ -5873,8 +5873,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10470525943c54d498e77477e57fdba3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  coinText: {fileID: 0}
-  discsText: {fileID: 0}
+  coinText: {fileID: 1274868082}
+  discsText: {fileID: 1623500578}
 --- !u!114 &1716308922
 MonoBehaviour:
   m_ObjectHideFlags: 0
