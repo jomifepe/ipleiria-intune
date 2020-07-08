@@ -182,7 +182,7 @@ public class GameManager : MonoBehaviour
         return level;
     }
 
-    public void PauseGame(bool pause)
+    public void PauseGame(bool pause, bool showPanel = true)
     {
         Debug.Log("Press paused");
         IsPaused = pause;
@@ -190,12 +190,12 @@ public class GameManager : MonoBehaviour
         {
             oldTimeScale = Time.timeScale;
             Time.timeScale = 0f;
-            UIManager.Instance.ShowPausePanel(true);
+            if(showPanel) UIManager.Instance.ShowPausePanel(true);
         }
         else
         {
             Time.timeScale = oldTimeScale;
-            UIManager.Instance.ShowPausePanel(false);
+            if(showPanel) UIManager.Instance.ShowPausePanel(false);
         }
     }
 
@@ -274,6 +274,7 @@ public class GameManager : MonoBehaviour
 
     public void EndGame(bool winner)
     {
+        PauseGame(true, false);
         UIManager.Instance.EndGame(winner);
     }
 }

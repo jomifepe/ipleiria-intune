@@ -185,7 +185,7 @@ namespace Enemy
             lifebarImage.fillAmount = life / maxHealth;
         }
 
-        protected virtual void Die()
+        protected void Die()
         {
             rigidBody.constraints = RigidbodyConstraints2D.FreezeRotation;
             isAlive = false;
