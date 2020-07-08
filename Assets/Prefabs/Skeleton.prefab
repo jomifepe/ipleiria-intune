@@ -289,7 +289,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 1
   attackCooldown: 2
-  attackRange: 2
+  attackRange: 1.2
   attackDamage: 1
   attackPoint: {fileID: 7065451944867234441}
   attackAudioClip: {fileID: 0}

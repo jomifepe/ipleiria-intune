@@ -25,9 +25,6 @@ public class Projectile : MonoBehaviour
             Dismiss();
         }
     }
-
-    
-    
     private void Dismiss()
     {
         Destroy(gameObject);
