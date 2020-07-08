@@ -28,7 +28,7 @@ public class PlayerController : MonoBehaviour
     [Range(0, .3f)] [SerializeField] private float movementSmoothing = .05f;
 
     private Rigidbody2D rigidBody;
-    private SpriteRenderer spriteRenderer;
+    private CapsuleCollider2D collider;
     private Animator animator;
     private AudioSource audioSource;
     private Collider2D[] results = new Collider2D[1];
@@ -41,6 +41,7 @@ public class PlayerController : MonoBehaviour
     private int extraJumps, maxJumps = 2;
     private Buff currentBuff = Buff.None;
     private Dictionary<Buff, (Sprite sprite, RuntimeAnimatorController animation)> buffResources;
+    private bool isOnFallPlatform;
 
     private static readonly int AnimHurt = Animator.StringToHash("Hurt");
     private static readonly int AnimIsDead = Animator.StringToHash("IsDead");
@@ -57,12 +58,13 @@ public class PlayerController : MonoBehaviour
         maxHealth = health;
         maxThrows = throws;
         extraJumps = maxJumps;
+        SwipeDetector.OnSwipe += OnSwipeDetected;
         GameManager.Instance.SetPlayerMaxHealth(maxHealth);
         GameManager.Instance.SetPlayerMaxThrows(maxThrows);
         rigidBody = GetComponent<Rigidbody2D>();
+        collider = GetComponent<CapsuleCollider2D>();
         animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
 
         currentBuff = Buff.None;
 
@@ -90,31 +92,37 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        CheckFallThroughPlatform();
         if (!GameManager.Instance.IsPaused && isAlive)
         {
+            // if (Input.GetButtonDown("Fire3") && isOnFallPlatform) FallThroughPlatform();
+            
             /* melee attack */
-            if (Time.time >= nextMeleeAttackTime && (
-                Input.GetButtonDown("Fire1") || CrossPlatformInputManager.GetButtonDown("Fire1")
+            if (Time.time >= nextMeleeAttackTime && (CrossPlatformInputManager.GetButtonDown("Fire1")
             )) PerformAttackAnimation();
             
             /* projectile throw */
-            if (Time.time >= nextRangedAttackTime && (
-                Input.GetButtonDown("Fire2") || CrossPlatformInputManager.GetButtonDown("Fire2")
+            if (Time.time >= nextRangedAttackTime && (CrossPlatformInputManager.GetButtonDown("Fire2")
             )) Throw();
 
             /* horizontal movement */
-            horizontalInput = Input.GetAxisRaw("Horizontal") + CrossPlatformInputManager.GetAxisRaw("Horizontal");
+            horizontalInput = CrossPlatformInputManager.GetAxisRaw("Horizontal");
 
             /* character horizontal flip */
             if (transform.right.x * horizontalInput < 0) Flip();
 
             /* jumping */
-            if (!jump && (Input.GetButtonDown("Jump") || CrossPlatformInputManager.GetButtonDown("Jump"))) jump = true;
+            if (!jump && (CrossPlatformInputManager.GetButtonDown("Jump"))) jump = true;
 
             /* check if the song/buff has changed */
             var currentSong = GameManager.Instance.CurrentSong;
             if (currentSong != null && currentSong.buff != currentBuff) currentBuff = currentSong.buff;
         }
+    }
+
+    private void CheckFallThroughPlatform()
+    {
+        // if (isOnFallPlatform)
     }
 
     private void FixedUpdate()
@@ -151,20 +159,49 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D other)
     {
-        if (!other.collider.CompareTag("Platform")) return;
+        if (other.collider.CompareTag("FallPlatform")) isOnFallPlatform = true;
+        else if (!other.collider.CompareTag("Platform")) return;
+
         var bounds = other.collider.bounds;
         GameManager.Instance.platformBounds = (bounds.min.x, bounds.max.x);
     }
-    
+
+    private void OnCollisionExit2D(Collision2D other)
+    {
+        if (other.collider.CompareTag("FallPlatform"))
+        {
+            isOnFallPlatform = false;
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (isOnFallPlatform && collider.isTrigger) collider.isTrigger = false;
+    }
+
     private void OnDrawGizmosSelected()
     {
         if (meleeAttackPoint == null) return;
         Gizmos.DrawWireSphere(meleeAttackPoint.position, meleeAttackRange);
     }
 
+    private void OnSwipeDetected(SwipeData swipe)
+    {
+        if (swipe.Direction == SwipeDirection.Down && isOnFallPlatform)
+        {
+            FallThroughPlatform();
+        }
+    }
+
+    private void FallThroughPlatform()
+    {
+        collider.isTrigger = true;
+    }
+
     private void PerformJump()
     {
         wasJumping = true;
+        isOnFallPlatform = false;
         animator.SetTrigger(AnimJump);
         rigidBody.velocity = Vector2.up * jumpForce;
         audioSource.PlayOneShot(jumpAudioClip);
@@ -174,8 +211,7 @@ public class PlayerController : MonoBehaviour
     {
         animator.SetBool(AnimIsAttackingMelee, true);
         animator.SetTrigger(AnimAttackMelee);
-        Debug.Log("Attack started");
-            nextMeleeAttackTime = Time.time + 1f / attackRate;
+        nextMeleeAttackTime = Time.time + 1f / attackRate;
         audioSource.PlayOneShot(meleeAudioClips[0]);
     }
     
@@ -251,6 +287,7 @@ public class PlayerController : MonoBehaviour
         rigidBody.velocity = Vector2.zero;
         animator.SetTrigger(AnimDeath);
         animator.SetBool(AnimIsDead, true);
+        collider.sharedMaterial = null;
     }
     
     public void Kill()
@@ -290,11 +327,5 @@ public class PlayerController : MonoBehaviour
     private void UpdateThrowBar()
     {
         GameManager.Instance.UpdatePlayerThrows(throws);
-    }
-
-    public void SetAttackEnded()
-    {
-        animator.SetBool(AnimIsAttackingMelee, false);
-        Debug.Log("Attack Ended");
     }
 }

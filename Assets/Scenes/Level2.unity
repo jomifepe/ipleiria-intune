@@ -4130,11 +4130,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: FlyingEye
       objectReference: {fileID: 0}
-    - target: {fileID: 1482677862990265186, guid: 5e35dda892b4ad14cb5b32c9d6a1e4f9,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5e35dda892b4ad14cb5b32c9d6a1e4f9, type: 3}
 --- !u!1 &230703134
@@ -16047,6 +16042,8 @@ MonoBehaviour:
   attackDamage: 0
   attackPoint: {fileID: 0}
   attackAudioClip: {fileID: 0}
+  slowIconObject: {fileID: 0}
+  lifebarFrame: {fileID: 0}
   lifebarImage: {fileID: 0}
   lifebarCanvas: {fileID: 0}
   nextWayPointDistance: 3
@@ -18942,6 +18939,8 @@ MonoBehaviour:
   attackDamage: 1
   attackPoint: {fileID: 0}
   attackAudioClip: {fileID: 0}
+  slowIconObject: {fileID: 0}
+  lifebarFrame: {fileID: 0}
   lifebarImage: {fileID: 1931035785}
   lifebarCanvas: {fileID: 679353500}
   nextWayPointDistance: 3
@@ -26630,7 +26629,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   version: 1
   data:
-    dataString: UEsDBBQAAAgIAAAAIex75a/gcAIAABYFAAALACQAZ3JhcGgwLmpzb24KACAAAAAAAAEAGAAAgD7V3rGdAQCAPtXesZ0BAIA+1d6xnQFlVE2TojAQ/StWzqsFiI7sbZdxnD3MR427NRcukTSSMiRUEkadKf/7dgII63Ixvtcf73UavgiXpobcKr3RnD0pBuT7hLgz+TYZyEc40b2SW/4Jfcw7Z7Z0QdTHvFHLFeKhSzOqAqt5/kPuhQsOEGwkL5Su1mwPqTLWIFxQYQAprazLlgh9TcgJf6aJSznjKbpzp088JcHkgsccpAU9hIbzWZzgs4y6jGk4S/yzWnWZ0/lscbeMVsFytZ4Gd75MI3NBqxqY8zRUixddlXnkwyS67SKcs1wJwU0nldhz7UeR0to0aBQDGKdo3esLZ3MESuD70joj4/SXojBgu8loer7nGmfY1iU/VTvYippDq+yDisZ1WoStqrbo03/8NPR0oVX12PcNA9fDljw/vNFzTo0dTX4M34+k+wEdqTjQnYD3EuSz2mjVSIak1Y1LbQxE98Pfq7W0hPww4K3UG7Cph4n3F91fs/Nw8e5PqeDVzlGzuAW2QvmJ++0AjXfzCwX73TFdCUSdij8GftP9eMk64oFrY5HqXEonb6ca7ULJ2s/MuWlsqrQED3eia5BU2PMrlrG3V3jDjdreMA/UvU5d847r35KbFA8P8UFwQ72q4/WyTKmOT2DKl8YKLmEQ7YhnnFOqpGw3bDyTPm3b6ILmo7R9w9m/q0XipEhWyS7O85hFwTya5gsW0yim8wAWSwh3xO8el+iTitdWaDcevDU5FJe4Z/1XZrLRtPbbzjQ9bvhnpcYCuSzUNtcA8qUtcVUOGrvgi8nWjOOEtmAtl/7CyVdGhMoPwLJrz8xbXZ+sptlQJSM1/1DWIRlJ/XclIxdy+QtQSwMEFAAACAgAAAAh7O7UQ0FtAAAAeAAAAAkAJABtZXRhLmpzb24KACAAAAAAAAEAGAAAgD7V3rGdAQCAPtXesZ0BAIA+1d6xnQGrVipLLSrOzM9TslIw0TPSMzTVUVBKL0osyCgGihiCOKWZKSB2tJKJZZqlhWWSSXKySYqRgbGRbrJpikmikUmisUGqqVmqYZJSLFB9SWVBql9ibipET0BiSUZaZl5KZl66nntRZoo7yGil2FoAUEsBAi0AFAAACAgAAAAh7Hvlr+BwAgAAFgUAAAsAJAAAAAAAAAAAAAAAAAAAAGdyYXBoMC5qc29uCgAgAAAAAAABABgAAIA+1d6xnQEAgD7V3rGdAQCAPtXesZ0BUEsBAi0AFAAACAgAAAAh7O7UQ0FtAAAAeAAAAAkAJAAAAAAAAAAAAAAAvQIAAG1ldGEuanNvbgoAIAAAAAAAAQAYAACAPtXesZ0BAIA+1d6xnQEAgD7V3rGdAVBLBQYAAAAAAgACALgAAAB1AwAAAAA=
+    dataString: UEsDBBQAAAgIAAAAIeym72+PbwIAABMFAAALACQAZ3JhcGgwLmpzb24KACAAAAAAAAEAGAAAgD7V3rGdAQCAPtXesZ0BAIA+1d6xnQFlVE1z2jAQ/SuMzoXxFwn01hpCesjHhHZy8UVYa6xBljySHCAZ/ntXssGuywX5vd3VvrdrfxEuTQ25VXqjOXtSDMj3CXFn8m3Sk49wonslt/wTrjHvnNnSBVEf80YtV4iHLs2oCqzm+Q+5Fy44QLCRvFC6WrM9pMpYg3BBhQGktLIuWyL0NSEn/JsuXcoZT9G9O33iaRlMLnjMQVrQfWgYz5Il/u6iLiOYJXeLOAmjOOwyF7P4PpkvovU0WPgajcwFrWpgTlBfKpl3JeLIh0mU2kW4UrkSgpuuT2LPtfchpbVpUCUGME5Rt28unMUIlMD3pXUqhukvRWHAdrZoel5xjQa2dclP1bpaUXNoO/ugonE3zcO2q7bo03/8NPR0oVX1eL03DNwdtuT54Y2ec2rswPYhvBq07g06UnGgOwHvJchntdGqkQxJqxuX2hiIVv3jTVpaQn7o8bbVEdjUvePXKV9n7DRcvPpTKni1a8fZAluhvON+NUDjbH5hw35xTFcCUdfFHwO/6X64YR3xwLWxSHUqpWtvpxrtQsnae+bUNDZVWoKHu6ZrkFTY8yuWseMRjrjBtSPmgbp3qbu8466vyCjFw318EIyoV3W8DcuU6vgEpnxprOByWMwxz2hUqqRsV8yMWJe3bXRBc+jF7hvO/t0tkiyL5WK5S/I8YVEQR9N8zhIaJTQOYH4H4Y745eMShVLx2nba+YNjk31xiYt2/cZMNprWft2ZpscN/6zUwHMuC7XNNYB8aSvcGgeNl+CLydaMo0NbsJZLP3DylRGh8gOw7FYo80rXJ6tp1lfJSM0/lHVIRlL/UcnIhVz+AlBLAwQUAAAICAAAACHs7tRDQW0AAAB4AAAACQAkAG1ldGEuanNvbgoAIAAAAAAAAQAYAACAPtXesZ0BAIA+1d6xnQEAgD7V3rGdAatWKkstKs7Mz1OyUjDRM9IzNNVRUEovSizIKAaKGII4pZkpIHa0kollmqWFZZJJcrJJipGBsZFusmmKSaKRSaKxQaqpWaphklIsUH1JZUGqX2JuKkRPQGJJRlpmXkpmXrqee1FmijvIaKXYWgBQSwECLQAUAAAICAAAACHspu9vj28CAAATBQAACwAkAAAAAAAAAAAAAAAAAAAAZ3JhcGgwLmpzb24KACAAAAAAAAEAGAAAgD7V3rGdAQCAPtXesZ0BAIA+1d6xnQFQSwECLQAUAAAICAAAACHs7tRDQW0AAAB4AAAACQAkAAAAAAAAAAAAAAC8AgAAbWV0YS5qc29uCgAgAAAAAAABABgAAIA+1d6xnQEAgD7V3rGdAQCAPtXesZ0BUEsFBgAAAAACAAIAuAAAAHQDAAAAAA==
     upgradeData: 
     file_cachedStartup: {fileID: 0}
     data_cachedStartup: 
@@ -26658,7 +26657,39 @@ MonoBehaviour:
     _MeshEdgeColor: {r: 0, g: 0, b: 0, a: 0.5}
     _AreaColors:
     - {r: 0, g: 0, b: 0, a: 0}
-  tagNames: []
+  tagNames:
+  - Basic Ground
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  - 25
+  - 26
+  - 27
+  - 28
+  - 29
+  - 30
+  - 31
   heuristic: 2
   heuristicScale: 1
   threadCount: 1
