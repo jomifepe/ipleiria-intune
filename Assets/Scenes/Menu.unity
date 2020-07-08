@@ -1677,7 +1677,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1928077185}
-        m_MethodName: PauseGame
+        m_MethodName: PauseGameButton
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6160,8 +6160,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10470525943c54d498e77477e57fdba3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  coinText: {fileID: 0}
-  discsText: {fileID: 0}
+  coinText: {fileID: 160181728}
+  discsText: {fileID: 412299088}
 --- !u!114 &1821500454
 MonoBehaviour:
   m_ObjectHideFlags: 0

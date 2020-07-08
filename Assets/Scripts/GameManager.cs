@@ -200,6 +200,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void PauseGameButton(bool pause)
+    {
+        PauseGame(pause);
+    }
+
     public void SetPlayerMaxHealth(float value)
     {
         MaxPlayerHealth = value;
@@ -284,5 +289,10 @@ public class GameManager : MonoBehaviour
     {
         PauseGame(true, false);
         UIManager.Instance.EndGame(winner);
+    }
+
+    public void RestartSameLevel()
+    {
+        LoadNextLevelAsync(level);
     }
 }
