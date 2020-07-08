@@ -17,7 +17,7 @@ namespace Enemy
 
         private bool rangedMode = true;
         private int spellsPerAttack = 3;
-        private float timeBetweenSpells = 0.4f;
+        private float timeBetweenSpells = 0.8f;
         protected float rangedAttackCooldown = 4f;
 
         private Vector3 leftThrowPoint;
@@ -76,7 +76,7 @@ namespace Enemy
         private void MeleeAttack()
         {
             if (Physics2D.OverlapCircleNonAlloc(attackPoint.position, attackRange, results, playerLayerMask) == 0) return;
-            results[0].GetComponent<PlayerController>().TakeDamage(attackDamage);
+            //results[0].GetComponent<PlayerController>().TakeDamage(attackDamage);
             //audioSource.PlayOneShot(attackAudioClip); 
             UpdateAttackType();
         }
