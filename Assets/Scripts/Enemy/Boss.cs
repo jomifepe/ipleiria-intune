@@ -16,6 +16,8 @@ namespace Enemy
         [SerializeField] private GameObject throwablePrefab;
         [SerializeField] private float shootVelocity = 3f;
 
+        [SerializeField] private GameObject boxPrefab;
+        
         private bool rangedMode = true;
         private int spellsPerAttack = 3;
         private float timeBetweenSpells = 0.4f;
@@ -27,7 +29,7 @@ namespace Enemy
         private int attackTimes;
         private int maxAttackTimes = 3;
         
-        protected static readonly int AnimIsMelee = Animator.StringToHash("Melee");
+        private static readonly int AnimIsMelee = Animator.StringToHash("Melee");
 
         protected override void Init()
         {
@@ -43,6 +45,8 @@ namespace Enemy
             UpdateDirection();
             CheckCanFlip(direction);
 
+            Dropbox();
+            
             if (rangedMode)
             {
                 if (canFlip) Flip();
@@ -62,7 +66,12 @@ namespace Enemy
             attackMode = false;
             Move();
         }
-        
+
+        private void Dropbox()
+        {
+            GameObject box = Instantiate(boxPrefab, player.position, attackPoint.rotation);
+        }
+
         protected override void FixedUpdate()
         {
             if (!isAlive) return;
@@ -82,8 +91,10 @@ namespace Enemy
 
         private void MeleeAttack()
         {
-            if (Physics2D.OverlapCircleNonAlloc(attackPoint.position, attackRange, results, playerLayerMask) == 0) return;
-            results[0].GetComponent<PlayerController>().TakeDamage(attackDamage);
+            if (Physics2D.OverlapCircleNonAlloc(attackPoint.position, attackRange, results, playerLayerMask) != 0)
+            {
+                results[0].GetComponent<PlayerController>().TakeDamage(attackDamage);
+            }
             //audioSource.PlayOneShot(attackAudioClip); 
             UpdateAttackType();
         }

@@ -6211,12 +6211,12 @@ PrefabInstance:
     - target: {fileID: 3453953449752038804, guid: f14946da104154e1480fa8ccfd9785d3,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 12.72
+      value: 9.14
       objectReference: {fileID: 0}
     - target: {fileID: 3453953449752038804, guid: f14946da104154e1480fa8ccfd9785d3,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.83
+      value: -0.64
       objectReference: {fileID: 0}
     - target: {fileID: 3453953449752038804, guid: f14946da104154e1480fa8ccfd9785d3,
         type: 3}
@@ -7111,6 +7111,7 @@ MonoBehaviour:
   throwablePrefab: {fileID: 4152751771967737515, guid: b3050e2122ae00143b8ca41c421515b3,
     type: 3}
   shootVelocity: 3
+  boxPrefab: {fileID: 0}
 --- !u!50 &619643735
 Rigidbody2D:
   serializedVersion: 4
