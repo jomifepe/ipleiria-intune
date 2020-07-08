@@ -116,7 +116,7 @@ namespace Enemy
             nextAttackTime = Time.time + attackCooldown / attackRate;
         }
     
-        public bool TakeDamage(float damage, Buff attackerBuff = Buff.None)
+        public virtual bool TakeDamage(float damage, Buff attackerBuff = Buff.None)
         {
             if (!isAlive) return false;
 
@@ -139,7 +139,7 @@ namespace Enemy
             if (life <= 0.01f) Die();
             return true;
         }
-
+        
         private IEnumerator ApplySlowDebuff()
         {
             speed = originalSpeed - .5f;

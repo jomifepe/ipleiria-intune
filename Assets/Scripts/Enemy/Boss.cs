@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using Model;
 using UnityEngine;
 using Image = UnityEngine.UI.Image;
 
@@ -18,18 +19,19 @@ namespace Enemy
         private bool rangedMode = true;
         private int spellsPerAttack = 3;
         private float timeBetweenSpells = 0.4f;
-        protected float rangedAttackCooldown = 4f;
+        private float rangedAttackCooldown = 4f;
+        private readonly float triggerlifeValue = 0.2f;
 
         private Vector3 leftThrowPoint;
         
         private int attackTimes;
-        private int maxAttackTimes = 10;
+        private int maxAttackTimes = 3;
         
         protected static readonly int AnimIsMelee = Animator.StringToHash("Melee");
 
         protected override void Init()
         {
-            life = maxHealth = 100f;
+            life = maxHealth = 50f;
             UpdateDirection();
             CheckCanFlip(direction);
             if(canFlip) Flip();
@@ -124,7 +126,6 @@ namespace Enemy
             rangedMode = !rangedMode;
             attackTimes = 0;
             nextAttackTime = Time.time;
-            Debug.Log("attackMode changed to false on UpdateAttackType");
             attackMode = false;
             //Debug.Log("Switch to: " + rangedMode);
         }
@@ -167,9 +168,7 @@ namespace Enemy
         
         private void StartAttacking()
         {
-            Debug.Log("attackMode changed to true on start attacking");
             attackMode = true;
-            
             if (rangedMode)
             {
                 nextAttackTime = Time.time + rangedAttackCooldown;
@@ -183,7 +182,19 @@ namespace Enemy
             animator.SetTrigger(AnimAttack);
             animator.SetBool(AnimIsAttacking, true);
             animator.SetBool(AnimIsMelee, true);
-            
+        }
+
+        public override bool TakeDamage(float damage, Buff attackerBuff = Buff.None)
+        {
+            if (life > maxHealth * triggerlifeValue && life - damage <= maxHealth * triggerlifeValue)
+            {
+                speed *= 1.4f;
+                attackCooldown *= 0.8f;
+                rangedAttackCooldown *= 0.8f;
+                spellsPerAttack += 3;
+                Debug.Log("Entered Furious mode");
+            }
+            return base.TakeDamage(damage, attackerBuff);
         }
     }
 }
