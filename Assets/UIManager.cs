@@ -103,7 +103,7 @@ public class UIManager : MonoBehaviour
         endGameLoose.SetActive(false);
         endGameWin.SetActive(false);
         levelCompleted.SetActive(false);
-        GameManager.Instance.PauseGame(false, false);
+        //GameManager.Instance.PauseGame(false, false);
     }
 }
 
