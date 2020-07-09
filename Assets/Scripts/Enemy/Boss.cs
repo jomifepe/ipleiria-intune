@@ -16,7 +16,7 @@ namespace Enemy
         [SerializeField] private GameObject throwablePrefab;
         [SerializeField] private float shootVelocity = 3f;
         
-        private bool rangedMode = false;
+        private bool rangedMode = true;
         private int spellsPerAttack = 3;
         private float timeBetweenSpells = 0.4f;
         private float rangedAttackCooldown = 4f;
@@ -27,14 +27,14 @@ namespace Enemy
         private float restTimer;
         private Vector3 leftThrowPoint;
         private int attackTimes;
-        private int maxAttackTimes = 100;
+        private int maxAttackTimes = 3;
         private Coroutine rangedAttackCoroutine;
 
         private static readonly int AnimIsMelee = Animator.StringToHash("Melee");
 
         protected override void Init()
         {
-            life = maxHealth = 50f;
+            life = maxHealth = 3f;
             UpdateDirection();
             CheckCanFlip(direction);
             if(canFlip) Flip();

@@ -132,11 +132,9 @@ MonoBehaviour:
   playerLayerMask:
     serializedVersion: 2
     m_Bits: 256
-  throwablePrefab: {fileID: 2581428994220222083, guid: 8a456e9b4e8ac49ec98b5b136d323f59,
+  throwablePrefab: {fileID: 1462282750168343263, guid: f4d3dbcabf2477b4391b8b19a0f5c857,
     type: 3}
   shootVelocity: 3
-  boxPrefab: {fileID: 1152617144903491811, guid: fff494baaa8a7a340a3cdd999f95864f,
-    type: 3}
 --- !u!50 &8431680856329254708
 Rigidbody2D:
   serializedVersion: 4
