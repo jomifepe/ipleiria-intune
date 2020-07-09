@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 379046340420385693}
   - component: {fileID: 379046340420385682}
   - component: {fileID: 5088583886371842308}
-  m_Layer: 14
+  - component: {fileID: 920881011096170322}
+  m_Layer: 0
   m_Name: EndLevelArrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -109,3 +110,15 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.53179604, y: 0.44885787}
   m_EdgeRadius: 0
+--- !u!114 &920881011096170322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 379046340420385681}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f087e8fad1fa0b438861f2b7e2d67a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

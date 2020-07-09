@@ -22,22 +22,14 @@ public class GameManager : MonoBehaviour
     public float MaxPlayerThrows { get; private set; }
 
     public (float, float) platformBounds;
-    
-    private int coins;
-    private int Coins
-    {
-        get => coins;
-        set
-        {
-            if (value == coins) return;
-            coins = value;
-           
-        }
-    }
+
+    private int levelCoins, originalCoins;
+
+    private int TotalCoins => originalCoins + levelCoins;
 
     private void SaveCoins()
     {
-        PlayerPrefs.SetInt(StateKeyCoins, coins);
+        PlayerPrefs.SetInt(StateKeyCoins, TotalCoins);
         PlayerPrefs.Save();            
     }
 
@@ -68,7 +60,7 @@ public class GameManager : MonoBehaviour
         StartDefaultSong();
         if (PlayerPrefs.HasKey(StateKeyCoins))
         {
-            Coins = PlayerPrefs.GetInt(StateKeyCoins);
+            originalCoins = PlayerPrefs.GetInt(StateKeyCoins);
         }
         UpdateCoinsText();
         buffResources = new Dictionary<Buff, (Sprite throwBar, Sprite throwButton)>
@@ -97,15 +89,16 @@ public class GameManager : MonoBehaviour
     
     private void UpdateCoinsText()
     {
-        UIManager.Instance.UpdateCoins(Coins);
+        UIManager.Instance.UpdateCoins(TotalCoins);
     }
 
     public void IncrementCoins(int amount)
     {
         if (amount <= 0) return;
-        Coins += amount;
+        levelCoins += amount;
         UpdateCoinsText();
     }
+
 
     public void LoadNextLevel()
     {
@@ -228,14 +221,14 @@ public class GameManager : MonoBehaviour
         CurrentPlayerThrows = value;
         UIManager.Instance.UpdatePlayerThrows(value);
     }
-
+    
     public void AddSong(Song song)
     {
         /* make the button visible if it's the first song that's been collected */
         if (songList.Count == 1) UIManager.Instance.ChangeSongButtonVisibility(true);
         songList.Add(song);
     }
-
+    
     public void ChangeSong()
     {
         currentSongIndex++;
@@ -245,23 +238,28 @@ public class GameManager : MonoBehaviour
         UIManager.Instance.SetThrowBarImage(buffResources[CurrentSong.buff].throwBar);
         UIManager.Instance.SetThrowButtonImage(buffResources[CurrentSong.buff].throwButton);
     }
-
+    
     /*public void OpenOptionsOnMenu()
     {
         Debug.Log("[GAMEMANAGER] Click Open options");
         UIManager.Instance.OpenOptionMenu();
     }*/
-
+    
     public String GetCurrentLevel()
     {
         return currentLevel;
     }
-
+    
     public int GetCoins()
     {
-        return coins;
+        return TotalCoins;
     }
-
+    
+    public int GetLevelCoins()
+    {
+        return levelCoins;
+    }
+    
     // Para remover
     /*public void ResetGame()
     {
@@ -282,6 +280,7 @@ public class GameManager : MonoBehaviour
     public void LevelCompleted()
     {
         PauseGame(true, false);
+        SaveCoins();
         UIManager.Instance.LevelCompleted();
     }
     
