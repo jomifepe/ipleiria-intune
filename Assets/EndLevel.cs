@@ -6,7 +6,7 @@ public class EndLevel : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            GameManager.Instance.LoadNextLevel();
+            GameManager.Instance.LevelCompleted();
         }
     }
 }
