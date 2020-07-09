@@ -26,19 +26,21 @@ public class EndGame : MonoBehaviour
         //SceneManager.LoadSceneAsync(currentLevel);
         /*int level = GameManager.Instance.GetLevel();
         StartCoroutine(GameManager.Instance.LoadNextLevelAsync(--level));*/
-        SceneManager.LoadSceneAsync(currentLevel); 
         GameManager.Instance.PauseGame(false);
+        SceneManager.LoadSceneAsync(currentLevel);
     }
 
     public void NextLevel()
     {
         UIManager.Instance.NotEndGame();
+        GameManager.Instance.PauseGame(false);
         GameManager.Instance.LoadNextLevel();
     }
 
     public void QuitLevel()
     {
         UIManager.Instance.NotEndGame();
+        GameManager.Instance.PauseGame(false);
         GameManager.Instance.LoadMainMenu();
     }
 }
