@@ -1,11 +1,19 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Paused_Menu : MonoBehaviour
 {
 	[SerializeField] private GameObject HUD;
+    [SerializeField] private Text levelNumberText;
+
+    private void Awake()
+    {
+        levelNumberText.text = GameManager.Instance.GetCurrentLevel();
+    }
 
     public void Resume()
     {
