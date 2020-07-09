@@ -20,7 +20,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject bossLifeBarCanvas;
     private float playerMaxHealth = 3f;
     private float playerMaxThrows = 3f;
-    private float bossMaxHealth = 0f;
+    private float bossMaxHealth;
+    private readonly Color32 normalBossLifeBarColor = new Color32(212, 25, 25, 255);
 
     private void Awake()
     {
@@ -118,7 +119,13 @@ public class UIManager : MonoBehaviour
     {
         bossMaxHealth = maxHealth;
         bossLifeBar.fillAmount = maxHealth;
+        bossLifeBar.color = normalBossLifeBarColor;
         bossLifeBarCanvas.SetActive(true);
+    }
+
+    public void UpdateBossLifeBarColor()
+    {
+        bossLifeBar.color = new Color32(87, 64, 222, 200);
     }
 }
 

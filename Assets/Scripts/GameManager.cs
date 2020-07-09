@@ -307,4 +307,10 @@ public class GameManager : MonoBehaviour
         UIManager.Instance.InitializeBossLifebar(maxHealth);
 
     }
+
+    public void UpdateBossLifeBarColor()
+    {
+        UIManager.Instance.UpdateBossLifeBarColor();
+
+    }
 }

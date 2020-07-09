@@ -144,7 +144,6 @@ namespace Enemy
             attackTimes = 0;
             nextAttackTime = Time.time;
             attackMode = false;
-            //Debug.Log("Switch to: " + rangedMode);
         }
 
         private void Shoot()
@@ -205,9 +204,9 @@ namespace Enemy
             {
                 speed *= 1.4f;
                 attackCooldown *= 0.8f;
-                rangedAttackCooldown *= 0.8f;
-                spellsPerAttack += 3;
-                //Debug.Log("Entered Furious mode");
+                rangedAttackCooldown *= 0.6f;
+                spellsPerAttack++;
+                GameManager.Instance.UpdateBossLifeBarColor();
             }
             bool returnValue = base.TakeDamage(damage, attackerBuff);
             GameManager.Instance.UpdateBossLife(life);
