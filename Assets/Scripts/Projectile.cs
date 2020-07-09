@@ -28,19 +28,16 @@ public class Projectile : MonoBehaviour
         if (other.CompareTag("Enemy") && type == Type.Tomahawk)
         {
             if(!other.GetComponent<Enemy.Enemy>().TakeDamage(damage, buff)) return;
-            PlaySound(onHitSound);
-            HideObject();
+            PlaySoundAndDestroy(onHitSound);
         }
         else if (other.CompareTag("Player") && type == Type.Spell)
         {
             other.GetComponent<PlayerController>().TakeDamage(damage);
-            PlaySound(onHitSound);
-            HideObject();
+            PlaySoundAndDestroy(onHitSound);
         }
         else if (other.CompareTag("Wall") || other.CompareTag("Platform") || other.CompareTag("FallPlatform"))
         {
-            PlaySound(onHitWallSound);
-            HideObject();
+            PlaySoundAndDestroy(onHitWallSound);
         }
     }
 
@@ -49,13 +46,14 @@ public class Projectile : MonoBehaviour
         spriteRenderer.enabled = false;
     }
     
-    private void PlaySound(AudioClip sound)
+    private void PlaySoundAndDestroy(AudioClip sound)
     {
-        if (sound == null) return;
-        StartCoroutine(PlaySoundAndDestroy(sound));
+        HideObject();
+        if (sound == null) Destroy(gameObject);
+        StartCoroutine(PlaySoundAndDestroyAsync(sound));
     }
 
-    private IEnumerator PlaySoundAndDestroy(AudioClip sound)
+    private IEnumerator PlaySoundAndDestroyAsync(AudioClip sound)
     {
         audioSource.PlayOneShot(sound);
         yield return new WaitForSeconds(sound.length);

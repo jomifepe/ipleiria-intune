@@ -31607,7 +31607,7 @@ GameObject:
   - component: {fileID: 783057793}
   m_Layer: 9
   m_Name: CavernCeiling
-  m_TagString: Untagged
+  m_TagString: Platform
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -39609,7 +39609,7 @@ GameObject:
   - component: {fileID: 973730609}
   m_Layer: 9
   m_Name: OutsideGrassPlatform
-  m_TagString: Untagged
+  m_TagString: Platform
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

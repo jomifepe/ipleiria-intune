@@ -11,7 +11,7 @@ namespace Enemy
         {
             GameObject throwable = Instantiate(throwablePrefab, attackPoint.position, attackPoint.rotation);
             throwable.GetComponent<Rigidbody2D>().velocity = attackPoint.right * shootVelocity;
-            audioSource.PlayOneShot(attackAudioClip);
+            if (attackAudioClip != null) audioSource.PlayOneShot(attackAudioClip);
         }
     }
 }

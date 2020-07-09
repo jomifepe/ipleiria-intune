@@ -224,6 +224,7 @@ namespace Enemy
         protected void FinishDying()
         {
             if (rangedAttackCoroutine != null) StopCoroutine(rangedAttackCoroutine);
+            GameManager.Instance.IncrementCoins(1500);
             GameManager.Instance.EndGame(true);
         }
     }
