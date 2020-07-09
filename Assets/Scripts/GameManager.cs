@@ -215,6 +215,11 @@ public class GameManager : MonoBehaviour
         CurrentPlayerHealth = value;
         UIManager.Instance.UpdatePlayerLife(value);
     }
+    
+    public void UpdateBossLife(float value)
+    {
+        UIManager.Instance.UpdateBossLife(value);
+    }
 
     public void UpdatePlayerThrows(float value)
     {
@@ -293,5 +298,11 @@ public class GameManager : MonoBehaviour
     public void RestartSameLevel()
     {
         LoadNextLevelAsync(level);
+    }
+
+    public void InitializeBossLifebar(float maxHealth)
+    {
+        UIManager.Instance.InitializeBossLifebar(maxHealth);
+
     }
 }

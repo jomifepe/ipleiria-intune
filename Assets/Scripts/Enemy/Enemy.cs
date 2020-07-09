@@ -111,7 +111,6 @@ namespace Enemy
         protected void StartAttacking()
         {
             animator.SetTrigger(AnimAttack);
-            //TODO: Is this needed for the non AI?
             animator.SetBool(AnimIsAttacking, true);
             nextAttackTime = Time.time + attackCooldown / attackRate;
         }
@@ -182,6 +181,7 @@ namespace Enemy
 
         private void UpdateLifebar()
         {
+            if(lifebarImage == null) return;
             lifebarImage.fillAmount = life / maxHealth;
         }
 

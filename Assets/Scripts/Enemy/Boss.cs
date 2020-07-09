@@ -34,11 +34,12 @@ namespace Enemy
 
         protected override void Init()
         {
-            life = maxHealth = 3f;
+            life = maxHealth = 25f;
             UpdateDirection();
             CheckCanFlip(direction);
             if(canFlip) Flip();
             Rest();
+            GameManager.Instance.InitializeBossLifebar(maxHealth);
         }
         
         protected override void Update()
@@ -200,7 +201,6 @@ namespace Enemy
 
         public override bool TakeDamage(float damage, Buff attackerBuff = Buff.None)
         {
-            
             if (life > maxHealth * triggerLifeValue && life - damage <= maxHealth * triggerLifeValue)
             {
                 speed *= 1.4f;
@@ -209,7 +209,9 @@ namespace Enemy
                 spellsPerAttack += 3;
                 //Debug.Log("Entered Furious mode");
             }
-            return base.TakeDamage(damage, attackerBuff);
+            bool returnValue = base.TakeDamage(damage, attackerBuff);
+            GameManager.Instance.UpdateBossLife(life);
+            return returnValue;
         }
 
         private void Rest()

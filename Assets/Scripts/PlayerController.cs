@@ -337,7 +337,7 @@ public class PlayerController : MonoBehaviour
     {
         GameManager.Instance.UpdatePlayerLife(health);
     }
-    
+
     private void UpdateThrowBar()
     {
         GameManager.Instance.UpdatePlayerThrows(throws);

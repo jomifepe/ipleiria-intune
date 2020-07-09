@@ -26,6 +26,7 @@ public class Paused_Menu : MonoBehaviour
 
     public void QuitLevel()
     {
+        UIManager.Instance.NotEndGame();
         StartCoroutine(GameManager.Instance.LoadNextLevelAsync(0));
         //Time.timeScale = 1f;
 		GameManager.Instance.PauseGame(false);

@@ -8,6 +8,7 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private Text coinText;
     [SerializeField] private Image lifeBar;
+    [SerializeField] private Image bossLifeBar;
     [SerializeField] private Image throwBarImage;
     [SerializeField] private Image throwButtonImage;
     [SerializeField] private GameObject pausePanel;
@@ -16,9 +17,11 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject endGameLoose;
     [SerializeField] private GameObject levelCompleted;
     [SerializeField] private GameObject HUD;
+    [SerializeField] private GameObject bossLifeBarCanvas;
     private float playerMaxHealth = 3f;
     private float playerMaxThrows = 3f;
-    
+    private float bossMaxHealth = 0f;
+
     private void Awake()
     {
         if (Instance == null)
@@ -40,6 +43,11 @@ public class UIManager : MonoBehaviour
     public void UpdatePlayerLife(float life)
     {
         lifeBar.fillAmount = life / playerMaxHealth;
+    }
+    
+    public void UpdateBossLife(float life)
+    {
+        bossLifeBar.fillAmount = life / bossMaxHealth;
     }
     
     public void UpdatePlayerThrows(float amount)
@@ -103,7 +111,15 @@ public class UIManager : MonoBehaviour
         endGameLoose.SetActive(false);
         endGameWin.SetActive(false);
         levelCompleted.SetActive(false);
+        bossLifeBarCanvas.SetActive(false);
         //GameManager.Instance.PauseGame(false, false);
+    }
+
+    public void InitializeBossLifebar(float maxHealth)
+    {
+        bossMaxHealth = maxHealth;
+        bossLifeBar.fillAmount = maxHealth;
+        bossLifeBarCanvas.SetActive(true);
     }
 }
 
