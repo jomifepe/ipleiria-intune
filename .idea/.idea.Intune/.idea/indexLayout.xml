@@ -3,6 +3,7 @@
   <component name="ContentModelUserStore">
     <attachedFolders />
     <explicitIncludes>
+      <Path>Assets</Path>
       <Path>Library/PackageCache/com.unity.2d.animation@3.2.2</Path>
       <Path>Library/PackageCache/com.unity.2d.common@2.0.2</Path>
       <Path>Library/PackageCache/com.unity.2d.pixel-perfect@2.0.4</Path>
@@ -20,8 +21,10 @@
     <explicitExcludes>
       <Path>.git</Path>
       <Path>.idea</Path>
+      <Path>Class2_Platformer_Data</Path>
       <Path>Library</Path>
       <Path>Logs</Path>
+      <Path>MonoBleedingEdge</Path>
       <Path>Temp</Path>
       <Path>obj</Path>
     </explicitExcludes>

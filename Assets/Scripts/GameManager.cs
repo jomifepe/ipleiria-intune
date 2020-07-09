@@ -153,6 +153,7 @@ public class GameManager : MonoBehaviour
         {
             // if (Application.CanStreamedLevelBeLoaded("Level" + levelToLoad))
             // {
+        
                 asyncLoad = SceneManager.LoadSceneAsync("Level" + levelToLoad);
                 currentLevel = "Level" + levelToLoad;
             // }
@@ -160,11 +161,10 @@ public class GameManager : MonoBehaviour
 
         while (!asyncLoad.isDone)
         {
-            //print(asyncLoad.progress);
             yield return null;
         }
-
-        if (levelToLoad > 0) HUD.SetActive(true);
+        
+        if (levelToLoad > 0) HUD.SetActive(true); 
         yield return null;
     }
 

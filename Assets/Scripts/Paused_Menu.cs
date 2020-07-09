@@ -21,6 +21,7 @@ public class Paused_Menu : MonoBehaviour
         Debug.Log("Restart..");
         int level = GameManager.Instance.GetLevel();
         StartCoroutine(GameManager.Instance.LoadNextLevelAsync(--level));
+        HUD.SetActive(true);
 		GameManager.Instance.PauseGame(false);
     }
 
