@@ -17,7 +17,7 @@ public class Projectile : MonoBehaviour
         }
         else if (other.CompareTag("Player") && type == Type.Spell)
         {
-            //other.GetComponent<PlayerController>().TakeDamage(damage);
+            other.GetComponent<PlayerController>().TakeDamage(damage);
             Dismiss();
         }
         else if (other.CompareTag("Wall"))

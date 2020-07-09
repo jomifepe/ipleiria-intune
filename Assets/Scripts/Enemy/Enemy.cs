@@ -15,7 +15,7 @@ namespace Enemy
         protected Vector2 pushForce = Vector2.zero;
 
         [SerializeField] protected float speed = 1f;
-        protected float originalSpeed;
+        private float originalSpeed;
         
         protected Vector2 movement;
         protected Vector3 direction;
@@ -36,7 +36,7 @@ namespace Enemy
         [SerializeField] protected Transform attackPoint;
     
         protected bool attackMode;
-        protected float attackRate = 2f;
+        private float attackRate = 2f;
         protected float nextAttackTime;
         #endregion
     
@@ -185,7 +185,7 @@ namespace Enemy
             lifebarImage.fillAmount = life / maxHealth;
         }
 
-        protected void Die()
+        private void Die()
         {
             rigidBody.constraints = RigidbodyConstraints2D.FreezeRotation;
             isAlive = false;

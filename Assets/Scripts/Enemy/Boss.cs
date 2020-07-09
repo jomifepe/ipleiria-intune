@@ -15,14 +15,12 @@ namespace Enemy
         //Ranged
         [SerializeField] private GameObject throwablePrefab;
         [SerializeField] private float shootVelocity = 3f;
-
-        [SerializeField] private GameObject boxPrefab;
         
         private bool rangedMode = true;
         private int spellsPerAttack = 3;
         private float timeBetweenSpells = 0.4f;
         private float rangedAttackCooldown = 4f;
-        private readonly float triggerlifeValue = 0.2f;
+        private readonly float triggerLifeValue = 0.2f;
         
         private const float RestTime = 3f;
         /*In this time the boss only walks, used in the beginning and when swapping from melee to ranged mode*/
@@ -30,12 +28,13 @@ namespace Enemy
         private Vector3 leftThrowPoint;
         private int attackTimes;
         private int maxAttackTimes = 3;
-        
+        private Coroutine rangedAttackCoroutine;
+
         private static readonly int AnimIsMelee = Animator.StringToHash("Melee");
 
         protected override void Init()
         {
-            life = maxHealth = 3f;
+            life = maxHealth = 50f;
             UpdateDirection();
             CheckCanFlip(direction);
             if(canFlip) Flip();
@@ -107,7 +106,8 @@ namespace Enemy
         private void RangedAttack()
         {
             UpdateLeftThrowPoint();
-            StartCoroutine(RangedAttackAsync());
+            if (rangedAttackCoroutine != null) StopCoroutine(rangedAttackCoroutine);
+            rangedAttackCoroutine = StartCoroutine(RangedAttackAsync());
         }
 
         private void UpdateLeftThrowPoint()
@@ -182,7 +182,7 @@ namespace Enemy
             return true;
         }
         
-        private void StartAttacking()
+        private new void StartAttacking()
         {
             attackMode = true;
             if (rangedMode)
@@ -202,7 +202,8 @@ namespace Enemy
 
         public override bool TakeDamage(float damage, Buff attackerBuff = Buff.None)
         {
-            if (life > maxHealth * triggerlifeValue && life - damage <= maxHealth * triggerlifeValue)
+            
+            if (life > maxHealth * triggerLifeValue && life - damage <= maxHealth * triggerLifeValue)
             {
                 speed *= 1.4f;
                 attackCooldown *= 0.8f;
@@ -223,6 +224,7 @@ namespace Enemy
         [UsedImplicitly]
         protected void FinishDying()
         {
+            if (rangedAttackCoroutine != null) StopCoroutine(rangedAttackCoroutine);
             GameManager.Instance.EndGame(true);
         }
     }
