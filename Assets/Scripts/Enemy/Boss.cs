@@ -118,7 +118,6 @@ namespace Enemy
             leftThrowPoint.x -= dist * 2;
         }
 
-        //TODO: Stop coroutine when dying and when taking damage
         private IEnumerator RangedAttackAsync()
         {
             int spellsThrown = 0;
@@ -129,7 +128,6 @@ namespace Enemy
                 spellsThrown++;
             }
             animator.SetBool(AnimIsAttacking, false);
-            //Debug.Log("attackMode changed to false on RangedAttackAsync");
             attackMode = false;
             UpdateAttackType();
         }
