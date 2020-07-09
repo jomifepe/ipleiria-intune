@@ -16,7 +16,7 @@ namespace Enemy
         [SerializeField] private GameObject throwablePrefab;
         [SerializeField] private float shootVelocity = 3f;
         
-        private bool rangedMode = true;
+        private bool rangedMode = false;
         private int spellsPerAttack = 3;
         private float timeBetweenSpells = 0.4f;
         private float rangedAttackCooldown = 4f;
@@ -27,7 +27,7 @@ namespace Enemy
         private float restTimer;
         private Vector3 leftThrowPoint;
         private int attackTimes;
-        private int maxAttackTimes = 3;
+        private int maxAttackTimes = 100;
         private Coroutine rangedAttackCoroutine;
 
         private static readonly int AnimIsMelee = Animator.StringToHash("Melee");

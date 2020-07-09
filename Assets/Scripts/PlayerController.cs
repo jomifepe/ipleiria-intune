@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float meleeAttackRange = 0.5f;
     [SerializeField] private float meleeDamage = 1f;
     [Range(0, .3f)] [SerializeField] private float movementSmoothing = .05f;
+    [SerializeField] private float health = 3f, throws = 3f;
 
     private Rigidbody2D rigidBody;
     private CapsuleCollider2D collider;
@@ -36,7 +37,7 @@ public class PlayerController : MonoBehaviour
 
     private float horizontalInput;
     private bool jump, isGrounded, wasJumping, isAlive = true;
-    private float health = 3f, throws = 3f, maxHealth, maxThrows;
+    private float maxHealth, maxThrows;
     private float shootVelocity = 5f, attackRate = 2f;
     private float nextMeleeAttackTime, nextRangedAttackTime;
     private int extraJumps, maxJumps = 2;
