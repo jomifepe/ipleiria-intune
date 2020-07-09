@@ -280,6 +280,7 @@ GameObject:
   - component: {fileID: 120183541}
   - component: {fileID: 120183543}
   - component: {fileID: 120183542}
+  - component: {fileID: 120183544}
   m_Layer: 5
   m_Name: Menu
   m_TagString: Untagged
@@ -348,6 +349,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 120183540}
   m_CullTransparentMesh: 0
+--- !u!114 &120183544
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 120183540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: acddbbf882814a74f8cd98e851a6c465, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &160181726
 GameObject:
   m_ObjectHideFlags: 0
@@ -1103,7 +1116,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1626773605}
+      - m_Target: {fileID: 120183544}
         m_MethodName: OpenOptionMenu
         m_Mode: 1
         m_Arguments:

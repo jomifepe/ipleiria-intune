@@ -73,7 +73,6 @@ public class UIManager : MonoBehaviour
 	
 	public void OpenOptionMenu()
 	{
-		Debug.Log("[UIManager] Click Open options");
         SceneManager.LoadScene("Option_inMenu");
 	}
 
