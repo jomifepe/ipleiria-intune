@@ -16,7 +16,7 @@ namespace Enemy
         [SerializeField] private GameObject throwablePrefab;
         [SerializeField] private float shootVelocity = 3f;
         
-        private bool rangedMode = false;
+        private bool rangedMode = true;
         private int spellsPerAttack = 3;
         private float timeBetweenSpells = 0.4f;
         private float rangedAttackCooldown = 4f;
@@ -27,7 +27,7 @@ namespace Enemy
         private float restTimer;
         private Vector3 leftThrowPoint;
         private int attackTimes;
-        private int maxAttackTimes = 100;
+        private int maxAttackTimes = 3;
         private Coroutine rangedAttackCoroutine;
 
         private static readonly int AnimIsMelee = Animator.StringToHash("Melee");
@@ -118,7 +118,6 @@ namespace Enemy
             leftThrowPoint.x -= dist * 2;
         }
 
-        //TODO: Stop coroutine when dying and when taking damage
         private IEnumerator RangedAttackAsync()
         {
             int spellsThrown = 0;
@@ -129,7 +128,6 @@ namespace Enemy
                 spellsThrown++;
             }
             animator.SetBool(AnimIsAttacking, false);
-            //Debug.Log("attackMode changed to false on RangedAttackAsync");
             attackMode = false;
             UpdateAttackType();
         }
