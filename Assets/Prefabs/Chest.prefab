@@ -72,7 +72,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1189730807
-  m_SortingLayer: 4
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: -153949952768978424, guid: f4ed72d84cec7244386bff4823eb42b7,
     type: 3}
@@ -152,8 +152,8 @@ MonoBehaviour:
   valueMultiplier: 1
   lifeDropChance: 0.2
   throwChargeDropChance: 0.15
-  minCoinValue: 3
-  maxCoinValue: 10
+  minCoinValue: 5
+  maxCoinValue: 15
   minCoinCount: 2
   maxCoinCount: 4
 --- !u!114 &4506220539925197784

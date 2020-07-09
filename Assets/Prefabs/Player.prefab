@@ -386,7 +386,7 @@ MonoBehaviour:
   meleeAttackRange: 0.74
   meleeDamage: 1
   movementSmoothing: 0
-  health: 3
+  health: 100
   throws: 3
 --- !u!114 &8371594012753148061
 MonoBehaviour:

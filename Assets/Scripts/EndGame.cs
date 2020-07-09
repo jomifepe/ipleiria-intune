@@ -14,10 +14,8 @@ public class EndGame : MonoBehaviour
     private void Start()
     {
         currentLevel = GameManager.Instance.GetCurrentLevel();
-        int coins = GameManager.Instance.GetLevelCoins();
-        coinText.text = coins.ToString();
-        
-        // FALTA os Discos
+        coinText.text = GameManager.Instance.GetLevelCoins().ToString();
+        discsText.text = GameManager.Instance.GetSongs().ToString();
     }
 
     public void RestartGame()

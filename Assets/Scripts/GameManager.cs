@@ -39,6 +39,7 @@ public class GameManager : MonoBehaviour
 
     private float oldTimeScale;
     public Song CurrentSong { get; private set; }
+
     private int currentSongIndex = -1;
     private Dictionary<Buff, (Sprite throwBar, Sprite throwButton)> buffResources;
 
@@ -150,17 +151,11 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            if (Application.CanStreamedLevelBeLoaded("Level" + levelToLoad))
-            {
-                HUD.SetActive(true);
+            // if (Application.CanStreamedLevelBeLoaded("Level" + levelToLoad))
+            // {
                 asyncLoad = SceneManager.LoadSceneAsync("Level" + levelToLoad);
                 currentLevel = "Level" + levelToLoad;
-            }
-            else
-            {               
-                asyncLoad = SceneManager.LoadSceneAsync("TheEnd"); 
-                // possivelmente não será assim.
-            }
+            // }
         }
 
         while (!asyncLoad.isDone)
@@ -168,6 +163,8 @@ public class GameManager : MonoBehaviour
             //print(asyncLoad.progress);
             yield return null;
         }
+
+        if (levelToLoad > 0) HUD.SetActive(true);
         yield return null;
     }
 
@@ -263,6 +260,11 @@ public class GameManager : MonoBehaviour
     public int GetLevelCoins()
     {
         return levelCoins;
+    }
+    
+    public int GetSongs()
+    {
+        return songList.Count - 1;
     }
     
     // Para remover

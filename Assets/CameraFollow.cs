@@ -22,11 +22,6 @@ public class CameraFollow : MonoBehaviour
     private Coroutine lastShakeCoroutine;
     private float topLimit, rightLimit, bottomLimit, leftLimit;
 
-    private void Start()
-    {
-        myCamera.transparencySortMode = TransparencySortMode.Orthographic;
-    }
-
     private void Awake()
     {
         if (Instance == null) Instance = this;

@@ -11,11 +11,6 @@ public class MenuLevels : MonoBehaviour
     {
         GameManager.Instance.LoadLevel(2);
     }
-    
-    public void LoadLevel3() 
-    {
-        GameManager.Instance.LoadLevel(3);
-    }
 
     public void LoadMainMenu()
     {

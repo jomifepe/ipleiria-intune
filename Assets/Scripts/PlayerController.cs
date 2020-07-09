@@ -230,6 +230,7 @@ public class PlayerController : MonoBehaviour
     }
     
     /* Called by animation event */
+    [UsedImplicitly]
     private void AttackMelee()
     {
         CameraFollow.Instance.Shake(.2f, 0.1f);
