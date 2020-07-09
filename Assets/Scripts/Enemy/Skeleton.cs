@@ -5,7 +5,7 @@ namespace Enemy
     {
         protected override void Init()
         {
-            life = maxHealth = 2f;
+            life = maxHealth = 3f;
             sensingRange = 10f;
         }
     }

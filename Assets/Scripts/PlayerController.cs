@@ -96,7 +96,7 @@ public class PlayerController : MonoBehaviour
     {
         if (!GameManager.Instance.IsPaused && isAlive)
         {
-            HandleKeyboardControls();
+            HandleTouchControls();
             /* character horizontal flip */
             if (transform.right.x * horizontalInput < 0) Flip();
 

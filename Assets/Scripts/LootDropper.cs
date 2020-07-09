@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 using UnityEngine;
 using Random = System.Random;
 
@@ -23,6 +24,7 @@ public class LootDropper : MonoBehaviour
     }
 
     /* function called on death animation event */
+    [UsedImplicitly]
     public void DropNormalLoot()
     {
         DropCoins();

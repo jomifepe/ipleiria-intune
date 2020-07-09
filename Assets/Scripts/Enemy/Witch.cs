@@ -4,7 +4,7 @@
     {
         protected override void Init()
         {
-            life = maxHealth = 3f;
+            life = maxHealth = 2f;
             sensingRange = attackRange;
         }
     }
