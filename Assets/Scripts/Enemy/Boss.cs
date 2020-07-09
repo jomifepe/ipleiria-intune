@@ -20,7 +20,7 @@ namespace Enemy
         private int spellsPerAttack = 3;
         private float timeBetweenSpells = 0.4f;
         private float rangedAttackCooldown = 4f;
-        private readonly float triggerLifeValue = 0.2f;
+        private readonly float triggerLifeValue = 0.3f;
         
         private const float RestTime = 3f;
         /*In this time the boss only walks, used in the beginning and when swapping from melee to ranged mode*/
