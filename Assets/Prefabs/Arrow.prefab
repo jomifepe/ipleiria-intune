@@ -150,8 +150,8 @@ MonoBehaviour:
   throwChargePrefab: {fileID: 8873143802504178685, guid: 7f2a67eb744abbb41a0edc94d500aabb,
     type: 3}
   valueMultiplier: 1
-  lifeDropChance: 0.05
-  throwChargeDropChance: 0.05
+  lifeDropChance: 0.2
+  throwChargeDropChance: 0.15
   minCoinValue: 3
   maxCoinValue: 10
   minCoinCount: 1
