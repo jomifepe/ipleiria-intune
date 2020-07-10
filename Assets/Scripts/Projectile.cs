@@ -49,7 +49,11 @@ public class Projectile : MonoBehaviour
     private void PlaySoundAndDestroy(AudioClip sound)
     {
         HideObject();
-        if (sound == null) Destroy(gameObject);
+        if (sound == null)
+        {
+            Destroy(gameObject);
+            return;
+        }
         StartCoroutine(PlaySoundAndDestroyAsync(sound));
     }
 

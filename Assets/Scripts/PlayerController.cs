@@ -96,7 +96,15 @@ public class PlayerController : MonoBehaviour
     {
         if (!GameManager.Instance.IsPaused && isAlive)
         {
-            HandleTouchControls();
+            if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
+            {
+                HandleTouchControls();
+            }
+            else
+            {
+                HandleKeyboardControls();
+            }
+
             /* character horizontal flip */
             if (transform.right.x * horizontalInput < 0) Flip();
 

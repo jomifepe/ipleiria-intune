@@ -175,7 +175,6 @@ public class GameManager : MonoBehaviour
 
     public void PauseGame(bool pause, bool showPanel = true)
     {
-        Debug.Log("Press paused");
         IsPaused = pause;
         if (pause)
         {
