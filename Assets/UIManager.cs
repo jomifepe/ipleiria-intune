@@ -59,6 +59,8 @@ public class UIManager : MonoBehaviour
     public void ShowPausePanel(bool value)
     {
         pausePanel.SetActive(value);
+        var pausedMenu = pausePanel.GetComponent<Paused_Menu>();
+        if (pausedMenu != null) pausedMenu.UpdateLevelNumber();
     }
 
     public void SetPlayerMaxHealth(float value)

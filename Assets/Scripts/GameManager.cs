@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.Save();            
     }
 
-    private int level = 1;
+    private int level;
 
     public bool IsPaused { get; set; }
 
@@ -105,26 +105,25 @@ public class GameManager : MonoBehaviour
     {
         //SceneManager.LoadScene(1);
         PauseGame(false, false);
-        StartCoroutine(LoadNextLevelAsync(level));
-        level++;
+        StartCoroutine(LoadNextLevelAsync(++level));
     }
     
      public void LoadLevel(int level)
     {
         StartCoroutine(LoadNextLevelAsync(level));
-        this.level = ++level;
+        this.level = level;
     }
 
     public void LoadMenuLevels()
     {
         StartCoroutine(LoadNextLevelAsync(-1));
-        level++;
+        level = -1;
     }
 
     public void LoadMainMenu()
     {
         StartCoroutine(LoadNextLevelAsync(0));
-        level = 1;
+        level = 0;
     }
 
     public IEnumerator LoadNextLevelAsync(int levelToLoad)
@@ -153,9 +152,9 @@ public class GameManager : MonoBehaviour
         {
             // if (Application.CanStreamedLevelBeLoaded("Level" + levelToLoad))
             // {
-        
                 asyncLoad = SceneManager.LoadSceneAsync("Level" + levelToLoad);
                 currentLevel = "Level" + levelToLoad;
+                Debug.Log("Loading level " + currentLevel);
             // }
         }
 

@@ -20,6 +20,7 @@ public class EndGame : MonoBehaviour
 
     public void RestartGame()
     {
+        currentLevel = GameManager.Instance.GetCurrentLevel();
         UIManager.Instance.NotEndGame();
         //SceneManager.LoadSceneAsync(currentLevel);
         /*int level = GameManager.Instance.GetLevel();

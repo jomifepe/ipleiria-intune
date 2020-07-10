@@ -12,6 +12,11 @@ public class Paused_Menu : MonoBehaviour
 
     private void Awake()
     {
+        UpdateLevelNumber();
+    }
+
+    public void UpdateLevelNumber()
+    {
         levelNumberText.text = GameManager.Instance.GetCurrentLevel();
     }
 
@@ -26,9 +31,8 @@ public class Paused_Menu : MonoBehaviour
 
     public void Restart()
     {
-        Debug.Log("Restart..");
         int level = GameManager.Instance.GetLevel();
-        StartCoroutine(GameManager.Instance.LoadNextLevelAsync(--level));
+        StartCoroutine(GameManager.Instance.LoadNextLevelAsync(level));
         HUD.SetActive(true);
 		GameManager.Instance.PauseGame(false);
     }
