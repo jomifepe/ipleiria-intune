@@ -4,3 +4,8 @@ University project - A 2D side-scrolling perspective mobile game with a pixel ar
 
 # In-game screenshot
 ![](screenshot.png)
+
+## Authors
+[Ivo Santos](https://github.com/Mikeloka), [José Pereira](https://github.com/jomifepe) and [Tiago Paulo](https://github.com/2161352)
+
+@2020
